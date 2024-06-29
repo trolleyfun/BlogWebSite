@@ -14,8 +14,8 @@
             <div class="col-md-8">
 
                 <h1 class="page-header">
-                    Page Heading
-                    <small>Secondary Text</small>
+                    Публикации
+                    <small>Путешествия по всему миру</small>
                 </h1>
 
                 <!-- Put Blog Posts from database -->
@@ -27,21 +27,22 @@
                         $post_title = $row['post_title'];
                         $post_author = $row['post_author'];
                         $post_date = $row['post_date'];
+                        $post_image = $row['post_image'];
                         $post_content = $row['post_content'];
                 ?>
                 
                 <h2>
-                    <a href="#"><?= $post_title; ?></a>
+                    <a href="#"><?=$post_title;?></a>
                 </h2>
                 <p class="lead">
-                    автор: <a href="index.php"><?= $post_author; ?></a>
+                    автор: <a href="index.php"><?=$post_author;?></a>
                 </p>
-                <p><span class="glyphicon glyphicon-time"></span> Опубликовано <?= $post_date; ?></p>
+                <p><span class="glyphicon glyphicon-time"></span> Опубликовано <?=$post_date;?></p>
                 <hr>
-                <img class="img-responsive" src="http://placehold.it/900x300" alt="">
+                <img class="img-responsive" src="img/<?=$post_image;?>" alt="<?=$post_title;?>">
                 <hr>
-                <p><?= $post_content; ?></p>
-                <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+                <p><?=$post_content;?></p>
+                <a class="btn btn-primary" href="#">Читать дальше <span class="glyphicon glyphicon-chevron-right"></span></a>
 
                 <hr>
                 <?php
@@ -52,10 +53,10 @@
                 <!-- Pager -->
                 <ul class="pager">
                     <li class="previous">
-                        <a href="#">&larr; Older</a>
+                        <a href="#">&larr; Старые</a>
                     </li>
                     <li class="next">
-                        <a href="#">Newer &rarr;</a>
+                        <a href="#">Новые &rarr;</a>
                     </li>
                 </ul>
 
