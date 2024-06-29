@@ -18,22 +18,13 @@
                     $query = "SELECT * FROM categories;";
                     if ($allCategories = mysqli_query($connection, $query)) {
                         while($row = mysqli_fetch_assoc($allCategories)) {
-                            $catTitle = $row['cat_title'];
-                            echo "<li><a href='#'>{$catTitle}</a></li>";
+                            $cat_title = $row['cat_title'];
+                            echo "<li><a href='#'>{$cat_title}</a></li>";
                         }
                     } else {
                         die("Query to database failed");
                     }
                     ?>
-                    <!-- <li>
-                        <a href="#">About</a>
-                    </li>
-                    <li>
-                        <a href="#">Services</a>
-                    </li>
-                    <li>
-                        <a href="#">Contact</a>
-                    </li> -->
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
