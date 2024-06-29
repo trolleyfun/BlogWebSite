@@ -8,7 +8,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Start Bootstrap</a>
+                <a class="navbar-brand" href="index.php">Главная</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -16,13 +16,13 @@
                     <!-- Put categories from database -->
                     <?php 
                     $query = "SELECT * FROM categories;";
-                    if ($allCategories = mysqli_query($connection, $query)) {
+                    if (!$allCategories = mysqli_query($connection, $query)) {
+                        die("Query to database failed." . mysqli_error($connection));
+                    } else { 
                         while($row = mysqli_fetch_assoc($allCategories)) {
                             $cat_title = $row['cat_title'];
                             echo "<li><a href='#'>{$cat_title}</a></li>";
                         }
-                    } else {
-                        die("Query to database failed");
                     }
                     ?>
                 </ul>
