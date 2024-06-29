@@ -13,7 +13,19 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li>
+                    <!-- Put categories from database -->
+                    <?php 
+                    $query = "SELECT * FROM categories;";
+                    if ($allCategories = mysqli_query($connection, $query)) {
+                        while($row = mysqli_fetch_assoc($allCategories)) {
+                            $catTitle = $row['cat_title'];
+                            echo "<li><a href='#'>{$catTitle}</a></li>";
+                        }
+                    } else {
+                        die("Query to database failed");
+                    }
+                    ?>
+                    <!-- <li>
                         <a href="#">About</a>
                     </li>
                     <li>
@@ -21,7 +33,7 @@
                     </li>
                     <li>
                         <a href="#">Contact</a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
