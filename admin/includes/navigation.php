@@ -29,7 +29,7 @@
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
             <li class="active">
-                <a href="index.html"><i class="fa fa-fw fa-dashboard"></i> Информация</a>
+                <a href="index.php"><i class="fa fa-fw fa-dashboard"></i> Информация</a>
             </li>
             <li>
                 <a href="javascript:;" data-toggle="collapse" data-target="#posts"><i class="fa fa-fw fa-edit"></i> Публикации <i class="fa fa-fw fa-caret-down"></i></a>
@@ -46,7 +46,7 @@
                 <a href="bootstrap-elements.html"><i class="fa fa-fw fa-desktop"></i> Комментарии</a>
             </li>
             <li>
-                <a href="bootstrap-grid.html"><i class="fa fa-fw fa-list"></i> Категории</a>
+                <a href="categories.php"><i class="fa fa-fw fa-list"></i> Регионы</a>
             </li>
             <li>
                 <a href="javascript:;" data-toggle="collapse" data-target="#users"><i class="fa fa-fw fa-user"></i> Пользователи <i class="fa fa-fw fa-caret-down"></i></a>
