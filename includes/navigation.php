@@ -25,6 +25,7 @@
                         }
                     }
                     ?>
+                    <li><a href='admin'>Управление</a></li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->

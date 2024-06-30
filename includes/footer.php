@@ -1,4 +1,4 @@
-<footer>
+        <footer>
             <div class="row">
                 <div class="col-lg-12">
                     <p>Copyright &copy; Блог &mdash; Путешествия 2024</p>
