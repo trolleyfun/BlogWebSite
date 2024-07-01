@@ -20,12 +20,12 @@
                         <div class="col-xs-6">
                             <?php 
                             /* Send category to database */
-                            $if_empty = false;
+                            $is_add_empty = false;
                             if (isset($_POST['add_cat_btn'])) {
                                 $cat_title = $_POST['cat_title'];
-                                $if_empty = false;
+                                $is_add_empty = false;
                                 if ($cat_title == "" || empty($cat_title)) {
-                                    $if_empty = true;
+                                    $is_add_empty = true;
                                 } else {
                                     $query = "INSERT INTO categories(cat_title) VALUE('{$cat_title}');";
                                     if (!$addCategory = mysqli_query($connection, $query)) {
@@ -40,7 +40,7 @@
                                     <input type="text" name="cat_title" id="cat_title" class="form-control">
                                     <?php 
                                     /* Write an error message if field is empty */
-                                    if ($if_empty) {
+                                    if ($is_add_empty) {
                                         echo "<p style='color: #a94442;'>Введите название региона</p>";
                                     }
                                     ?>
@@ -49,6 +49,15 @@
                                     <input type="submit" name="add_cat_btn" class="btn btn-primary" value="Добавить регион">
                                 </div>
                             </form>
+
+                            <?php 
+                            /* Edit Category in database */
+                            if (isset($_GET['edit_id']))
+                            {
+                                $edit_id = $_GET['edit_id'];
+                                include "includes/edit_categories.php";
+                            }
+                            ?>
                         </div>
 
                         <!-- Category Table -->
@@ -58,6 +67,8 @@
                                     <tr>
                                         <th>Id</th>
                                         <th>Название</th>
+                                        <th></th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -75,6 +86,7 @@
                                             echo "<td>{$cat_id}</td>";
                                             echo "<td>{$cat_title}</td>";
                                             echo "<td><a href='categories.php?delete_id={$cat_id}'><span class='fa fa-fw fa-trash-o'></span></a></td>";
+                                            echo "<td><a href='categories.php?edit_id={$cat_id}'><span class='fa fa-fw fa-edit'></span></a></td>";
                                             echo "</tr>";
                                         }
                                     }
