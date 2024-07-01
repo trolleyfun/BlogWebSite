@@ -13,9 +13,9 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <!-- Put categories from database -->
                     <?php 
-                    $query = "SELECT * FROM categories;";
+                    /* Put categories from database */
+                    $query = "SELECT * FROM categories LIMIT 4;";
                     if (!$allCategories = mysqli_query($connection, $query)) {
                         die("Query to database failed." . mysqli_error($connection));
                     } else { 

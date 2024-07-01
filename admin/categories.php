@@ -1,9 +1,9 @@
 <?php include "../includes/db.php"; ?>
-<?php include "includes/header.php"; ?>
+<?php include "includes/admin_header.php"; ?>
     <div id="wrapper">
 
         <!-- Navigation -->
-        <?php include "includes/navigation.php"; ?>
+        <?php include "includes/admin_navigation.php"; ?>
 
         <div id="page-wrapper">
 
@@ -19,10 +19,32 @@
 
                         <!-- Category Add Form -->
                         <div class="col-xs-6">
-                            <form action="">
+                            <?php 
+                            /* Send category to database */
+                            $if_empty = false;
+                            if (isset($_POST['add_cat_btn'])) {
+                                $cat_title = $_POST['cat_title'];
+                                $if_empty = false;
+                                if ($cat_title == "" || empty($cat_title)) {
+                                    $if_empty = true;
+                                } else {
+                                    $query = "INSERT INTO categories(cat_title) VALUE('{$cat_title}');";
+                                    if (!$addCategory = mysqli_query($connection, $query)) {
+                                        die("Query to database failed." . mysqli_error($connection));
+                                    }
+                                }
+                            }
+                            ?>
+                            <form action="" method="post">
                                 <div class="form-group">
                                     <label for="cat_title">Название региона:</label>
                                     <input type="text" name="cat_title" id="cat_title" class="form-control">
+                                    <?php 
+                                    /* Write an error message if field is empty */
+                                    if ($if_empty) {
+                                        echo "<p style='color: #a94442;'>Введите название региона</p>";
+                                    }
+                                    ?>
                                 </div>
                                 <div class="form-group">
                                     <input type="submit" name="add_cat_btn" class="btn btn-primary" value="Добавить регион">
@@ -40,14 +62,23 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Азия</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Западная Европа</td>
-                                    </tr>
+                                    <?php 
+                                    /* Put categories from database */
+                                    $query = "SELECT * FROM categories;";
+                                    if (!$adminCategories = mysqli_query($connection,$query)) {
+                                        die("Query to database failed." . mysqli_error($connection));
+                                    } else {
+                                        while($row = mysqli_fetch_assoc($adminCategories)) {
+                                            $cat_id = $row['cat_id'];
+                                            $cat_title = $row['cat_title'];
+
+                                            echo "<tr>";
+                                            echo "<td>{$cat_id}</td>";
+                                            echo "<td>{$cat_title}</td>";
+                                            echo "</tr>";
+                                        }
+                                    }
+                                    ?>
                                 </tbody> 
                             </table>
                         </div>
@@ -64,4 +95,4 @@
     </div>
     <!-- /#wrapper -->
 
-<?php include "includes/footer.php"; ?>
+<?php include "includes/admin_footer.php"; ?>
