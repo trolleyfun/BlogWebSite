@@ -1,4 +1,3 @@
-<?php include "../includes/db.php"; ?>
 <?php include "includes/admin_header.php"; ?>
     <div id="wrapper">
 
@@ -75,12 +74,26 @@
                                             echo "<tr>";
                                             echo "<td>{$cat_id}</td>";
                                             echo "<td>{$cat_title}</td>";
+                                            echo "<td><a href='categories.php?delete_id={$cat_id}'><span class='fa fa-fw fa-trash-o'></span></a></td>";
                                             echo "</tr>";
                                         }
                                     }
                                     ?>
                                 </tbody> 
                             </table>
+                            <?php 
+                            /* Delete categories from database */
+                            if (isset($_GET['delete_id'])) {
+                                $delete_id = $_GET['delete_id'];
+                                $query = "DELETE FROM categories WHERE cat_id = {$delete_id};";
+
+                                if (!$deleteCategory = mysqli_query($connection, $query)) {
+                                    die("Query to database failed." . mysqli_error($connection));
+                                }
+
+                                header("Location: categories.php");
+                            }
+                            ?>
                         </div>
                     </div>
                 </div>
