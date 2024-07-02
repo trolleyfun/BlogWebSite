@@ -32,17 +32,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>1</td>
-                                    <td>Летние каникулы в Японии</td>
-                                    <td>Джон Смит</td>
-                                    <td>10.06.2024</td>
-                                    <td>example.jpg</td>
-                                    <td>каникулы, япония, токио</td>
-                                    <td>5</td>
-                                    <td>Черновик</td>
-                                </tr>
+                                <?php 
+                                /* Put All Posts from database */
+                                showAllPosts();
+                                ?>
                             </tbody>
                         </table>
                     </div>
