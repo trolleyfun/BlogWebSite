@@ -16,28 +16,26 @@
                             <small>Администратор</small>
                         </h1>
 
-                        <!-- List of posts -->
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Id публикации</th>
-                                    <th>Id региона</th>
-                                    <th>Название</th>
-                                    <th>Автор</th>
-                                    <th>Дата</th>
-                                    <th>Изображение</th>
-                                    <th>Тэги</th>
-                                    <th>Кол-во комментариев</th>
-                                    <th>Статус</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php 
-                                /* Put All Posts from database */
-                                showAllPosts();
-                                ?>
-                            </tbody>
-                        </table>
+                        <!-- Posts Section -->
+                        <?php 
+                        if (isset($_GET['source'])) {
+                            $source = $_GET['source'];
+                        } else {
+                            $source = "";
+                        }
+
+                        switch($source) {
+                            case '12':
+                                echo "This 12";
+                                break;
+                            case "100":
+                                echo "This 100";
+                                break;
+                            default:
+                                include "includes/show_all_posts.php";
+                                break;
+                        }
+                        ?>
                     </div>
                 </div>
                 <!-- /.row -->
