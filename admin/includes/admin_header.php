@@ -1,5 +1,7 @@
-<?php ob_start(); ?>
 <?php include "../includes/db.php"; ?>
+<?php include "admin_functions.php"; ?>
+
+<?php ob_start(); ?>
 <!DOCTYPE html>
 <html lang="ru">
 

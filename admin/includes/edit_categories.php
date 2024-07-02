@@ -1,22 +1,7 @@
 <?php 
 /* Update category in database */
 $is_edit_empty = false;
-if (isset($_POST['update_cat_btn'])) {
-    $update_id = $_POST['edit_id'];
-    $update_title = $_POST['edit_title'];
-
-    $is_edit_empty = false;
-    if ($update_title == "" || empty($update_title)) {
-        $is_edit_empty = true;
-    } else {
-        $query = "UPDATE categories SET cat_title = '{$update_title}' WHERE cat_id = {$update_id};";
-        if (!$updateCategory = mysqli_query($connection, $query)) {
-            die("Query to database failed." . mysqli_error($connection));
-        }
-
-        header("Location: categories.php");
-    }
-}
+updateCategories();
 ?>
 <?php
 /* Put edit category from database to the form */
