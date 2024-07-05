@@ -6,8 +6,8 @@ addPosts();
 <!-- Add Post Form -->
  <form action="" method="post" enctype="multipart/form-data">
     <div class="form-group">
-        <label for="post_id_category">Id региона</label>
-        <input type="text" name="post_id_category" id="post_id_category" class="form-control">
+        <label for="post_category_id">Id региона</label>
+        <input type="text" name="post_category_id" id="post_category_id" class="form-control">
     </div>
     <div class="form-group">
         <label for="post_title">Название</label>
@@ -23,7 +23,7 @@ addPosts();
     </div>
     <div class="form-group">
         <label for="post_content">Текст</label>
-        <textarea type="text" name="post_content" id="post_content" class="form-control" rows="10"></textarea>
+        <textarea name="post_content" id="post_content" class="form-control" rows="10"></textarea>
     </div>
     <div class="form-group">
         <label for="post_tags">Тэги</label>

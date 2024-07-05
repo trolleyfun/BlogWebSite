@@ -1,4 +1,13 @@
 <?php
+/* Check if the query is successful. If not, intercept the program and display an error message */
+function validateQuery($result) {
+    global $connection;
+
+    if (!$result) {
+        die("Query to database failed. " . mysqli_error($connection));
+    }
+}
+
 /* Add category from input field of Add Form to database */
 function addCategories() {
     global $connection;
@@ -137,7 +146,7 @@ function addPosts() {
     global $connection;
 
     if (isset($_POST['add_post_btn'])) {
-        $post_id_category = $_POST['post_id_category'];
+        $post_category_id = $_POST['post_category_id'];
         $post_title = $_POST['post_title'];
         $post_author = $_POST['post_author'];
         $post_date = date('d-m-y');
@@ -151,6 +160,11 @@ function addPosts() {
         $post_status = $_POST['post_status'];
 
         move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
+
+        $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_date, post_image, post_content, post_tags, post_comments_count, post_status) VALUES({$post_category_id}, '{$post_title}', '{$post_author}', now(), '{$post_image_name}', '{$post_content}', '{$post_tags}', {$post_comments_count}, '{$post_status}');";
+
+        $addPost = mysqli_query($connection, $query);
+        validateQuery($addPost);
     }
 }
 ?>
