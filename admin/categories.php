@@ -40,12 +40,14 @@
                             </form>
 
                             <?php 
-                            /* Edit Category in database */
-                            if (isset($_GET['edit_id']))
-                            {
-                                $edit_id = $_GET['edit_id'];
-                                include "includes/edit_categories.php";
-                            }
+                            /* Update category in database */
+                            $is_edit_empty = false;
+                            updateCategories();
+                            ?>
+
+                            <?php 
+                            /* Edit selected Category */
+                            editCategories();
                             ?>
                         </div>
 

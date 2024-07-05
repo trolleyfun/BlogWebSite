@@ -40,6 +40,26 @@ function updateCategories() {
     }
 }
 
+/* Create Edit Form for selected category and put id and title of the category from the database */
+function editCategories() {
+    global $connection;
+    global $is_edit_empty;
+
+    if (isset($_GET['edit_id'])) {
+        $edit_id = $_GET['edit_id'];
+        $query = "SELECT * FROM categories WHERE cat_id = {$edit_id};";
+        if (!$editCategory = mysqli_query($connection, $query)) {
+            die("Query to database failed." . mysqli_error($connection));
+        } else {
+            while($row = mysqli_fetch_assoc($editCategory)) {
+                $edit_id_db = $row['cat_id'];
+                $edit_title = $row['cat_title'];
+                include "includes/edit_categories.php";
+            }
+        }
+    }
+}
+
 /* Read all categories from database and display in Categories Section of admin */
 function showAllCategories() {
     global $connection;
