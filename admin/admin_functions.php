@@ -131,4 +131,26 @@ function showAllPosts() {
         }
     }
 }
+
+/* Put Post from Add Post Form to database */
+function addPosts() {
+    global $connection;
+
+    if (isset($_POST['add_post_btn'])) {
+        $post_id_category = $_POST['post_id_category'];
+        $post_title = $_POST['post_title'];
+        $post_author = $_POST['post_author'];
+        $post_date = date('d-m-y');
+
+        $post_image_name = $_FILES['post_image']['name'];
+        $post_image_temp = $_FILES['post_image']['tmp_name'];
+
+        $post_content = $_POST['post_content'];
+        $post_tags = $_POST['post_tags'];
+        $post_comments_count = 1;
+        $post_status = $_POST['post_status'];
+
+        move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
+    }
+}
 ?>
