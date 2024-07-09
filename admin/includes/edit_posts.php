@@ -1,0 +1,52 @@
+<!-- Edit Post Form -->
+<div class="col-xs-6">
+    <h3>Редактирование публикации</h3>
+    <form action="" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <input type="hidden" name="edit_post_id" class="form-control" value="<?=$edit_post_id;?>" readonly>
+        </div>
+        <div class="form-group">
+            <label for="edit_post_category_id">Id региона</label>
+            <input type="text" name="edit_post_category_id" id="edit_post_category_id" class="form-control" value="<?=$edit_post_category_id;?>">
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['category_id'], "Введите Id региона"); ?></span>
+        </div>
+        <div class="form-group">
+            <label for="edit_post_title">Название</label>
+            <input type="text" name="edit_post_title" id="edit_post_title" class="form-control" value="<?=$edit_post_title;?>">
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['title'], "Введите название публикации"); ?></span>
+        </div>
+        <div class="form-group">
+            <label for="edit_post_author">Автор</label>
+            <input type="text" name="edit_post_author" id="edit_post_author" class="form-control" value="<?=$edit_post_author;?>">
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['author'], "Введите автора публикации"); ?></span>
+        </div>
+        <div class="form-group">
+            <label for="edit_post_date">Дата</label>
+            <input type="date" name="edit_post_date" id="edit_post_date" class="form-control" value="<?=$edit_post_date;?>">
+        </div>
+        <div class="form-group">
+            <label for="post_image">Изображение</label>
+            <input type="file" name="post_image" id="post_image" class="form-control">
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['image'], "Загрузите изображение"); ?></span>
+        </div>
+        <div class="form-group">
+            <label for="edit_post_content">Текст</label>
+            <textarea name="edit_post_content" id="edit_post_content" class="form-control" rows="10"><?=$edit_post_content;?></textarea>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['content'], "Введите текст публикации"); ?></span>
+        </div>
+        <div class="form-group">
+            <label for="edit_post_tags">Тэги</label>
+            <input type="text" name="edit_post_tags" id="edit_post_tags" class="form-control" value="<?=$edit_post_tags;?>">
+        </div>
+        <div class="form-group">
+            <input type="hidden" name="edit_post_comments_count" class="form-control" value="<?=$edit_post_comments_count;?>" readonly>
+        </div>
+        <div class="form-group">
+            <label for="edit_post_status">Статус</label>
+            <input type="text" name="edit_post_status" id="edit_post_status" class="form-control" value="<?=$edit_post_status;?>">
+        </div>
+        <div class="form-group">
+            <input type="submit" name="update_post_btn" class="btn btn-primary" value="Обновить публикацию">
+        </div>
+    </form>
+ </div>

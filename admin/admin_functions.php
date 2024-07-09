@@ -138,8 +138,8 @@ function showAllPosts() {
         echo "<td>{$post_tags}</td>";
         echo "<td>{$post_comments_count}</td>";
         echo "<td>{$post_status}</td>";
-        echo "<td><a href='posts.php?delete_id={$post_id}'><span class='fa fa-fw fa-trash-o'></span></a></td>";
-        echo "<td><a href='posts.php?edit_id={$post_id}'><span class='fa fa-fw fa-edit'></span></a></td>";
+        echo "<td><a href='posts.php?delete_post_id={$post_id}'><span class='fa fa-fw fa-trash-o'></span></a></td>";
+        echo "<td><a href='posts.php?source=edit_posts&edit_post_id={$post_id}'><span class='fa fa-fw fa-edit'></span></a></td>";
         echo "</tr>";
     }
 }
@@ -211,14 +211,42 @@ function addPosts() {
 function deletePosts() {
     global $connection;
 
-    if (isset($_GET['delete_id'])) {
-        $delete_post_id = $_GET['delete_id'];
+    if (isset($_GET['delete_post_id'])) {
+        $delete_post_id = $_GET['delete_post_id'];
         $query = "DELETE FROM posts WHERE post_id={$delete_post_id};";
 
         $deletePost = mysqli_query($connection, $query);
         validateQuery($deletePost);
 
         header("Location: posts.php");
+    }
+}
+
+function editPosts() {
+    global $connection;
+    global $err_edit_post;
+    
+    if (isset($_GET['edit_post_id'])) {
+        $edit_post_id = $_GET['edit_post_id'];
+
+        $query = "SELECT * FROM posts WHERE post_id = {$edit_post_id};";
+        $editPost = mysqli_query($connection, $query);
+        validateQuery($editPost);
+
+        while($row = mysqli_fetch_assoc($editPost)) {
+            $edit_post_id = $row['post_id'];
+            $edit_post_category_id = $row['post_category_id'];
+            $edit_post_title = $row['post_title'];
+            $edit_post_author = $row['post_author'];
+            $edit_post_date = $row['post_date'];
+            $edit_post_image = $row['post_image'];
+            $edit_post_content = $row['post_content'];
+            $edit_post_tags = $row['post_tags'];
+            $edit_post_comments_count = $row['post_comments_count'];
+            $edit_post_status = $row['post_status'];
+
+            include "includes/edit_posts.php";
+        }
     }
 }
 ?>

@@ -28,8 +28,10 @@
                             case "add_posts":
                                 include "includes/add_posts.php";
                                 break;
-                            case "100":
-                                echo "This 100";
+                            case "edit_posts":
+                                /* Edit selected post */
+                                $err_edit_post = ['category_id'=>false, 'title'=>false, 'author'=>false, 'image'=>false, 'content'=>false];
+                                editPosts();
                                 break;
                             default:
                                 include "includes/show_all_posts.php";
