@@ -138,6 +138,8 @@ function showAllPosts() {
         echo "<td>{$post_tags}</td>";
         echo "<td>{$post_comments_count}</td>";
         echo "<td>{$post_status}</td>";
+        echo "<td><a href='posts.php?delete_id={$post_id}'><span class='fa fa-fw fa-trash-o'></span></a></td>";
+        echo "<td><a href='posts.php?edit_id={$post_id}'><span class='fa fa-fw fa-edit'></span></a></td>";
         echo "</tr>";
     }
 }
@@ -202,6 +204,21 @@ function addPosts() {
             $addPost = mysqli_query($connection, $query);
             validateQuery($addPost);
         }
+    }
+}
+
+/* Delete selected post from the database */
+function deletePosts() {
+    global $connection;
+
+    if (isset($_GET['delete_id'])) {
+        $delete_post_id = $_GET['delete_id'];
+        $query = "DELETE FROM posts WHERE post_id={$delete_post_id};";
+
+        $deletePost = mysqli_query($connection, $query);
+        validateQuery($deletePost);
+
+        header("Location: posts.php");
     }
 }
 ?>

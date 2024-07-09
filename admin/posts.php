@@ -36,6 +36,11 @@
                                 break;
                         }
                         ?>
+
+                        <?php 
+                        /* Delete post from the database */
+                        deletePosts();
+                        ?>
                     </div>
                 </div>
                 <!-- /.row -->

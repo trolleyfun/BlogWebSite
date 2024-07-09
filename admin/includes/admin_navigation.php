@@ -38,7 +38,7 @@
                         <a href="posts.php">Показатать все публикации</a>
                     </li>
                     <li>
-                        <a href="#">Добавить публикацию</a>
+                        <a href="posts.php?source=add_posts">Добавить публикацию</a>
                     </li>
                 </ul>
             </li>
