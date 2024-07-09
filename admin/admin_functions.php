@@ -8,20 +8,26 @@ function validateQuery($result) {
     }
 }
 
+/* Display Message from argument $message if input data is invalid. $status = false: data is valid, $status = true: data is invalid */
+function displayErrorMessage($status, $message) {
+    if ($status) {
+        echo $message;
+    }
+}
+
 /* Add category from input field of Add Form to database */
 function addCategories() {
     global $connection;
-    global $is_add_empty;
+    global $err_add_cat_title;
     if (isset($_POST['add_cat_btn'])) {
         $cat_title = $_POST['cat_title'];
-        $is_add_empty = false;
+        $err_add_cat_title = false;
         if ($cat_title == "" || empty($cat_title)) {
-            $is_add_empty = true;
+            $err_add_cat_title = true;
         } else {
             $query = "INSERT INTO categories(cat_title) VALUE('{$cat_title}');";
-            if (!$addCategory = mysqli_query($connection, $query)) {
-                die("Query to database failed." . mysqli_error($connection));
-            }
+            $addCategory = mysqli_query($connection, $query);
+            validateQuery($addCategory);
         }
     }
 }
@@ -29,20 +35,19 @@ function addCategories() {
 /* Update category in database from input field of Edit Form */
 function updateCategories() {
     global $connection;
-    global $is_edit_empty;
+    global $err_edit_cat_title;
 
     if (isset($_POST['update_cat_btn'])) {
         $update_id = $_POST['edit_id'];
         $update_title = $_POST['edit_title'];
     
-        $is_edit_empty = false;
+        $err_edit_cat_title = false;
         if ($update_title == "" || empty($update_title)) {
-            $is_edit_empty = true;
+            $err_edit_cat_title = true;
         } else {
             $query = "UPDATE categories SET cat_title = '{$update_title}' WHERE cat_id = {$update_id};";
-            if (!$updateCategory = mysqli_query($connection, $query)) {
-                die("Query to database failed." . mysqli_error($connection));
-            }
+            $updateCategory = mysqli_query($connection, $query);
+            validateQuery($updateCategory);
     
             header("Location: categories.php");
         }
@@ -52,19 +57,18 @@ function updateCategories() {
 /* Create Edit Form for selected category and put id and title of the category from the database */
 function editCategories() {
     global $connection;
-    global $is_edit_empty;
+    global $err_edit_cat_title;
 
     if (isset($_GET['edit_id'])) {
         $edit_id = $_GET['edit_id'];
         $query = "SELECT * FROM categories WHERE cat_id = {$edit_id};";
-        if (!$editCategory = mysqli_query($connection, $query)) {
-            die("Query to database failed." . mysqli_error($connection));
-        } else {
-            while($row = mysqli_fetch_assoc($editCategory)) {
-                $edit_id_db = $row['cat_id'];
-                $edit_title = $row['cat_title'];
-                include "includes/edit_categories.php";
-            }
+        $editCategory = mysqli_query($connection, $query);
+        validateQuery($editCategory);
+
+        while($row = mysqli_fetch_assoc($editCategory)) {
+            $edit_id_db = $row['cat_id'];
+            $edit_title = $row['cat_title'];
+            include "includes/edit_categories.php";
         }
     }
 }
@@ -74,20 +78,19 @@ function showAllCategories() {
     global $connection;
 
     $query = "SELECT * FROM categories;";
-    if (!$adminCategories = mysqli_query($connection,$query)) {
-        die("Query to database failed." . mysqli_error($connection));
-    } else {
-        while($row = mysqli_fetch_assoc($adminCategories)) {
-            $cat_id = $row['cat_id'];
-            $cat_title = $row['cat_title'];
+    $adminCategories = mysqli_query($connection,$query);
+    validateQuery($adminCategories);
 
-            echo "<tr>";
-            echo "<td>{$cat_id}</td>";
-            echo "<td>{$cat_title}</td>";
-            echo "<td><a href='categories.php?delete_id={$cat_id}'><span class='fa fa-fw fa-trash-o'></span></a></td>";
-            echo "<td><a href='categories.php?edit_id={$cat_id}'><span class='fa fa-fw fa-edit'></span></a></td>";
-            echo "</tr>";
-        }
+    while($row = mysqli_fetch_assoc($adminCategories)) {
+        $cat_id = $row['cat_id'];
+        $cat_title = $row['cat_title'];
+
+        echo "<tr>";
+        echo "<td>{$cat_id}</td>";
+        echo "<td>{$cat_title}</td>";
+        echo "<td><a href='categories.php?delete_id={$cat_id}'><span class='fa fa-fw fa-trash-o'></span></a></td>";
+        echo "<td><a href='categories.php?edit_id={$cat_id}'><span class='fa fa-fw fa-edit'></span></a></td>";
+        echo "</tr>";
     }
 }
 
@@ -99,9 +102,8 @@ function deleteCategories() {
         $delete_id = $_GET['delete_id'];
         $query = "DELETE FROM categories WHERE cat_id = {$delete_id};";
 
-        if (!$deleteCategory = mysqli_query($connection, $query)) {
-            die("Query to database failed." . mysqli_error($connection));
-        }
+        $deleteCategory = mysqli_query($connection, $query);
+        validateQuery($deleteCategory);
 
         header("Location: categories.php");
     }
@@ -112,59 +114,94 @@ function showAllPosts() {
     global $connection;
 
     $query = "SELECT * FROM posts;";
-    if (!$allPosts = mysqli_query($connection, $query)) {
-        die("Query to database failed." . mysqli_error($connection));
-    } else {
-        while($row = mysqli_fetch_assoc($allPosts)) {
-            $post_id = $row['post_id'];
-            $post_category_id = $row['post_category_id'];
-            $post_title = $row['post_title'];
-            $post_author = $row['post_author'];
-            $post_date = $row['post_date'];
-            $post_image = $row['post_image'];
-            $post_tags = $row['post_tags'];
-            $post_comments_count = $row['post_comments_count'];
-            $post_status = $row['post_status'];
+    $allPosts = mysqli_query($connection, $query);
+    validateQuery($allPosts);
 
-            echo "<tr>";
-            echo "<td>{$post_id}</td>";
-            echo "<td>{$post_category_id}</td>";
-            echo "<td>{$post_title}</td>";
-            echo "<td>{$post_author}</td>";
-            echo "<td>{$post_date}</td>";
-            echo "<td><img src='../img/{$post_image}' alt='{$post_title}' style='width: 100px;'></td>";
-            echo "<td>{$post_tags}</td>";
-            echo "<td>{$post_comments_count}</td>";
-            echo "<td>{$post_status}</td>";
-            echo "</tr>";
-        }
+    while($row = mysqli_fetch_assoc($allPosts)) {
+        $post_id = $row['post_id'];
+        $post_category_id = $row['post_category_id'];
+        $post_title = $row['post_title'];
+        $post_author = $row['post_author'];
+        $post_date = $row['post_date'];
+        $post_image = $row['post_image'];
+        $post_tags = $row['post_tags'];
+        $post_comments_count = $row['post_comments_count'];
+        $post_status = $row['post_status'];
+
+        echo "<tr>";
+        echo "<td>{$post_id}</td>";
+        echo "<td>{$post_category_id}</td>";
+        echo "<td>{$post_title}</td>";
+        echo "<td>{$post_author}</td>";
+        echo "<td>{$post_date}</td>";
+        echo "<td><img src='../img/{$post_image}' alt='{$post_title}' style='width: 100px;'></td>";
+        echo "<td>{$post_tags}</td>";
+        echo "<td>{$post_comments_count}</td>";
+        echo "<td>{$post_status}</td>";
+        echo "</tr>";
     }
 }
 
 /* Put Post from Add Post Form to database */
 function addPosts() {
     global $connection;
+    global $err_add_post;
 
     if (isset($_POST['add_post_btn'])) {
         $post_category_id = $_POST['post_category_id'];
         $post_title = $_POST['post_title'];
         $post_author = $_POST['post_author'];
-        $post_date = date('d-m-y');
+        $post_date = date('Y-m-d');
 
         $post_image_name = $_FILES['post_image']['name'];
         $post_image_temp = $_FILES['post_image']['tmp_name'];
+        $post_image_err = $_FILES['post_image']['error'];
 
         $post_content = $_POST['post_content'];
         $post_tags = $_POST['post_tags'];
         $post_comments_count = 1;
         $post_status = $_POST['post_status'];
 
-        move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
+        foreach($err_add_post as $err_item) {
+            $err_item = false;
+        }
+        if ($post_category_id == "" || empty($post_category_id)) {
+            $err_add_post['category_id'] = true;
+        }
+        if ($post_title == "" || empty($post_title)) {
+            $err_add_post['title'] = true;
+        }
+        if ($post_author == "" || empty($post_author)) {
+            $err_add_post['author'] = true;
+        }
+        if ($post_image_err == UPLOAD_ERR_NO_FILE) {
+            $err_add_post['image'] = true;
+        }
+        if ($post_content == "" || empty($post_content)) {
+            $err_add_post['content'] = true;
+        }
+        $err_result = false;
+        foreach($err_add_post as $err_item) {
+            $err_result = $err_result || $err_item;
+        }
 
-        $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_date, post_image, post_content, post_tags, post_comments_count, post_status) VALUES({$post_category_id}, '{$post_title}', '{$post_author}', now(), '{$post_image_name}', '{$post_content}', '{$post_tags}', {$post_comments_count}, '{$post_status}');";
+        if (!$err_result) {
+            move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
 
-        $addPost = mysqli_query($connection, $query);
-        validateQuery($addPost);
+            $query1 = "INSERT INTO posts(post_category_id, post_title, post_author, post_date, post_image, post_content, post_tags, post_comments_count";
+            $query2 = "VALUES({$post_category_id}, '{$post_title}', '{$post_author}', '{$post_date}', '{$post_image_name}', '{$post_content}', '{$post_tags}', {$post_comments_count}";
+            if ($post_status == "" || empty($post_status)) {
+                $query1 .= ") ";
+                $query2 .= ");";
+            } else {
+                $query1 .= ", post_status) ";
+                $query2 .= ", '{$post_status}');";
+            }
+            $query = $query1 . $query2;
+
+            $addPost = mysqli_query($connection, $query);
+            validateQuery($addPost);
+        }
     }
 }
 ?>

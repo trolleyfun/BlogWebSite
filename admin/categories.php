@@ -20,19 +20,14 @@
                         <div class="col-xs-6">
                             <?php 
                             /* Add category to database */
-                            $is_add_empty = false;
+                            $err_add_cat_title = false;
                             addCategories();
                             ?>
                             <form action="" method="post">
                                 <div class="form-group">
                                     <label for="cat_title">Название региона:</label>
                                     <input type="text" name="cat_title" id="cat_title" class="form-control">
-                                    <?php 
-                                    /* Write an error message if field is empty */
-                                    if ($is_add_empty) {
-                                        echo "<p style='color: #a94442;'>Введите название региона</p>";
-                                    }
-                                    ?>
+                                    <span style='color: #a94442;'><?php displayErrorMessage($err_add_cat_title, "Введите название региона"); ?></span>
                                 </div>
                                 <div class="form-group">
                                     <input type="submit" name="add_cat_btn" class="btn btn-primary" value="Добавить регион">
@@ -41,7 +36,7 @@
 
                             <?php 
                             /* Update category in database */
-                            $is_edit_empty = false;
+                            $err_edit_cat_title = false;
                             updateCategories();
                             ?>
 
