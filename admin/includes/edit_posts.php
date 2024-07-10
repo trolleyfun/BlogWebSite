@@ -25,10 +25,13 @@
         <div class="form-group">
             <label for="edit_post_date">Дата</label>
             <input type="date" name="edit_post_date" id="edit_post_date" class="form-control" value="<?=$edit_post_date;?>">
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['date'], "Введите дату"); ?></span>
         </div>
         <div class="form-group">
-            <label for="post_image">Изображение</label>
-            <input type="file" name="post_image" id="post_image" class="form-control">
+            <label for="edit_post_image">Изображение</label><br>
+            <img src="../img/<?=$edit_post_image;?>" alt="<?=$edit_post_title;?>" style="width: 100px;"><br><br>
+            <input type="file" name="edit_post_image" id="edit_post_image" class="form-control">
+            <input type="hidden" name="current_post_image" class="form-control" value="<?=$edit_post_image;?>" readonly>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['image'], "Загрузите изображение"); ?></span>
         </div>
         <div class="form-group">
@@ -46,6 +49,7 @@
         <div class="form-group">
             <label for="edit_post_status">Статус</label>
             <input type="text" name="edit_post_status" id="edit_post_status" class="form-control" value="<?=$edit_post_status;?>">
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['status'], "Выберите статус публикации"); ?></span>
         </div>
         <div class="form-group">
             <input type="submit" name="update_post_btn" class="btn btn-primary" value="Обновить публикацию">

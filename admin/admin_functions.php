@@ -172,7 +172,7 @@ function addPosts() {
         if ($post_author == "" || empty($post_author)) {
             $err_add_post['author'] = true;
         }
-        if ($post_image_err == UPLOAD_ERR_NO_FILE) {
+        if ($post_image_name == "" || $post_image_err == UPLOAD_ERR_NO_FILE) {
             $err_add_post['image'] = true;
         }
         if ($post_content == "" || empty($post_content)) {
@@ -218,6 +218,7 @@ function deletePosts() {
     }
 }
 
+/* Create Edit Post Form and put selected post's values from database into the form */
 function editPosts() {
     global $connection;
     global $err_edit_post;
@@ -242,6 +243,92 @@ function editPosts() {
             $edit_post_status = $row['post_status'];
 
             include "includes/edit_posts.php";
+        }
+    }
+}
+
+/* Put data from Edit Post Form to database */
+function updatePosts() {
+    global $connection;
+    global $err_edit_post;
+
+    if (isset($_POST['update_post_btn'])) {
+        $update_post_id = $_POST['edit_post_id'];
+        $update_post_category_id = $_POST['edit_post_category_id'];
+        $update_post_title = $_POST['edit_post_title'];
+        $update_post_author = $_POST['edit_post_author'];
+        $update_post_date = $_POST['edit_post_date'];
+
+        $is_new_post_image = true;
+        $current_post_image_name = $_POST['current_post_image'];
+        $update_post_image_name = $_FILES['edit_post_image']['name'];
+        $update_post_image_temp = $_FILES['edit_post_image']['tmp_name'];
+        $update_post_image_err = $_FILES['edit_post_image']['error'];
+        if ($update_post_image_name == "" || $update_post_image_err == UPLOAD_ERR_NO_FILE) {
+            $update_post_image_name = $current_post_image_name;
+            $is_new_post_image = false;
+        }
+
+        $update_post_content = $_POST['edit_post_content'];
+        $update_post_tags = $_POST['edit_post_tags'];
+        $update_post_comments_count = $_POST['edit_post_comments_count'];
+        $update_post_status = $_POST['edit_post_status'];
+
+        foreach($err_edit_post as $err_item) {
+            $err_item = false;
+        }
+        if ($update_post_id == "" || empty($update_post_id)) {
+            $err_edit_post['post_id'] = true;
+        }
+        if ($update_post_category_id == "" || empty($update_post_category_id)) {
+            $err_edit_post['category_id'] = true;
+        }
+        if ($update_post_title == "" || empty($update_post_title)) {
+            $err_edit_post['title'] = true;
+        }
+        if ($update_post_author == "" || empty($update_post_author)) {
+            $err_edit_post['author'] = true;
+        }
+        if ($update_post_date == "" || empty($update_post_date)) {
+            $err_edit_post['date'] = true;
+        }
+        if ($update_post_image_name == "" || empty($update_post_image_name)) {
+            $err_edit_post['image'] = true;
+        }
+        if ($update_post_content == "" || empty($update_post_content)) {
+            $err_edit_post['content'] = true;
+        }
+        if ($update_post_comments_count == "" || empty($update_post_comments_count)) {
+            $err_edit_post['comments_count'] = true;
+        }
+        if ($update_post_status == "" || empty($update_post_status)) {
+            $err_edit_post['status'] = true;
+        }
+        $err_result = false;
+        foreach($err_edit_post as $err_item) {
+            $err_result = $err_result || $err_item;
+        }
+
+        if (!$err_result) {
+            if ($is_new_post_image) {
+                move_uploaded_file($update_post_image_temp, "../img/{$update_post_image_name}");
+            }
+
+            $query = "UPDATE posts SET post_category_id = {$update_post_category_id}, ";
+            $query .= "post_title = '{$update_post_title}', ";
+            $query .= "post_author = '{$update_post_author}', ";
+            $query .= "post_date = '{$update_post_date}', ";
+            $query .= "post_image = '{$update_post_image_name}', ";
+            $query .= "post_content = '{$update_post_content}', ";
+            $query .= "post_tags = '{$update_post_tags}', ";
+            $query .= "post_comments_count = '{$update_post_comments_count}', ";
+            $query .= "post_status = '{$update_post_status}' ";
+            $query .= "WHERE post_id = {$update_post_id};";
+
+            $updatePost = mysqli_query($connection, $query);
+            validateQuery($updatePost);
+
+            header("Location: posts.php");
         }
     }
 }
