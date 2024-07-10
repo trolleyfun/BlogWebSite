@@ -6,9 +6,11 @@
             <input type="hidden" name="edit_post_id" class="form-control" value="<?=$edit_post_id;?>" readonly>
         </div>
         <div class="form-group">
-            <label for="edit_post_category_id">Id региона</label>
-            <input type="text" name="edit_post_category_id" id="edit_post_category_id" class="form-control" value="<?=$edit_post_category_id;?>">
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['category_id'], "Введите Id региона"); ?></span>
+            <label for="edit_post_category_id">Регион</label>
+            <select name="edit_post_category_id" id="edit_post_category_id" class="form-control">
+                <?php showAllCategories("includes/all_categories_list.php", $edit_post_category_id); ?>
+            </select>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['category_id'], "Выберите регион"); ?></span>
         </div>
         <div class="form-group">
             <label for="edit_post_title">Название</label>

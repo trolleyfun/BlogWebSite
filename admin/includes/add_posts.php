@@ -9,9 +9,12 @@ addPosts();
     <h3>Добавление новой публикации</h3>
     <form action="" method="post" enctype="multipart/form-data">
         <div class="form-group">
-            <label for="post_category_id">Id региона</label>
-            <input type="text" name="post_category_id" id="post_category_id" class="form-control">
-            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['category_id'], "Введите Id региона"); ?></span>
+            <label for="post_category_id">Регион</label>
+            <select name="post_category_id" id="post_category_id" class="form-control">
+                <option value="">Выберите регион...</option>
+                <?php showAllCategories("includes/all_categories_list.php", ""); ?>
+            </select>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['category_id'], "Выберите регион"); ?></span>
         </div>
         <div class="form-group">
             <label for="post_title">Название</label>

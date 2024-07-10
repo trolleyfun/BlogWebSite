@@ -74,7 +74,7 @@ function editCategories() {
 }
 
 /* Read all categories from database and display in Categories Section of admin */
-function showAllCategories() {
+function showAllCategories($categoriesFile, $arg) {
     global $connection;
 
     $query = "SELECT * FROM categories;";
@@ -85,12 +85,7 @@ function showAllCategories() {
         $cat_id = $row['cat_id'];
         $cat_title = $row['cat_title'];
 
-        echo "<tr>";
-        echo "<td>{$cat_id}</td>";
-        echo "<td>{$cat_title}</td>";
-        echo "<td><a href='categories.php?delete_id={$cat_id}'><span class='fa fa-fw fa-trash-o'></span></a></td>";
-        echo "<td><a href='categories.php?edit_id={$cat_id}'><span class='fa fa-fw fa-edit'></span></a></td>";
-        echo "</tr>";
+        include $categoriesFile;
     }
 }
 
@@ -113,13 +108,14 @@ function deleteCategories() {
 function showAllPosts() {
     global $connection;
 
-    $query = "SELECT * FROM posts;";
+    $query = "SELECT * FROM posts JOIN categories ON posts.post_category_id = categories.cat_id;";
     $allPosts = mysqli_query($connection, $query);
     validateQuery($allPosts);
 
     while($row = mysqli_fetch_assoc($allPosts)) {
         $post_id = $row['post_id'];
         $post_category_id = $row['post_category_id'];
+        $post_category_title = $row['cat_title'];
         $post_title = $row['post_title'];
         $post_author = $row['post_author'];
         $post_date = $row['post_date'];
@@ -130,7 +126,7 @@ function showAllPosts() {
 
         echo "<tr>";
         echo "<td>{$post_id}</td>";
-        echo "<td>{$post_category_id}</td>";
+        echo "<td>{$post_category_title}</td>";
         echo "<td>{$post_title}</td>";
         echo "<td>{$post_author}</td>";
         echo "<td>{$post_date}</td>";
@@ -138,8 +134,8 @@ function showAllPosts() {
         echo "<td>{$post_tags}</td>";
         echo "<td>{$post_comments_count}</td>";
         echo "<td>{$post_status}</td>";
-        echo "<td><a href='posts.php?delete_post_id={$post_id}'><span class='fa fa-fw fa-trash-o'></span></a></td>";
         echo "<td><a href='posts.php?source=edit_posts&edit_post_id={$post_id}'><span class='fa fa-fw fa-edit'></span></a></td>";
+        echo "<td><a href='posts.php?delete_post_id={$post_id}'><span class='fa fa-fw fa-trash-o'></span></a></td>";
         echo "</tr>";
     }
 }

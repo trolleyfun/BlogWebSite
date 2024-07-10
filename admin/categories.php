@@ -60,7 +60,7 @@
                                 <tbody>
                                     <?php 
                                     /* Put categories from database */
-                                    showAllCategories();
+                                    showAllCategories("includes/all_categories_table.php", "");
                                     ?>
                                 </tbody> 
                             </table>
