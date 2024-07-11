@@ -12,7 +12,7 @@ function validateQuery($result) {
 function showAllPosts() { 
     global $connection;
     
-    $query = "SELECT * FROM posts";
+    $query = "SELECT * FROM posts;";
     $allPosts = mysqli_query($connection, $query);
     validateQuery($allPosts);
 
@@ -25,6 +25,29 @@ function showAllPosts() {
         $post_content = $row['post_content'];
 
         include "includes/post_form.php";
+    }
+}
+
+function showPostById() { 
+    global $connection;
+
+    if (isset($_GET['post_id'])) {
+        $selected_post_id = $_GET['post_id'];
+    
+        $query = "SELECT * FROM posts WHERE post_id = {$selected_post_id};";
+        $postById = mysqli_query($connection, $query);
+        validateQuery($postById);
+
+        while($row = mysqli_fetch_assoc($postById)) {
+            $post_id = $row['post_id'];
+            $post_title = $row['post_title'];
+            $post_author = $row['post_author'];
+            $post_date = $row['post_date'];
+            $post_image = $row['post_image'];
+            $post_content = $row['post_content'];
+
+            include "includes/post_form.php";
+        }
     }
 }
 
