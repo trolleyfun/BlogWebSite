@@ -23,13 +23,13 @@
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['author'], "Введите автора публикации"); ?></span>
         </div>
         <div class="form-group">
-            <label for="edit_post_date">Дата</label>
+            <label for="edit_post_date">Дата публикации</label>
             <input type="date" name="edit_post_date" id="edit_post_date" class="form-control" value="<?=$edit_post_date;?>">
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['date'], "Введите дату"); ?></span>
         </div>
         <div class="form-group">
-            <label for="edit_post_image">Изображение</label><br>
-            <img src="../img/<?=$edit_post_image;?>" alt="<?=$edit_post_title;?>" style="width: 100px;"><br><br>
+            <label for="edit_post_image">Изображение</label>
+            <img class="img-responsive" src="../img/<?=$edit_post_image;?>" alt="<?=$edit_post_title;?>" style="width: 100px;"><br>
             <input type="file" name="edit_post_image" id="edit_post_image" class="form-control">
             <input type="hidden" name="current_post_image" class="form-control" value="<?=$edit_post_image;?>" readonly>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['image'], "Загрузите изображение"); ?></span>

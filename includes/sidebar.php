@@ -21,18 +21,9 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <ul class="list-unstyled">
-                                <!-- Put categories from database -->
                                 <?php 
-                                $query = "SELECT * FROM categories LIMIT 10;";
-
-                                if (!$sidebarCategories = mysqli_query($connection, $query)) {
-                                    die("Query to database failed." . mysqli_error($connection));
-                                } else {
-                                    while($row = mysqli_fetch_assoc($sidebarCategories)) {
-                                        $cat_title = $row['cat_title'];
-                                        echo "<li><a href='#'>{$cat_title}</a></li>";
-                                    }
-                                }
+                                /* Put categories from database */
+                                showAllCategories(10);
                                 ?>
                             </ul>
                         </div>

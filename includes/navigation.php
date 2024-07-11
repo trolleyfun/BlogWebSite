@@ -15,15 +15,7 @@
                 <ul class="nav navbar-nav">
                     <?php 
                     /* Put categories from database */
-                    $query = "SELECT * FROM categories LIMIT 4;";
-                    if (!$allCategories = mysqli_query($connection, $query)) {
-                        die("Query to database failed." . mysqli_error($connection));
-                    } else { 
-                        while($row = mysqli_fetch_assoc($allCategories)) {
-                            $cat_title = $row['cat_title'];
-                            echo "<li><a href='#'>{$cat_title}</a></li>";
-                        }
-                    }
+                    showAllCategories(4);
                     ?>
                     <li><a href='admin'>Управление</a></li>
                 </ul>
