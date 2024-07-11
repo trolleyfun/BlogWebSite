@@ -28,6 +28,7 @@ function showAllPosts() {
     }
 }
 
+/* Display selected post on the separate page */
 function showPostById() { 
     global $connection;
 
@@ -51,6 +52,61 @@ function showPostById() {
     }
 }
 
+/* Display posts on selected category */
+function showPostByCategory() { 
+    global $connection;
+
+    if (isset($_GET['cat_id'])) {
+        $category_id = $_GET['cat_id'];
+        $category_title = "";
+
+        $query = "SELECT * FROM categories WHERE cat_id = {$category_id};";
+        $categoryById = mysqli_query($connection, $query);
+        validateQuery($categoryById);
+        while($row = mysqli_fetch_assoc($categoryById)) {
+            $category_id = $row['cat_id'];
+            $category_title = $row['cat_title'];
+        }
+    
+        $query = "SELECT * FROM posts WHERE post_category_id = {$category_id};";
+        $postByCategory = mysqli_query($connection, $query);
+        validateQuery($postByCategory);
+
+        $number_rows = mysqli_num_rows($postByCategory);
+        $search_str = "";
+        switch(true) {
+            case $number_rows == 0:
+                $search_str = "не найдено ни одной публикации";
+                break;
+            case $number_rows % 100 >= 11 && $number_rows % 100 <= 19:
+                $search_str = "найдено {$number_rows} публикаций";
+                break;
+            case $number_rows % 10 == 1:
+                $search_str = "найдена {$number_rows} публикация";
+                break;
+            case $number_rows % 10 >= 2 && $number_rows % 10 <= 4:
+                $search_str = "найдено {$number_rows} публикации";
+                break;
+            default:
+                $search_str = "найдено {$number_rows} публикаций";
+                break;            
+        };
+        
+        include "includes/category_header.php";
+
+        while($row = mysqli_fetch_assoc($postByCategory)) {
+            $post_id = $row['post_id'];
+            $post_title = $row['post_title'];
+            $post_author = $row['post_author'];
+            $post_date = $row['post_date'];
+            $post_image = $row['post_image'];
+            $post_content = $row['post_content'];
+
+            include "includes/post_form.php";
+        }
+    }
+}
+
 /* Display $items_amount categories from the beginning from database */
 function showAllCategories($items_amount) {
     global $connection;
@@ -61,8 +117,9 @@ function showAllCategories($items_amount) {
     validateQuery($allCategories);
 
     while($row = mysqli_fetch_assoc($allCategories)) {
+        $cat_id = $row['cat_id'];
         $cat_title = $row['cat_title'];
-        echo "<li><a href='#'>{$cat_title}</a></li>";
+        echo "<li><a href='category.php?cat_id={$cat_id}'>{$cat_title}</a></li>";
     }
 }
 

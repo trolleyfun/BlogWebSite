@@ -52,7 +52,7 @@
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['status'], "Выберите статус публикации"); ?></span>
         </div>
         <div class="form-group">
-            <input type="submit" name="update_post_btn" class="btn btn-primary" value="Обновить публикацию">
+            <input type="submit" name="update_post_btn" class="btn btn-primary" value="Сохранить изменения">
         </div>
     </form>
  </div>

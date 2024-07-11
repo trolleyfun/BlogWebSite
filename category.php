@@ -13,13 +13,18 @@
                 <!-- Blog Posts -->
                 <?php 
                 /* Put Blog Posts from database */
-                showPostById();
+                showPostByCategory();
                 ?>
 
-                <!-- Posted Comments -->
-
-                <!-- Comments Section -->
-                <?php include "includes/comment_form.php"; ?>
+                <!-- Pager -->
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="#">&larr; Старые</a>
+                    </li>
+                    <li class="next">
+                        <a href="#">Новые &rarr;</a>
+                    </li>
+                </ul>
 
             </div>
 
