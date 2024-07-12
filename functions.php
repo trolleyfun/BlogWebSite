@@ -16,6 +16,7 @@ function showAllPosts() {
     $allPosts = mysqli_query($connection, $query);
     validateQuery($allPosts);
 
+    $is_btn = true; //the button will be displayed under each post
     while($row = mysqli_fetch_assoc($allPosts)) {
         $post_id = $row['post_id'];
         $post_title = $row['post_title'];
@@ -25,7 +26,6 @@ function showAllPosts() {
         $post_content = substr($row['post_content'], 0, 500);
 
         include "includes/post_form.php";
-        echo "<a class='btn btn-primary' href='#'>Читать дальше <span class='glyphicon glyphicon-chevron-right'></span></a><hr>";
     }
 }
 
@@ -40,6 +40,7 @@ function showPostById() {
         $postById = mysqli_query($connection, $query);
         validateQuery($postById);
 
+        $is_btn = false; //the button won't be displayed under posts
         while($row = mysqli_fetch_assoc($postById)) {
             $post_id = $row['post_id'];
             $post_title = $row['post_title'];
@@ -49,7 +50,6 @@ function showPostById() {
             $post_content = $row['post_content'];
 
             include "includes/post_form.php";
-            echo "<hr>";
         }
     }
 }
@@ -96,6 +96,7 @@ function showPostByCategory() {
         
         include "includes/category_header.php";
 
+        $is_btn = true; //the button will be displayed under each post
         while($row = mysqli_fetch_assoc($postByCategory)) {
             $post_id = $row['post_id'];
             $post_title = $row['post_title'];
@@ -105,7 +106,6 @@ function showPostByCategory() {
             $post_content = substr($row['post_content'], 0, 500);
 
             include "includes/post_form.php";
-            echo "<a class='btn btn-primary' href='#'>Читать дальше <span class='glyphicon glyphicon-chevron-right'></span></a><hr>";
         }
     }
 }
@@ -159,6 +159,7 @@ function searchPosts() {
         
         include "includes/search_header.php";
 
+        $is_btn = true; //the button will be displayed under each post
         while($row = mysqli_fetch_assoc($search_result)) {
             $post_id = $row['post_id'];
             $post_title = $row['post_title'];
@@ -168,7 +169,6 @@ function searchPosts() {
             $post_content = substr($row['post_content'], 0, 500);
 
             include "includes/post_form.php";
-            echo "<a class='btn btn-primary' href='#'>Читать дальше <span class='glyphicon glyphicon-chevron-right'></span></a><hr>";
         }
     }
 }
