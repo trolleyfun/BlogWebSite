@@ -9,7 +9,7 @@
         <div class="row">
 
             <!-- Blog Entries Column -->
-            <div class="col-lg-8">
+            <div class="col-md-8">
                 <!-- Blog Posts -->
                 <?php 
                 /* Put Blog Posts from database */

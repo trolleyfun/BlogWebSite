@@ -12,5 +12,3 @@
 </a>
 <hr>
 <p><?=$post_content;?></p>
-<a class="btn btn-primary" href="#">Читать дальше <span class="glyphicon glyphicon-chevron-right"></span></a>
-<hr>

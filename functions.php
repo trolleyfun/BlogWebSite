@@ -22,9 +22,10 @@ function showAllPosts() {
         $post_author = $row['post_author'];
         $post_date = $row['post_date'];
         $post_image = $row['post_image'];
-        $post_content = $row['post_content'];
+        $post_content = substr($row['post_content'], 0, 500);
 
         include "includes/post_form.php";
+        echo "<a class='btn btn-primary' href='#'>Читать дальше <span class='glyphicon glyphicon-chevron-right'></span></a><hr>";
     }
 }
 
@@ -48,6 +49,7 @@ function showPostById() {
             $post_content = $row['post_content'];
 
             include "includes/post_form.php";
+            echo "<hr>";
         }
     }
 }
@@ -100,9 +102,10 @@ function showPostByCategory() {
             $post_author = $row['post_author'];
             $post_date = $row['post_date'];
             $post_image = $row['post_image'];
-            $post_content = $row['post_content'];
+            $post_content = substr($row['post_content'], 0, 500);
 
             include "includes/post_form.php";
+            echo "<a class='btn btn-primary' href='#'>Читать дальше <span class='glyphicon glyphicon-chevron-right'></span></a><hr>";
         }
     }
 }
@@ -162,9 +165,10 @@ function searchPosts() {
             $post_author = $row['post_author'];
             $post_date = $row['post_date'];
             $post_image = $row['post_image'];
-            $post_content = $row['post_content'];
+            $post_content = substr($row['post_content'], 0, 500);
 
             include "includes/post_form.php";
+            echo "<a class='btn btn-primary' href='#'>Читать дальше <span class='glyphicon glyphicon-chevron-right'></span></a><hr>";
         }
     }
 }
