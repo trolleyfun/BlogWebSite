@@ -35,18 +35,18 @@
                 <a href="javascript:;" data-toggle="collapse" data-target="#posts"><i class="fa fa-fw fa-edit"></i> Публикации <i class="fa fa-fw fa-caret-down"></i></a>
                 <ul id="posts" class="collapse">
                     <li>
-                        <a href="posts.php">Показатать все публикации</a>
+                        <a href="admin_posts.php">Показатать все публикации</a>
                     </li>
                     <li>
-                        <a href="posts.php?source=add_posts">Добавить публикацию</a>
+                        <a href="admin_posts.php?source=add_posts">Добавить публикацию</a>
                     </li>
                 </ul>
             </li>
             <li>
-                <a href="#"><i class="fa fa-fw fa-desktop"></i> Комментарии</a>
+                <a href="admin_comments.php"><i class="fa fa-fw fa-desktop"></i> Комментарии</a>
             </li>
             <li>
-                <a href="categories.php"><i class="fa fa-fw fa-list"></i> Регионы</a>
+                <a href="admin_categories.php"><i class="fa fa-fw fa-list"></i> Регионы</a>
             </li>
             <li>
                 <a href="javascript:;" data-toggle="collapse" data-target="#users"><i class="fa fa-fw fa-user"></i> Пользователи <i class="fa fa-fw fa-caret-down"></i></a>

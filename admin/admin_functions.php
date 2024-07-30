@@ -73,7 +73,7 @@ function editCategories() {
     }
 }
 
-/* Read all categories from database and display in Categories Section of admin */
+/* Read all categories from database and display in $categoryFile Form */
 function showAllCategories($categoriesFile, $arg) {
     global $connection;
 
@@ -124,19 +124,7 @@ function showAllPosts() {
         $post_comments_count = $row['post_comments_count'];
         $post_status = $row['post_status'];
 
-        echo "<tr>";
-        echo "<td>{$post_id}</td>";
-        echo "<td>{$post_category_title}</td>";
-        echo "<td>{$post_title}</td>";
-        echo "<td>{$post_author}</td>";
-        echo "<td>{$post_date}</td>";
-        echo "<td><img src='../img/{$post_image}' alt='{$post_title}' style='width: 100px;'></td>";
-        echo "<td>{$post_tags}</td>";
-        echo "<td>{$post_comments_count}</td>";
-        echo "<td>{$post_status}</td>";
-        echo "<td><a href='posts.php?source=edit_posts&edit_post_id={$post_id}'><span class='fa fa-fw fa-edit'></span></a></td>";
-        echo "<td><a href='posts.php?delete_post_id={$post_id}'><span class='fa fa-fw fa-trash-o'></span></a></td>";
-        echo "</tr>";
+        include "includes/all_posts_table.php";
     }
 }
 
@@ -330,6 +318,28 @@ function updatePosts() {
 
             header("Location: posts.php");
         }
+    }
+}
+
+/* Put all comments from database to Comments Section in admin */
+function showAllComments() {
+    global $connection;
+
+    $query = "SELECT * FROM comments JOIN posts ON comments.comment_post_id = posts.post_id;";
+    $allComments = mysqli_query($connection, $query);
+    validateQuery($allComments);
+
+    while($row = mysqli_fetch_assoc($allComments)) {
+        $comment_id = $row['comment_id'];
+        $comment_post_id = $row['comment_post_id'];
+        $comment_post_title = $row['post_title'];
+        $comment_author = $row['comment_author'];
+        $comment_date = $row['comment_date'];
+        $comment_content = $row['comment_content'];
+        $comment_email = $row['comment_email'];
+        $comment_status = $row['comment_status'];
+
+        include "includes/all_comments_table.php";
     }
 }
 ?>
