@@ -23,7 +23,7 @@
                             <ul class="list-unstyled">
                                 <?php 
                                 /* Put categories from database */
-                                showAllCategories(10);
+                                showAllCategories(100);
                                 ?>
                             </ul>
                         </div>
