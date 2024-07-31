@@ -342,4 +342,18 @@ function showAllComments() {
         include "includes/all_comments_table.php";
     }
 }
+
+function deleteComments() {
+    global $connection;
+
+    if (isset($_GET['del_comment_id'])) {
+        $del_comment_id = $_GET['del_comment_id'];
+
+        $query = "DELETE FROM comments WHERE comment_id = $del_comment_id;";
+        $deleteComment = mysqli_query($connection, $query);
+        validateQuery($deleteComment);
+
+        Header("Location: admin_comments.php");
+    }
+}
 ?>

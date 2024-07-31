@@ -41,8 +41,8 @@
                         ?>
 
                         <?php 
-                        /* Delete post from the database */
-                        deletePosts();
+                        /* Delete comments from the database */
+                        deleteComments();
                         ?>
                     </div>
                 </div>
