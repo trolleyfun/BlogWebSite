@@ -145,7 +145,6 @@ function addPosts() {
 
         $post_content = $_POST['post_content'];
         $post_tags = $_POST['post_tags'];
-        $post_comments_count = 1;
         $post_status = $_POST['post_status'];
 
         foreach($err_add_post as $err_item) {
@@ -174,13 +173,16 @@ function addPosts() {
         if (!$err_result) {
             move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
 
-            $query1 = "INSERT INTO posts(post_category_id, post_title, post_author, post_date, post_image, post_content, post_tags, post_comments_count";
-            $query2 = "VALUES({$post_category_id}, '{$post_title}', '{$post_author}', '{$post_date}', '{$post_image_name}', '{$post_content}', '{$post_tags}', {$post_comments_count}";
+            $query1 = "INSERT INTO posts(post_category_id, post_title, post_author, post_date, post_image, post_content, post_tags";
             if ($post_status == "" || empty($post_status)) {
                 $query1 .= ") ";
-                $query2 .= ");";
             } else {
                 $query1 .= ", post_status) ";
+            }
+            $query2 = "VALUES({$post_category_id}, '{$post_title}', '{$post_author}', '{$post_date}', '{$post_image_name}', '{$post_content}', '{$post_tags}'";
+            if ($post_status == "" || empty($post_status)) {
+                $query2 .= ");";
+            } else {
                 $query2 .= ", '{$post_status}');";
             }
             $query = $query1 . $query2;
@@ -350,6 +352,23 @@ function deleteComments() {
     if (isset($_GET['del_comment_id'])) {
         $del_comment_id = $_GET['del_comment_id'];
 
+        $query = "SELECT * FROM comments WHERE comment_id = {$del_comment_id};";
+        $statusDelComment = mysqli_query($connection, $query);
+        validateQuery($statusDelComment);
+        $comments_count_diff = 0;
+        while($row = mysqli_fetch_assoc($statusDelComment)) {
+            $del_comment_post_id = $row['comment_post_id'];
+            $del_comment_status = $row['comment_status'];
+
+            if ($del_comment_status == "одобрен") {
+                $comments_count_diff = -1;
+            } else {
+                $comments_count_diff = 0;
+            }
+        }
+
+        changeCommentsCount($del_comment_post_id, $comments_count_diff);
+
         $query = "DELETE FROM comments WHERE comment_id = $del_comment_id;";
         $deleteComment = mysqli_query($connection, $query);
         validateQuery($deleteComment);
@@ -364,20 +383,48 @@ function confirmComments() {
 
     if (isset($_GET['confirm_comment'])) {
         if ($_GET['confirm_comment'] == "true") {
-            $confirm_comment_status = "одобрен";
+            $new_confirm_comment_status = "одобрен";
         } else {
-            $confirm_comment_status = "заблокирован";
+            $new_confirm_comment_status = "заблокирован";
         }
 
         if (isset($_GET['comment_id'])) {
             $confirm_comment_id = $_GET['comment_id'];
 
-            $query = "UPDATE comments SET comment_status = '{$confirm_comment_status}' WHERE comment_id = {$confirm_comment_id};";
+            $query = "SELECT * FROM comments WHERE comment_id = {$confirm_comment_id};";
+            $statusConfirmComment = mysqli_query($connection, $query);
+            validateQuery($statusConfirmComment);
+            $comments_count_diff = 0;
+            $confirm_comment_post_id = 0;
+            while($row = mysqli_fetch_assoc($statusConfirmComment)) {
+                $confirm_comment_post_id = $row['comment_post_id'];
+                $old_confirm_comment_status = $row['comment_status'];
+
+                if ($new_confirm_comment_status == "одобрен" && $old_confirm_comment_status != "одобрен") {
+                    $comments_count_diff = 1;
+                } elseif ($new_confirm_comment_status != "одобрен" && $old_confirm_comment_status == "одобрен") {
+                    $comments_count_diff = -1;
+                } else {
+                    $comments_count_diff = 0;
+                }
+            }
+
+            $query = "UPDATE comments SET comment_status = '{$new_confirm_comment_status}' WHERE comment_id = {$confirm_comment_id};";
             $confirmComment = mysqli_query($connection, $query);
             validateQuery($confirmComment);
+
+            changeCommentsCount($confirm_comment_post_id, $comments_count_diff);
 
             header("Location: admin_comments.php");
         }
     }
+}
+
+function changeCommentsCount($post_id, $diff) {
+    global $connection;
+
+    $query = "UPDATE posts SET post_comments_count = post_comments_count + {$diff} WHERE post_id = {$post_id};";
+    $commentsCount = mysqli_query($connection, $query);
+    validateQuery($commentsCount);
 }
 ?>
