@@ -325,7 +325,7 @@ function updatePosts() {
 function showAllComments() {
     global $connection;
 
-    $query = "SELECT * FROM comments JOIN posts ON comments.comment_post_id = posts.post_id;";
+    $query = "SELECT * FROM comments JOIN posts ON comments.comment_post_id = posts.post_id ORDER BY comment_id DESC;";
     $allComments = mysqli_query($connection, $query);
     validateQuery($allComments);
 

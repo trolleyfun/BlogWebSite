@@ -2,40 +2,15 @@
 <!-- Posted Comments -->
 
 <!-- Comment -->
+ <hr>
 <div class="media">
-    <a class="pull-left" href="#">
-        <img class="media-object" src="http://placehold.it/64x64" alt="">
+    <a class="pull-left" href="post.php?post_id=<?=$comment_post_id;?>">
+        <img class="media-object" src="img/user_icon.png" alt="Фотография пользователя">
     </a>
     <div class="media-body">
-        <h4 class="media-heading">Имя пользователя
-            <small>Август 25, 2014 в 21:30</small>
+        <h4 class="media-heading"><?=$comment_author;?>
+            <small><?=$comment_date;?></small>
         </h4>
-        Текст комментария.
-    </div>
-</div>
-
-<!-- Comment -->
-<div class="media">
-    <a class="pull-left" href="#">
-        <img class="media-object" src="http://placehold.it/64x64" alt="">
-    </a>
-    <div class="media-body">
-        <h4 class="media-heading">Имя пользователя
-            <small>Август 25, 2014 в 21:30</small>
-        </h4>
-        Текст комментария.
-        <!-- Nested Comment -->
-        <div class="media">
-            <a class="pull-left" href="#">
-                <img class="media-object" src="http://placehold.it/64x64" alt="">
-            </a>
-            <div class="media-body">
-                <h4 class="media-heading">Имя пользователя
-                    <small>Август 25, 2014 в 21:30</small>
-                </h4>
-                Текст комментария.
-            </div>
-        </div>
-        <!-- End Nested Comment -->
+        <?=$comment_content;?>
     </div>
 </div>

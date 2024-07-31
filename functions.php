@@ -61,7 +61,7 @@ function showPostById() {
 
             include "includes/post_form.php";
             include "includes/add_comment_form.php";
-            include "includes/comment_form.php";
+            showCommentsOfPost($post_id);
         }
     }
 }
@@ -221,5 +221,21 @@ function addComments($add_comment_post_id, $err_status) {
     }
 
     return $err_status;
+}
+
+function showCommentsOfPost($comment_post_id) {
+    global $connection;
+
+    $query = "SELECT * FROM comments WHERE comment_post_id = $comment_post_id AND comment_status = 'одобрен' ORDER BY comment_id DESC;";
+    $commentsOfPost = mysqli_query($connection, $query);
+    validateQuery($commentsOfPost);
+
+    while($row = mysqli_fetch_assoc($commentsOfPost)) {
+        $comment_author = $row['comment_author'];
+        $comment_date = $row['comment_date'];
+        $comment_content = $row['comment_content'];
+
+        include "includes/comment_form.php";
+    }
 }
 ?>
