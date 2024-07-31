@@ -1,7 +1,7 @@
 <?php /* For function showAllComments() */ ?>
 <tr>
     <td><?=$comment_id;?></td>
-    <td><?=$comment_post_title;?></td>
+    <td><a href="../post.php?post_id=<?=$comment_post_id;?>"><?=$comment_post_title;?></a></td>
     <td><?=$comment_author;?></td>
     <td><?=$comment_date;?></td>
     <td><?=$comment_content;?></td>
