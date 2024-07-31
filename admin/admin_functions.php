@@ -49,7 +49,7 @@ function updateCategories() {
             $updateCategory = mysqli_query($connection, $query);
             validateQuery($updateCategory);
     
-            header("Location: categories.php");
+            header("Location: admin_categories.php");
         }
     }
 }
@@ -100,7 +100,7 @@ function deleteCategories() {
         $deleteCategory = mysqli_query($connection, $query);
         validateQuery($deleteCategory);
 
-        header("Location: categories.php");
+        header("Location: admin_categories.php");
     }
 }
 
@@ -202,7 +202,7 @@ function deletePosts() {
         $deletePost = mysqli_query($connection, $query);
         validateQuery($deletePost);
 
-        header("Location: posts.php");
+        header("Location: admin_posts.php");
     }
 }
 
@@ -316,7 +316,7 @@ function updatePosts() {
             $updatePost = mysqli_query($connection, $query);
             validateQuery($updatePost);
 
-            header("Location: posts.php");
+            header("Location: admin_posts.php");
         }
     }
 }
@@ -343,6 +343,7 @@ function showAllComments() {
     }
 }
 
+/* Delete selected comment from the database */
 function deleteComments() {
     global $connection;
 
@@ -353,7 +354,30 @@ function deleteComments() {
         $deleteComment = mysqli_query($connection, $query);
         validateQuery($deleteComment);
 
-        Header("Location: admin_comments.php");
+        header("Location: admin_comments.php");
+    }
+}
+
+/* Change status of the comment: approved or unapproved */
+function confirmComments() {
+    global $connection;
+
+    if (isset($_GET['confirm_comment'])) {
+        if ($_GET['confirm_comment'] == "true") {
+            $confirm_comment_status = "одобрен";
+        } else {
+            $confirm_comment_status = "заблокирован";
+        }
+
+        if (isset($_GET['comment_id'])) {
+            $confirm_comment_id = $_GET['comment_id'];
+
+            $query = "UPDATE comments SET comment_status = '{$confirm_comment_status}' WHERE comment_id = {$confirm_comment_id};";
+            $confirmComment = mysqli_query($connection, $query);
+            validateQuery($confirmComment);
+
+            header("Location: admin_comments.php");
+        }
     }
 }
 ?>

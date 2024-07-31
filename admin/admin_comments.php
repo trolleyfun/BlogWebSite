@@ -43,6 +43,9 @@
                         <?php 
                         /* Delete comments from the database */
                         deleteComments();
+
+                        /* Confirm new comments */
+                        confirmComments();
                         ?>
                     </div>
                 </div>
