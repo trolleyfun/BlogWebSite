@@ -15,27 +15,6 @@
                 /* Put Blog Posts from database */
                 showPostById();
                 ?>
-
-                <!-- Blog Comments -->
-
-                <!-- Comments Form -->
-                <div class="well">
-                    <h4>Оставьте комментарий:</h4>
-                    <form role="form">
-                        <div class="form-group">
-                            <textarea class="form-control" rows="3"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Отправить</button>
-                    </form>
-                </div>
-
-                <hr>
-
-                <!-- Posted Comments -->
-
-                <!-- Comments Section -->
-                <?php include "includes/comment_form.php"; ?>
-
             </div>
 
             <!-- Blog Sidebar Widgets Column -->

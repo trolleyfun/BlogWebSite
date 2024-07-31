@@ -1,3 +1,6 @@
+<?php /* For showPostById() function */ ?>
+<!-- Posted Comments -->
+
 <!-- Comment -->
 <div class="media">
     <a class="pull-left" href="#">

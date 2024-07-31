@@ -8,6 +8,13 @@ function validateQuery($result) {
     }
 }
 
+/* Display Message from argument $message if input data is invalid. $status = false: data is valid, $status = true: data is invalid */
+function displayErrorMessage($status, $message) {
+    if ($status) {
+        echo $message;
+    }
+}
+
 /* Display all posts from database */
 function showAllPosts() { 
     global $connection;
@@ -49,7 +56,12 @@ function showPostById() {
             $post_image = $row['post_image'];
             $post_content = $row['post_content'];
 
+            $err_add_comment = ['comment_author'=>false, 'comment_email'=>false, 'comment_content'=>false]; 
+            $err_add_comment = addComments($post_id, $err_add_comment);
+
             include "includes/post_form.php";
+            include "includes/add_comment_form.php";
+            include "includes/comment_form.php";
         }
     }
 }
@@ -171,5 +183,43 @@ function searchPosts() {
             include "includes/post_form.php";
         }
     }
+}
+
+/* Put comment from Comment Form in Post Section to database. $add_comment_post_id is ID of the post the comment is related to, $err_status is used for Comment Form fields validation */
+function addComments($add_comment_post_id, $err_status) {
+    global $connection;
+
+    if (isset($_POST['add_comment_btn'])) {
+        $add_comment_author = $_POST['comment_author'];
+        $add_comment_date = date('Y-m-d');
+        $add_comment_content = $_POST['comment_content'];
+        $add_comment_email = $_POST['comment_email'];
+        
+        foreach($err_status as $err_item) {
+            $err_item = false;
+        }
+        if ($add_comment_author == "" || empty($add_comment_author)) {
+            $err_status['comment_author'] = true;
+        }
+        if ($add_comment_email == "" || empty($add_comment_email)) {
+            $err_status['comment_email'] = true;
+        }
+        if ($add_comment_content == "" || empty($add_comment_content)) {
+            $err_status['comment_content'] = true;
+        }
+        $err_result = false;
+        foreach($err_status as $err_item) {
+            $err_result = $err_result || $err_item;
+        }
+
+        if (!$err_result) {
+            $query = "INSERT INTO comments(comment_post_id, comment_author, comment_date, comment_content, comment_email) VALUES({$add_comment_post_id}, '{$add_comment_author}', '{$add_comment_date}', '{$add_comment_content}', '{$add_comment_email}');";
+
+            $addComment = mysqli_query($connection, $query);
+            validateQuery($addComment);
+        }
+    }
+
+    return $err_status;
 }
 ?>

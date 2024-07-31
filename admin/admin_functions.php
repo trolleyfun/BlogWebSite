@@ -321,7 +321,7 @@ function updatePosts() {
     }
 }
 
-/* Put all comments from database to Comments Section in admin */
+/* Put all comments from database and display them in Comments Section in admin */
 function showAllComments() {
     global $connection;
 
