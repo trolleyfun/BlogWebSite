@@ -355,23 +355,16 @@ function deleteComments() {
         $query = "SELECT * FROM comments WHERE comment_id = {$del_comment_id};";
         $statusDelComment = mysqli_query($connection, $query);
         validateQuery($statusDelComment);
-        $comments_count_diff = 0;
+        $del_comment_post_id = 0;
         while($row = mysqli_fetch_assoc($statusDelComment)) {
             $del_comment_post_id = $row['comment_post_id'];
-            $del_comment_status = $row['comment_status'];
-
-            if ($del_comment_status == "одобрен") {
-                $comments_count_diff = -1;
-            } else {
-                $comments_count_diff = 0;
-            }
         }
-
-        changeCommentsCount($del_comment_post_id, $comments_count_diff);
 
         $query = "DELETE FROM comments WHERE comment_id = $del_comment_id;";
         $deleteComment = mysqli_query($connection, $query);
         validateQuery($deleteComment);
+
+        commentsCountByPost($del_comment_post_id);
 
         header("Location: admin_comments.php");
     }
@@ -383,9 +376,9 @@ function confirmComments() {
 
     if (isset($_GET['confirm_comment'])) {
         if ($_GET['confirm_comment'] == "true") {
-            $new_confirm_comment_status = "одобрен";
+            $confirm_comment_status = "одобрен";
         } else {
-            $new_confirm_comment_status = "заблокирован";
+            $confirm_comment_status = "заблокирован";
         }
 
         if (isset($_GET['comment_id'])) {
@@ -394,37 +387,46 @@ function confirmComments() {
             $query = "SELECT * FROM comments WHERE comment_id = {$confirm_comment_id};";
             $statusConfirmComment = mysqli_query($connection, $query);
             validateQuery($statusConfirmComment);
-            $comments_count_diff = 0;
             $confirm_comment_post_id = 0;
             while($row = mysqli_fetch_assoc($statusConfirmComment)) {
                 $confirm_comment_post_id = $row['comment_post_id'];
-                $old_confirm_comment_status = $row['comment_status'];
-
-                if ($new_confirm_comment_status == "одобрен" && $old_confirm_comment_status != "одобрен") {
-                    $comments_count_diff = 1;
-                } elseif ($new_confirm_comment_status != "одобрен" && $old_confirm_comment_status == "одобрен") {
-                    $comments_count_diff = -1;
-                } else {
-                    $comments_count_diff = 0;
-                }
             }
 
-            $query = "UPDATE comments SET comment_status = '{$new_confirm_comment_status}' WHERE comment_id = {$confirm_comment_id};";
+            $query = "UPDATE comments SET comment_status = '{$confirm_comment_status}' WHERE comment_id = {$confirm_comment_id};";
             $confirmComment = mysqli_query($connection, $query);
             validateQuery($confirmComment);
 
-            changeCommentsCount($confirm_comment_post_id, $comments_count_diff);
+            commentsCountByPost($confirm_comment_post_id);
 
             header("Location: admin_comments.php");
         }
     }
 }
 
+/* Change Count of approved Comments in response to post wiyh $post_id in posts table in database. The difference between new value and previous one is $diff. If $diff is positive, then the count increases, if $diff is negative, then the count decreases. */
 function changeCommentsCount($post_id, $diff) {
     global $connection;
 
     $query = "UPDATE posts SET post_comments_count = post_comments_count + {$diff} WHERE post_id = {$post_id};";
     $commentsCount = mysqli_query($connection, $query);
     validateQuery($commentsCount);
+}
+
+/* Update the Count of approved Comments in database */
+function commentsCountByPost($post_id) {
+    global $connection;
+
+    $query = "SELECT comment_post_id, COUNT(comment_post_id) AS comments_count FROM comments ";
+    $query .= "WHERE comment_status = 'одобрен' GROUP BY comment_post_id HAVING comment_post_id = {$post_id};";
+    $commentsCount = mysqli_query($connection, $query);
+    validateQuery($commentsCount);
+    $post_comments_count = 0;
+    while($row = mysqli_fetch_assoc($commentsCount)) {
+        $post_comments_count = $row['comments_count'];
+    }
+
+    $query = "UPDATE posts SET post_comments_count = {$post_comments_count} WHERE post_id = {$post_id};";
+    $updateCommentsCount = mysqli_query($connection, $query);
+    validateQuery($updateCommentsCount);
 }
 ?>

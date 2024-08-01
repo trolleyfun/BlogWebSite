@@ -23,3 +23,5 @@
         <button type="submit" name="add_comment_btn" class="btn btn-primary">Отправить</button>
     </form>
 </div>
+
+<!-- Posted Comments -->

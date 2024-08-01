@@ -1,6 +1,4 @@
 <?php /* For showPostById() function */ ?>
-<!-- Posted Comments -->
-
 <!-- Comment -->
  <hr>
 <div class="media">
