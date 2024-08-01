@@ -19,9 +19,15 @@ function displayErrorMessage($status, $message) {
 function showAllPosts() { 
     global $connection;
     
-    $query = "SELECT * FROM posts;";
+    $query = "SELECT * FROM posts WHERE post_status = 'опубликован';";
     $allPosts = mysqli_query($connection, $query);
     validateQuery($allPosts);
+
+    $num_rows = mysqli_num_rows($allPosts);
+    if ($num_rows == 0) {
+        echo "<h2>Скоро здесь будут публикации</h2>";
+        echo "<hr>";
+    }
 
     $is_btn = true; //the button will be displayed under each post
     while($row = mysqli_fetch_assoc($allPosts)) {
@@ -82,7 +88,7 @@ function showPostByCategory() {
             $category_title = $row['cat_title'];
         }
     
-        $query = "SELECT * FROM posts WHERE post_category_id = {$category_id};";
+        $query = "SELECT * FROM posts WHERE post_category_id = {$category_id} AND post_status = 'опубликован';";
         $postByCategory = mysqli_query($connection, $query);
         validateQuery($postByCategory);
 
@@ -145,7 +151,7 @@ function searchPosts() {
     if (isset($_POST['search_btn'])) {
         $search_data = $_POST['search_data'];
     
-        $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search_data%';";
+        $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search_data%' AND post_status = 'опубликован';";
         $search_result = mysqli_query($connection, $query);
         validateQuery($search_result);
 

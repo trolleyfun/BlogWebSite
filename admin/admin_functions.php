@@ -267,10 +267,10 @@ function updatePosts() {
         foreach($err_edit_post as $err_item) {
             $err_item = false;
         }
-        if ($update_post_id == "" || empty($update_post_id)) {
+        if ($update_post_id <= 0) {
             $err_edit_post['post_id'] = true;
         }
-        if ($update_post_category_id == "" || empty($update_post_category_id)) {
+        if ($update_post_category_id <= 0) {
             $err_edit_post['category_id'] = true;
         }
         if ($update_post_title == "" || empty($update_post_title)) {
@@ -288,7 +288,7 @@ function updatePosts() {
         if ($update_post_content == "" || empty($update_post_content)) {
             $err_edit_post['content'] = true;
         }
-        if ($update_post_comments_count == "" || empty($update_post_comments_count)) {
+        if ($update_post_comments_count < 0) {
             $err_edit_post['comments_count'] = true;
         }
         if ($update_post_status == "" || empty($update_post_status)) {

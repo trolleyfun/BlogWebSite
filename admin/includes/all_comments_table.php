@@ -8,6 +8,5 @@
     <td><?=$comment_email;?></td>
     <td><?=$comment_status;?></td>
     <td><a href="admin_comments.php?confirm_comment=true&comment_id=<?=$comment_id;?>">разрешить</a> <a href="admin_comments.php?confirm_comment=false&comment_id=<?=$comment_id;?>">отклонить</a></td>
-    <td><a href="#"><span class="fa fa-fw fa-edit"></span></a></td>
     <td><a href="admin_comments.php?del_comment_id=<?=$comment_id;?>"><span class="fa fa-fw fa-trash-o"></span></a></td>
 </tr>
