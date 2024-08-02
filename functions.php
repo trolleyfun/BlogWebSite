@@ -19,7 +19,7 @@ function displayErrorMessage($status, $message) {
 function showAllPosts() { 
     global $connection;
     
-    $query = "SELECT * FROM posts WHERE post_status = 'опубликован';";
+    $query = "SELECT * FROM posts WHERE post_status = 'опубликовано';";
     $allPosts = mysqli_query($connection, $query);
     validateQuery($allPosts);
 
@@ -88,7 +88,7 @@ function showPostByCategory() {
             $category_title = $row['cat_title'];
         }
     
-        $query = "SELECT * FROM posts WHERE post_category_id = {$category_id} AND post_status = 'опубликован';";
+        $query = "SELECT * FROM posts WHERE post_category_id = {$category_id} AND post_status = 'опубликовано';";
         $postByCategory = mysqli_query($connection, $query);
         validateQuery($postByCategory);
 
@@ -151,7 +151,7 @@ function searchPosts() {
     if (isset($_POST['search_btn'])) {
         $search_data = $_POST['search_data'];
     
-        $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search_data%' AND post_status = 'опубликован';";
+        $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search_data%' AND post_status = 'опубликовано';";
         $search_result = mysqli_query($connection, $query);
         validateQuery($search_result);
 
