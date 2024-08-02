@@ -12,11 +12,11 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Комментарии
+                            Публикации
                             <small>Администратор</small>
                         </h1>
 
-                        <!-- Comments Section -->
+                        <!-- Users Section -->
                         <?php 
                         if (isset($_GET['source'])) {
                             $source = $_GET['source'];
@@ -25,18 +25,24 @@
                         }
 
                         switch($source) {
+                            case "add_users":
+                                include "";
+                                break;
+                            case "edit_users":
+                                /* Edit selected post */
+                                $err_edit_post = ['post_id'=>false, 'category_id'=>false, 'title'=>false, 'author'=>false, 'date'=>false, 'image'=>false, 'content'=>false, 'comments_count'=>false, 'status'=>false];
+                                // updatePosts();
+                                // editPosts();
+                                break;
                             default:
-                                include "includes/show_all_comments.php";
+                                include "includes/show_all_users.php";
                                 break;
                         }
                         ?>
 
                         <?php 
-                        /* Delete comments from the database */
-                        deleteComments();
-
-                        /* Confirm new comments */
-                        confirmComments();
+                        /* Delete post from the database */
+                        // deletePosts();
                         ?>
                     </div>
                 </div>

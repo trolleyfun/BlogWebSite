@@ -150,7 +150,7 @@ function addPosts() {
         foreach($err_add_post as $err_item) {
             $err_item = false;
         }
-        if ($post_category_id == "" || empty($post_category_id)) {
+        if ($post_category_id <= 0) {
             $err_add_post['category_id'] = true;
         }
         if ($post_title == "" || empty($post_title)) {
@@ -428,5 +428,25 @@ function commentsCountByPost($post_id) {
     $query = "UPDATE posts SET post_comments_count = {$post_comments_count} WHERE post_id = {$post_id};";
     $updateCommentsCount = mysqli_query($connection, $query);
     validateQuery($updateCommentsCount);
+}
+
+function showAllUsers() {
+    global $connection;
+
+    $query = "SELECT * FROM users;";
+    $allUsers = mysqli_query($connection, $query);
+    validateQuery($allUsers);
+    while($row = mysqli_fetch_assoc($allUsers)) {
+        $user_id = $row['user_id'];
+        $user_login = $row['user_login'];
+        $user_password = $row['user_password'];
+        $user_firstname = $row['user_firstname'];
+        $user_lastname = $row['user_lastname'];
+        $user_email = $row['user_email'];
+        $user_image = $row['user_image'];
+        $user_privilege = $row['user_privilege'];
+
+        include "includes/all_users_table.php";
+    }
 }
 ?>

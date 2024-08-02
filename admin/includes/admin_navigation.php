@@ -52,10 +52,10 @@
                 <a href="javascript:;" data-toggle="collapse" data-target="#users"><i class="fa fa-fw fa-user"></i> Пользователи <i class="fa fa-fw fa-caret-down"></i></a>
                 <ul id="users" class="collapse">
                     <li>
-                        <a href="#">Показать всех пользователей</a>
+                        <a href="admin_users.php">Показать всех пользователей</a>
                     </li>
                     <li>
-                        <a href="#">Добавить пользователя</a>
+                        <a href="admin_users.php?source=add_users">Добавить пользователя</a>
                     </li>
                 </ul>
             </li>
