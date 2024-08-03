@@ -430,6 +430,7 @@ function commentsCountByPost($post_id) {
     validateQuery($updateCommentsCount);
 }
 
+/* Display all users from database */
 function showAllUsers() {
     global $connection;
 
@@ -448,5 +449,62 @@ function showAllUsers() {
 
         include "includes/all_users_table.php";
     }
+}
+
+function addUsers($err_status) {
+    global $connection;
+
+    if (isset($_POST['add_user_btn'])) {
+        $user_login = $_POST['user_login'];
+        $user_password = $_POST['user_password'];
+        $user_firstname = $_POST['user_firstname'];
+        $user_lastname = $_POST['user_lastname'];
+        $user_email = $_POST['user_email'];
+
+        $user_image_name = $_FILES['user_image']['name'];
+        $user_image_tmp = $_FILES['user_image']['tmp_name'];
+        $user_image_error = $_FILES['user_image']['error'];
+
+        $user_privilege = $_POST['user_privilege'];
+
+        foreach($err_status as $err_item) {
+            $err_item = false;
+        }
+        if ($user_login == "" || empty($user_login)) {
+            $err_status['login'] = true;
+        }
+        if ($user_password == "" || empty($user_password)) {
+            $err_status['password'] = true;
+        }
+        if ($user_firstname == "" || empty($user_firstname)) {
+            $err_status['firstname'] = true;
+        }
+        if ($user_lastname == "" || empty($user_lastname)) {
+            $err_status['lastname'] = true;
+        }
+        if ($user_email == "" || empty($user_email)) {
+            $err_status['email'] = true;
+        }
+        if ($user_image_name == "" || $user_image_error == UPLOAD_ERR_NO_FILE) {
+            $err_status['image'] = true;
+        }
+        if ($user_privilege == "" || empty($user_privilege)) {
+            $err_status['privilege'] = true;
+        }
+        $err_result = false;
+        foreach($err_status as $err_item) {
+            $err_result = $err_result || $err_item;
+        }
+
+        if (!$err_result) {
+            move_uploaded_file($user_image_tmp, "../img/{$user_image_name}");
+
+            $query = "INSERT INTO users(user_login, user_password, user_firstname, user_lastname, user_email, user_image, user_privilege) VALUES('{$user_login}', '{$user_password}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$user_image_name}', '{$user_privilege}');";
+            $addUser = mysqli_query($connection, $query);
+            validateQuery($addUser);
+        }
+    }
+
+    return $err_status;
 }
 ?>

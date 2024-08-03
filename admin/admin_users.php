@@ -12,7 +12,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Публикации
+                            Пользователи
                             <small>Администратор</small>
                         </h1>
 
@@ -26,7 +26,7 @@
 
                         switch($source) {
                             case "add_users":
-                                include "";
+                                include "includes/add_users.php";
                                 break;
                             case "edit_users":
                                 /* Edit selected post */
