@@ -29,10 +29,9 @@
                                 include "includes/add_users.php";
                                 break;
                             case "edit_users":
-                                /* Edit selected post */
-                                $err_edit_post = ['post_id'=>false, 'category_id'=>false, 'title'=>false, 'author'=>false, 'date'=>false, 'image'=>false, 'content'=>false, 'comments_count'=>false, 'status'=>false];
+                                /* Edit selected user */
                                 // updatePosts();
-                                // editPosts();
+                                editUsers();
                                 break;
                             default:
                                 include "includes/show_all_users.php";

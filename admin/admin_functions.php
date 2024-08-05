@@ -523,4 +523,31 @@ function deleteUsers() {
         header("Location: admin_users.php");
     }
 }
+
+/* Display Edit User form and put values from database to the fields of the form */
+function editUsers() {
+    global $connection;
+
+    if (isset($_GET['edit_user_id'])) {
+        $edit_user_id = $_GET['edit_user_id'];
+
+        $query = "SELECT * FROM users WHERE user_id = {$edit_user_id};";
+        $editUser = mysqli_query($connection, $query);
+        validateQuery($editUser);
+        if ($row = mysqli_fetch_assoc($editUser)) {
+            $user_id = $row['user_id'];
+            $user_login = $row['user_login'];
+            $user_password = $row['user_password'];
+            $user_firstname = $row['user_firstname'];
+            $user_lastname = $row['user_lastname'];
+            $user_email = $row['user_email'];
+            $user_image_name = $row['user_image'];
+            $user_privilege = $row['user_privilege'];
+
+            $err_edit_user = ['user_id'=>false, 'login'=>false, 'password'=>false, 'firstname'=>false, 'lastname'=>false, 'email'=>false, 'image'=>false, 'privilege'=>false];
+
+            include "includes/edit_users.php";
+        }
+    }
+}
 ?>
