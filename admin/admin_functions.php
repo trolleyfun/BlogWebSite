@@ -451,6 +451,7 @@ function showAllUsers() {
     }
 }
 
+/* Add information about new user to database */
 function addUsers($err_status) {
     global $connection;
 
@@ -506,5 +507,20 @@ function addUsers($err_status) {
     }
 
     return $err_status;
+}
+
+/* Delete user from database */
+function deleteUsers() {
+    global $connection;
+
+    if (isset($_GET['del_user_id'])) {
+        $user_id = $_GET['del_user_id'];
+
+        $query = "DELETE FROM users WHERE user_id = {$user_id};";
+        $delUser = mysqli_query($connection, $query);
+        validateQuery($delUser);
+
+        header("Location: admin_users.php");
+    }
 }
 ?>

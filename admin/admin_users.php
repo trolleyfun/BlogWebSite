@@ -41,8 +41,8 @@
                         ?>
 
                         <?php 
-                        /* Delete post from the database */
-                        // deletePosts();
+                        /* Delete user from the database */
+                        deleteUsers();
                         ?>
                     </div>
                 </div>
