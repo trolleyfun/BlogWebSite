@@ -29,8 +29,6 @@
                                 include "includes/add_users.php";
                                 break;
                             case "edit_users":
-                                /* Edit selected user */
-                                // updatePosts();
                                 editUsers();
                                 break;
                             default:

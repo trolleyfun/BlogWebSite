@@ -35,7 +35,7 @@
                 <a href="javascript:;" data-toggle="collapse" data-target="#posts"><i class="fa fa-fw fa-edit"></i> Публикации <i class="fa fa-fw fa-caret-down"></i></a>
                 <ul id="posts" class="collapse">
                     <li>
-                        <a href="admin_posts.php">Показатать все публикации</a>
+                        <a href="admin_posts.php">Все публикации</a>
                     </li>
                     <li>
                         <a href="admin_posts.php?source=add_posts">Добавить публикацию</a>
@@ -52,7 +52,7 @@
                 <a href="javascript:;" data-toggle="collapse" data-target="#users"><i class="fa fa-fw fa-user"></i> Пользователи <i class="fa fa-fw fa-caret-down"></i></a>
                 <ul id="users" class="collapse">
                     <li>
-                        <a href="admin_users.php">Показать всех пользователей</a>
+                        <a href="admin_users.php">Все пользователи</a>
                     </li>
                     <li>
                         <a href="admin_users.php?source=add_users">Добавить пользователя</a>
