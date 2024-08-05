@@ -32,7 +32,7 @@
             <label for="edit_user_image">Изображение</label>
             <img src="../img/<?=$user_image_name;?>" alt="Изображение пользователя" style="width: 75px;" class="img-responsive"><br>
             <input type="file" name="edit_user_image" id="edit_user_image" class="form-control">
-            <input type="hidden" name="current_user_image" class="form-control" value="<?=$user_image_name;?>">
+            <input type="hidden" name="current_user_image" class="form-control" value="<?=$user_image_name;?>" readonly>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_user['image'], "Загрузите изображение"); ?></span>
         </div>
         <div class="form-group">
@@ -45,7 +45,7 @@
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_user['privilege'], "Выберите тип учетной записи"); ?></span>
         </div>
         <div class="form-group">
-            <input type="submit" name="edit_user_btn" class="btn btn-primary" value="Сохранить изменения">
+            <input type="submit" name="update_user_btn" class="btn btn-primary" value="Сохранить изменения">
         </div>
     </form>
  </div>

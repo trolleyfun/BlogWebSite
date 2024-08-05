@@ -18,63 +18,85 @@ function displayErrorMessage($status, $message) {
 /* Add category from input field of Add Form to database */
 function addCategories() {
     global $connection;
-    global $err_add_cat_title;
+
+    $err_add_cat = ['title'=>false];
+
     if (isset($_POST['add_cat_btn'])) {
         $cat_title = $_POST['cat_title'];
-        $err_add_cat_title = false;
+        foreach($err_add_cat as $err_item) {
+            $err_item = false;
+        }
         if ($cat_title == "" || empty($cat_title)) {
-            $err_add_cat_title = true;
-        } else {
+            $err_add_cat['title'] = true;
+        } 
+        $err_result = false;
+        foreach($err_add_cat as $err_item) {
+            $err_result = $err_result || $err_item;
+        }
+        if (!$err_result) {
             $query = "INSERT INTO categories(cat_title) VALUE('{$cat_title}');";
             $addCategory = mysqli_query($connection, $query);
             validateQuery($addCategory);
         }
     }
+
+    include "includes/add_categories.php";
 }
 
 /* Update category in database from input field of Edit Form */
-function updateCategories() {
+function updateCategories($cat_id, $err_status) {
     global $connection;
-    global $err_edit_cat_title;
 
     if (isset($_POST['update_cat_btn'])) {
-        $update_id = $_POST['edit_id'];
-        $update_title = $_POST['edit_title'];
+        $cat_title = $_POST['edit_cat_title'];
     
-        $err_edit_cat_title = false;
-        if ($update_title == "" || empty($update_title)) {
-            $err_edit_cat_title = true;
-        } else {
-            $query = "UPDATE categories SET cat_title = '{$update_title}' WHERE cat_id = {$update_id};";
+        foreach($err_status as $err_item) {
+            $err_item = false;
+        }
+        if ($cat_title == "" || empty($cat_title)) {
+            $err_status['title'] = true;
+        }
+        $err_result = false;
+        foreach($err_status as $err_item) {
+            $err_result = $err_result || $err_item;
+        }
+        
+        if (!$err_result) {
+            $query = "UPDATE categories SET cat_title = '{$cat_title}' WHERE cat_id = {$cat_id};";
             $updateCategory = mysqli_query($connection, $query);
             validateQuery($updateCategory);
     
             header("Location: admin_categories.php");
         }
     }
+
+    return $err_status;
 }
 
 /* Create Edit Form for selected category and put id and title of the category from the database */
 function editCategories() {
     global $connection;
-    global $err_edit_cat_title;
 
-    if (isset($_GET['edit_id'])) {
-        $edit_id = $_GET['edit_id'];
-        $query = "SELECT * FROM categories WHERE cat_id = {$edit_id};";
+    if (isset($_GET['edit_cat_id'])) {
+        $edit_cat_id = $_GET['edit_cat_id'];
+        $query = "SELECT * FROM categories WHERE cat_id = {$edit_cat_id};";
         $editCategory = mysqli_query($connection, $query);
         validateQuery($editCategory);
 
-        while($row = mysqli_fetch_assoc($editCategory)) {
-            $edit_id_db = $row['cat_id'];
-            $edit_title = $row['cat_title'];
+        if ($row = mysqli_fetch_assoc($editCategory)) {
+            $cat_id = $row['cat_id'];
+            $cat_title = $row['cat_title'];
+
+            $err_edit_cat = ['title'=>false];
+
+            $err_edit_cat = updateCategories($cat_id, $err_edit_cat);
             include "includes/edit_categories.php";
         }
     }
 }
 
 /* Read all categories from database and display in $categoryFile Form */
-function showAllCategories($categoriesFile, $arg) {
+function showAllCategories($categoriesForm, $arg) {
     global $connection;
 
     $query = "SELECT * FROM categories;";
@@ -85,7 +107,7 @@ function showAllCategories($categoriesFile, $arg) {
         $cat_id = $row['cat_id'];
         $cat_title = $row['cat_title'];
 
-        include $categoriesFile;
+        include $categoriesForm;
     }
 }
 
@@ -93,9 +115,9 @@ function showAllCategories($categoriesFile, $arg) {
 function deleteCategories() {
     global $connection;
 
-    if (isset($_GET['delete_id'])) {
-        $delete_id = $_GET['delete_id'];
-        $query = "DELETE FROM categories WHERE cat_id = {$delete_id};";
+    if (isset($_GET['delete_cat_id'])) {
+        $delete_cat_id = $_GET['delete_cat_id'];
+        $query = "DELETE FROM categories WHERE cat_id = {$delete_cat_id};";
 
         $deleteCategory = mysqli_query($connection, $query);
         validateQuery($deleteCategory);
@@ -131,7 +153,8 @@ function showAllPosts() {
 /* Put Post from Add Post Form to database */
 function addPosts() {
     global $connection;
-    global $err_add_post;
+
+    $err_add_post = ['category_id'=>false, 'title'=>false, 'author'=>false, 'image'=>false, 'content'=>false, 'status'=>false];
 
     if (isset($_POST['add_post_btn'])) {
         $post_category_id = $_POST['post_category_id'];
@@ -165,6 +188,9 @@ function addPosts() {
         if ($post_content == "" || empty($post_content)) {
             $err_add_post['content'] = true;
         }
+        if ($post_status == "" || empty($post_status)) {
+            $err_add_post['status'] = true;
+        }
         $err_result = false;
         foreach($err_add_post as $err_item) {
             $err_result = $err_result || $err_item;
@@ -173,24 +199,15 @@ function addPosts() {
         if (!$err_result) {
             move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
 
-            $query1 = "INSERT INTO posts(post_category_id, post_title, post_author, post_date, post_image, post_content, post_tags";
-            if ($post_status == "" || empty($post_status)) {
-                $query1 .= ") ";
-            } else {
-                $query1 .= ", post_status) ";
-            }
-            $query2 = "VALUES({$post_category_id}, '{$post_title}', '{$post_author}', '{$post_date}', '{$post_image_name}', '{$post_content}', '{$post_tags}'";
-            if ($post_status == "" || empty($post_status)) {
-                $query2 .= ");";
-            } else {
-                $query2 .= ", '{$post_status}');";
-            }
-            $query = $query1 . $query2;
+            $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_date, post_image, post_content, post_tags, post_status) ";
+            $query .= "VALUES({$post_category_id}, '{$post_title}', '{$post_author}', '{$post_date}', '{$post_image_name}', '{$post_content}', '{$post_tags}', '{$post_status}');";
 
             $addPost = mysqli_query($connection, $query);
             validateQuery($addPost);
         }
     }
+
+    include "includes/add_posts.php";
 }
 
 /* Delete selected post from the database */
@@ -211,7 +228,6 @@ function deletePosts() {
 /* Create Edit Post Form and put selected post's values from database into the form */
 function editPosts() {
     global $connection;
-    global $err_edit_post;
     
     if (isset($_GET['edit_post_id'])) {
         $edit_post_id = $_GET['edit_post_id'];
@@ -220,17 +236,21 @@ function editPosts() {
         $editPost = mysqli_query($connection, $query);
         validateQuery($editPost);
 
-        while($row = mysqli_fetch_assoc($editPost)) {
-            $edit_post_id = $row['post_id'];
-            $edit_post_category_id = $row['post_category_id'];
-            $edit_post_title = $row['post_title'];
-            $edit_post_author = $row['post_author'];
-            $edit_post_date = $row['post_date'];
-            $edit_post_image = $row['post_image'];
-            $edit_post_content = $row['post_content'];
-            $edit_post_tags = $row['post_tags'];
-            $edit_post_comments_count = $row['post_comments_count'];
-            $edit_post_status = $row['post_status'];
+        if ($row = mysqli_fetch_assoc($editPost)) {
+            $post_id = $row['post_id'];
+            $post_category_id = $row['post_category_id'];
+            $post_title = $row['post_title'];
+            $post_author = $row['post_author'];
+            $post_date = $row['post_date'];
+            $post_image = $row['post_image'];
+            $post_content = $row['post_content'];
+            $post_tags = $row['post_tags'];
+            $post_comments_count = $row['post_comments_count'];
+            $post_status = $row['post_status'];
+
+            $err_edit_post = ['category_id'=>false, 'title'=>false, 'author'=>false, 'date'=>false, 'image'=>false, 'content'=>false, 'status'=>false];
+
+            $err_edit_post = updatePosts($edit_post_id, $err_edit_post);
 
             include "includes/edit_posts.php";
         }
@@ -238,82 +258,72 @@ function editPosts() {
 }
 
 /* Put data from Edit Post Form to database */
-function updatePosts() {
+function updatePosts($post_id, $err_status) {
     global $connection;
-    global $err_edit_post;
 
     if (isset($_POST['update_post_btn'])) {
-        $update_post_id = $_POST['edit_post_id'];
-        $update_post_category_id = $_POST['edit_post_category_id'];
-        $update_post_title = $_POST['edit_post_title'];
-        $update_post_author = $_POST['edit_post_author'];
-        $update_post_date = $_POST['edit_post_date'];
+        $post_category_id = $_POST['edit_post_category_id'];
+        $post_title = $_POST['edit_post_title'];
+        $post_author = $_POST['edit_post_author'];
+        $post_date = $_POST['edit_post_date'];
 
         $is_new_post_image = true;
         $current_post_image_name = $_POST['current_post_image'];
-        $update_post_image_name = $_FILES['edit_post_image']['name'];
-        $update_post_image_temp = $_FILES['edit_post_image']['tmp_name'];
-        $update_post_image_err = $_FILES['edit_post_image']['error'];
-        if ($update_post_image_name == "" || $update_post_image_err == UPLOAD_ERR_NO_FILE) {
-            $update_post_image_name = $current_post_image_name;
+        $post_image_name = $_FILES['edit_post_image']['name'];
+        $post_image_temp = $_FILES['edit_post_image']['tmp_name'];
+        $post_image_err = $_FILES['edit_post_image']['error'];
+        if ($post_image_name == "" || $post_image_err == UPLOAD_ERR_NO_FILE) {
+            $post_image_name = $current_post_image_name;
             $is_new_post_image = false;
         }
 
-        $update_post_content = $_POST['edit_post_content'];
-        $update_post_tags = $_POST['edit_post_tags'];
-        $update_post_comments_count = $_POST['edit_post_comments_count'];
-        $update_post_status = $_POST['edit_post_status'];
+        $post_content = $_POST['edit_post_content'];
+        $post_tags = $_POST['edit_post_tags'];
+        $post_status = $_POST['edit_post_status'];
 
-        foreach($err_edit_post as $err_item) {
+        foreach($err_status as $err_item) {
             $err_item = false;
         }
-        if ($update_post_id <= 0) {
-            $err_edit_post['post_id'] = true;
+        if ($post_category_id <= 0) {
+            $err_status['category_id'] = true;
         }
-        if ($update_post_category_id <= 0) {
-            $err_edit_post['category_id'] = true;
+        if ($post_title == "" || empty($post_title)) {
+            $err_status['title'] = true;
         }
-        if ($update_post_title == "" || empty($update_post_title)) {
-            $err_edit_post['title'] = true;
+        if ($post_author == "" || empty($post_author)) {
+            $err_status['author'] = true;
         }
-        if ($update_post_author == "" || empty($update_post_author)) {
-            $err_edit_post['author'] = true;
+        if ($post_date == "" || empty($post_date)) {
+            $err_status['date'] = true;
         }
-        if ($update_post_date == "" || empty($update_post_date)) {
-            $err_edit_post['date'] = true;
+        if ($post_image_name == "" || empty($post_image_name)) {
+            $err_status['image'] = true;
         }
-        if ($update_post_image_name == "" || empty($update_post_image_name)) {
-            $err_edit_post['image'] = true;
+        if ($post_content == "" || empty($post_content)) {
+            $err_status['content'] = true;
         }
-        if ($update_post_content == "" || empty($update_post_content)) {
-            $err_edit_post['content'] = true;
-        }
-        if ($update_post_comments_count < 0) {
-            $err_edit_post['comments_count'] = true;
-        }
-        if ($update_post_status == "" || empty($update_post_status)) {
-            $err_edit_post['status'] = true;
+        if ($post_status == "" || empty($post_status)) {
+            $err_status['status'] = true;
         }
         $err_result = false;
-        foreach($err_edit_post as $err_item) {
+        foreach($err_status as $err_item) {
             $err_result = $err_result || $err_item;
         }
 
         if (!$err_result) {
             if ($is_new_post_image) {
-                move_uploaded_file($update_post_image_temp, "../img/{$update_post_image_name}");
+                move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
             }
 
-            $query = "UPDATE posts SET post_category_id = {$update_post_category_id}, ";
-            $query .= "post_title = '{$update_post_title}', ";
-            $query .= "post_author = '{$update_post_author}', ";
-            $query .= "post_date = '{$update_post_date}', ";
-            $query .= "post_image = '{$update_post_image_name}', ";
-            $query .= "post_content = '{$update_post_content}', ";
-            $query .= "post_tags = '{$update_post_tags}', ";
-            $query .= "post_comments_count = '{$update_post_comments_count}', ";
-            $query .= "post_status = '{$update_post_status}' ";
-            $query .= "WHERE post_id = {$update_post_id};";
+            $query = "UPDATE posts SET post_category_id = {$post_category_id}, ";
+            $query .= "post_title = '{$post_title}', ";
+            $query .= "post_author = '{$post_author}', ";
+            $query .= "post_date = '{$post_date}', ";
+            $query .= "post_image = '{$post_image_name}', ";
+            $query .= "post_content = '{$post_content}', ";
+            $query .= "post_tags = '{$post_tags}', ";
+            $query .= "post_status = '{$post_status}' ";
+            $query .= "WHERE post_id = {$post_id};";
 
             $updatePost = mysqli_query($connection, $query);
             validateQuery($updatePost);
@@ -321,6 +331,8 @@ function updatePosts() {
             header("Location: admin_posts.php");
         }
     }
+
+    return $err_status;
 }
 
 /* Put all comments from database and display them in Comments Section in admin */
@@ -349,22 +361,22 @@ function showAllComments() {
 function deleteComments() {
     global $connection;
 
-    if (isset($_GET['del_comment_id'])) {
-        $del_comment_id = $_GET['del_comment_id'];
+    if (isset($_GET['delete_comment_id'])) {
+        $delete_comment_id = $_GET['delete_comment_id'];
 
-        $query = "SELECT * FROM comments WHERE comment_id = {$del_comment_id};";
+        $query = "SELECT * FROM comments WHERE comment_id = {$delete_comment_id};";
         $statusDelComment = mysqli_query($connection, $query);
         validateQuery($statusDelComment);
-        $del_comment_post_id = 0;
-        while($row = mysqli_fetch_assoc($statusDelComment)) {
-            $del_comment_post_id = $row['comment_post_id'];
+        $delete_comment_post_id = 0;
+        if ($row = mysqli_fetch_assoc($statusDelComment)) {
+            $delete_comment_post_id = $row['comment_post_id'];
         }
 
-        $query = "DELETE FROM comments WHERE comment_id = $del_comment_id;";
+        $query = "DELETE FROM comments WHERE comment_id = $delete_comment_id;";
         $deleteComment = mysqli_query($connection, $query);
         validateQuery($deleteComment);
 
-        commentsCountByPost($del_comment_post_id);
+        commentsCountByPost($delete_comment_post_id);
 
         header("Location: admin_comments.php");
     }
@@ -388,7 +400,7 @@ function confirmComments() {
             $statusConfirmComment = mysqli_query($connection, $query);
             validateQuery($statusConfirmComment);
             $confirm_comment_post_id = 0;
-            while($row = mysqli_fetch_assoc($statusConfirmComment)) {
+            if ($row = mysqli_fetch_assoc($statusConfirmComment)) {
                 $confirm_comment_post_id = $row['comment_post_id'];
             }
 
@@ -421,7 +433,7 @@ function commentsCountByPost($post_id) {
     $commentsCount = mysqli_query($connection, $query);
     validateQuery($commentsCount);
     $post_comments_count = 0;
-    while($row = mysqli_fetch_assoc($commentsCount)) {
+    if ($row = mysqli_fetch_assoc($commentsCount)) {
         $post_comments_count = $row['comments_count'];
     }
 
@@ -452,8 +464,10 @@ function showAllUsers() {
 }
 
 /* Add information about new user to database */
-function addUsers($err_status) {
+function addUsers() {
     global $connection;
+
+    $err_add_user = ['login'=>false, 'password'=>false, 'firstname'=>false, 'lastname'=>false, 'email'=>false, 'image'=>false, 'privilege'=>false];
 
     if (isset($_POST['add_user_btn'])) {
         $user_login = $_POST['user_login'];
@@ -468,32 +482,32 @@ function addUsers($err_status) {
 
         $user_privilege = $_POST['user_privilege'];
 
-        foreach($err_status as $err_item) {
+        foreach($err_add_user as $err_item) {
             $err_item = false;
         }
         if ($user_login == "" || empty($user_login)) {
-            $err_status['login'] = true;
+            $err_add_user['login'] = true;
         }
         if ($user_password == "" || empty($user_password)) {
-            $err_status['password'] = true;
+            $err_add_user['password'] = true;
         }
         if ($user_firstname == "" || empty($user_firstname)) {
-            $err_status['firstname'] = true;
+            $err_add_user['firstname'] = true;
         }
         if ($user_lastname == "" || empty($user_lastname)) {
-            $err_status['lastname'] = true;
+            $err_add_user['lastname'] = true;
         }
         if ($user_email == "" || empty($user_email)) {
             $err_status['email'] = true;
         }
         if ($user_image_name == "" || $user_image_error == UPLOAD_ERR_NO_FILE) {
-            $err_status['image'] = true;
+            $err_add_user['image'] = true;
         }
         if ($user_privilege == "" || empty($user_privilege)) {
-            $err_status['privilege'] = true;
+            $err_add_user['privilege'] = true;
         }
         $err_result = false;
-        foreach($err_status as $err_item) {
+        foreach($err_add_user as $err_item) {
             $err_result = $err_result || $err_item;
         }
 
@@ -506,17 +520,17 @@ function addUsers($err_status) {
         }
     }
 
-    return $err_status;
+    include "includes/add_users.php";
 }
 
 /* Delete user from database */
 function deleteUsers() {
     global $connection;
 
-    if (isset($_GET['del_user_id'])) {
-        $user_id = $_GET['del_user_id'];
+    if (isset($_GET['delete_user_id'])) {
+        $delete_user_id = $_GET['delete_user_id'];
 
-        $query = "DELETE FROM users WHERE user_id = {$user_id};";
+        $query = "DELETE FROM users WHERE user_id = {$delete_user_id};";
         $delUser = mysqli_query($connection, $query);
         validateQuery($delUser);
 
@@ -556,7 +570,7 @@ function editUsers() {
 function updateUsers($user_id, $err_status) {
     global $connection;
 
-    if (isset($_POST['edit_user_btn'])) {
+    if (isset($_POST['update_user_btn'])) {
         $user_login = $_POST['edit_user_login'];
         $user_password = $_POST['edit_user_password'];
         $user_firstname = $_POST['edit_user_firstname'];

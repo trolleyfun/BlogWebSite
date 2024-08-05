@@ -1,8 +1,4 @@
-<?php 
-/* Add Post to database */
-$err_add_post = ['category_id'=>false, 'title'=>false, 'author'=>false, 'image'=>false, 'content'=>false];
-addPosts(); 
-?>
+<?php /* For function addPosts() */ ?>
 
 <!-- Add Post Form -->
  <div class="col-xs-6">
@@ -42,7 +38,12 @@ addPosts();
         </div>
         <div class="form-group">
             <label for="post_status">Статус</label>
-            <input type="text" name="post_status" id="post_status" class="form-control">
+            <select name="post_status" id="post_status" class="form-control">
+                <option value="">Выберите стутус публикации...</option>
+                <option value="черновик">Черновик</option>
+                <option value="опубликовано">Опубликовано</option>
+            </select>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['status'], "Выберите статус публикации"); ?></span>
         </div>
         <div class="form-group">
             <input type="submit" name="add_post_btn" class="btn btn-primary" value="Добавить публикацию">

@@ -1,8 +1,4 @@
-<?php 
-/* Add User to database */
-$err_add_user = ['login'=>false, 'password'=>false, 'firstname'=>false, 'lastname'=>false, 'email'=>false, 'image'=>false, 'privilege'=>false];
-$err_add_user = addUsers($err_add_user); 
-?>
+<?php /* For function addUsers() */ ?>
 
 <!-- Add User Form -->
  <div class="col-xs-6">

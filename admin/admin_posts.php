@@ -26,12 +26,9 @@
 
                         switch($source) {
                             case "add_posts":
-                                include "includes/add_posts.php";
+                                addPosts();
                                 break;
                             case "edit_posts":
-                                /* Edit selected post */
-                                $err_edit_post = ['post_id'=>false, 'category_id'=>false, 'title'=>false, 'author'=>false, 'date'=>false, 'image'=>false, 'content'=>false, 'comments_count'=>false, 'status'=>false];
-                                updatePosts();
                                 editPosts();
                                 break;
                             default:
