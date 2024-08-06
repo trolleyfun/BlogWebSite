@@ -13,7 +13,6 @@
                     <div class="col-lg-12">
                         <h1 class="page-header">
                             Регионы
-                            <small>Администратор</small>
                         </h1>
 
                         <div class="col-xs-6">

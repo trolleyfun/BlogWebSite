@@ -22,6 +22,14 @@ if (isset($_POST['login_btn'])) {
         $user_privilege = $row['user_privilege'];
         
         if ($user_login == $received_login && $user_password == $received_password) {
+            $_SESSION['user_id'] = $user_id;
+            $_SESSION['login'] = $user_login;
+            $_SESSION['firstname'] = $user_firstname;
+            $_SESSION['lastname'] = $user_lastname;
+            $_SESSION['email'] = $user_email;
+            $_SESSION['image'] = $user_image_name;
+            $_SESSION['privilege'] = $user_privilege;
+
             header("Location: ../admin/");
         } else {
             header("Location: ../index.php");

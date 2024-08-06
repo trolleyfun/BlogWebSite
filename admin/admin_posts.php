@@ -13,7 +13,6 @@
                     <div class="col-lg-12">
                         <h1 class="page-header">
                             Публикации
-                            <small>Администратор</small>
                         </h1>
 
                         <!-- Posts Section -->

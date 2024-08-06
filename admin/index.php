@@ -13,7 +13,7 @@
                     <div class="col-lg-12">
                         <h1 class="page-header">
                             Добро пожаловать
-                            <small>Администратор</small>
+                            <small><?=$session_user_firstname." ".$session_user_lastname;?></small>
                         </h1>
                     </div>
                 </div>
