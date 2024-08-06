@@ -558,7 +558,7 @@ function editUsers() {
             $user_image_name = $row['user_image'];
             $user_privilege = $row['user_privilege'];
 
-            $err_edit_user = ['login'=>false, 'password'=>false, 'firstname'=>false, 'lastname'=>false, 'email'=>false, 'image'=>false, 'privilege'=>false];
+            $err_edit_user = ['password'=>false, 'firstname'=>false, 'lastname'=>false, 'email'=>false, 'image'=>false, 'privilege'=>false];
 
             $err_edit_user = updateUsers($user_id, $err_edit_user);
             include "includes/edit_users.php";
@@ -571,7 +571,6 @@ function updateUsers($user_id, $err_status) {
     global $connection;
 
     if (isset($_POST['update_user_btn'])) {
-        $user_login = $_POST['edit_user_login'];
         $user_password = $_POST['edit_user_password'];
         $user_firstname = $_POST['edit_user_firstname'];
         $user_lastname = $_POST['edit_user_lastname'];
@@ -591,9 +590,6 @@ function updateUsers($user_id, $err_status) {
 
         foreach($err_status as $err_item) {
             $err_item = false;
-        }
-        if ($user_login == "" || empty($user_login)) {
-            $err_status['login'] = true;
         }
         if ($user_password == "" || empty($user_password)) {
             $err_status['password'] = true;
@@ -624,7 +620,6 @@ function updateUsers($user_id, $err_status) {
             }
 
             $query = "UPDATE users SET ";
-            $query .= "user_login = '{$user_login}', ";
             $query .= "user_password = '{$user_password}', ";
             $query .= "user_firstname = '{$user_firstname}', ";
             $query .= "user_lastname = '{$user_lastname}', ";

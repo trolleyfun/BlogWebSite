@@ -1,13 +1,8 @@
 <?php /* For function editUsers() */ ?>
 <!-- Edit User Form -->
 <div class="col-xs-6">
-    <h3>Редактирование пользователя</h3>
+    <h3>Редактирование пользователя <b><?=$user_login;?></b></h3>
     <form action="" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="edit_user_login">Логин</label>
-            <input type="text" name="edit_user_login" id="edit_user_login" class="form-control" value="<?=$user_login;?>">
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_user['login'], "Введите логин"); ?></span>
-        </div>
         <div class="form-group">
             <label for="edit_user_password">Пароль</label>
             <input type="password" name="edit_user_password" id="edit_user_password" class="form-control" minlength="8" value="<?=$user_password;?>">
