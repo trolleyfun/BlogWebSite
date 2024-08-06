@@ -5,7 +5,7 @@
     <td><?=$post_title;?></td>
     <td><?=$post_author;?></td>
     <td><?=$post_date;?></td>
-    <td><img src="../img/<?=$post_image;?>" alt="<?=$post_title;?>" style="width: 100px;"></td>
+    <td><img src="../img/<?=$post_image;?>" alt="<?=$post_title;?>" style="max-width: 100px;"></td>
     <td><?=$post_tags;?></td>
     <td><?=$post_comments_count;?></td>
     <td><?=$post_status;?></td>

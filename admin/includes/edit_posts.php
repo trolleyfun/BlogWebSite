@@ -28,7 +28,7 @@
         </div>
         <div class="form-group">
             <label for="edit_post_image">Изображение</label>
-            <img class="img-responsive" src="../img/<?=$post_image;?>" alt="<?=$post_title;?>" style="width: 100px;"><br>
+            <img class="img-responsive" src="../img/<?=$post_image;?>" alt="<?=$post_title;?>" style="max-width: 100px;"><br>
             <input type="file" name="edit_post_image" id="edit_post_image" class="form-control">
             <input type="hidden" name="current_post_image" class="form-control" value="<?=$post_image;?>" readonly>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['image'], "Загрузите изображение"); ?></span>

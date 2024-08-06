@@ -8,7 +8,7 @@
 <p><span class="glyphicon glyphicon-time"></span> Опубликовано <?=$post_date;?></p>
 <hr>
 <a href="post.php?post_id=<?=$post_id;?>">
-    <img class="img-responsive" src="img/<?=$post_image;?>" alt="<?=$post_title;?>">
+    <img class="img-responsive" src="img/<?=$post_image;?>" alt="<?=$post_title;?>" style="max-width: 600px;">
 </a>
 <hr>
 <p><?=$post_content;?></p>
