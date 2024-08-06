@@ -37,7 +37,7 @@
         <div class="form-group">
             <label for="user_privilege">Права доступа</label>
             <select name="user_privilege" id="user_privilege" class="form-control">
-                <option value="">выберите тип учетной записи...</option>
+                <option value="">Выберите тип учетной записи...</option>
                 <option value="пользователь">пользователь</option>
                 <option value="модератор">модератор</option>
                 <option value="администратор">администратор</option>

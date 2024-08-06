@@ -39,7 +39,7 @@
         <div class="form-group">
             <label for="post_status">Статус</label>
             <select name="post_status" id="post_status" class="form-control">
-                <option value="">выберите стутус публикации...</option>
+                <option value="">Выберите стутус публикации...</option>
                 <option value="черновик">черновик</option>
                 <option value="опубликовано">опубликовано</option>
             </select>

@@ -11,7 +11,7 @@
     <tbody>
         <?php 
         /* Put categories from database */
-        showAllCategories("includes/all_categories_table.php", NULL);
+        showAllCategories("includes/all_categories_table.php", null);
         ?>
     </tbody> 
 </table>
