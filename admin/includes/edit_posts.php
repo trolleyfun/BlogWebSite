@@ -45,8 +45,8 @@
         <div class="form-group">
             <label for="edit_post_status">Статус</label>
             <select name="edit_post_status" id="edit_post_status" class="form-control">
-                <option value="черновик" <?php if ($post_status == "черновик") {echo "selected";} ?>>Черновик</option>
-                <option value="опубликовано" <?php if ($post_status == "опубликовано") {echo "selected";} ?>>Опубликовано</option>
+                <option value="черновик" <?php if ($post_status == "черновик") {echo "selected";} ?>>черновик</option>
+                <option value="опубликовано" <?php if ($post_status == "опубликовано") {echo "selected";} ?>>опубликовано</option>
             </select>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['status'], "Выберите статус публикации"); ?></span>
         </div>

@@ -29,12 +29,9 @@
                                 include "includes/show_all_comments.php";
                                 break;
                         }
-                        ?>
-
-                        <?php 
+        
                         /* Delete comments from the database */
                         deleteComments();
-
                         /* Confirm new comments */
                         confirmComments();
                         ?>

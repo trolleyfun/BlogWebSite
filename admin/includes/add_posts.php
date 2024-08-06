@@ -39,9 +39,9 @@
         <div class="form-group">
             <label for="post_status">Статус</label>
             <select name="post_status" id="post_status" class="form-control">
-                <option value="">Выберите стутус публикации...</option>
-                <option value="черновик">Черновик</option>
-                <option value="опубликовано">Опубликовано</option>
+                <option value="">выберите стутус публикации...</option>
+                <option value="черновик">черновик</option>
+                <option value="опубликовано">опубликовано</option>
             </select>
             <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['status'], "Выберите статус публикации"); ?></span>
         </div>

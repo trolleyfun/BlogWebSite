@@ -22,30 +22,15 @@
                             addCategories();
                             /* Edit selected Category */
                             editCategories();
+                            /* Delete categories from database */
+                            deleteCategories();
                             ?>
                         </div>
 
-                        <!-- Category Table -->
                         <div class="col-xs-6">
-                            <table class="table table-bodered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Название</th>
-                                        <th></th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php 
-                                    /* Put categories from database */
-                                    showAllCategories("includes/all_categories_table.php", "");
-                                    ?>
-                                </tbody> 
-                            </table>
                             <?php 
-                            /* Delete categories from database */
-                            deleteCategories();
+                            /* Display all categories from database */
+                            include "includes/show_all_categories.php";
                             ?>
                         </div>
                     </div>

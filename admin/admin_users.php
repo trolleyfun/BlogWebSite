@@ -35,9 +35,7 @@
                                 include "includes/show_all_users.php";
                                 break;
                         }
-                        ?>
-
-                        <?php 
+                        
                         /* Delete user from the database */
                         deleteUsers();
                         ?>

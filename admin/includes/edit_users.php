@@ -38,9 +38,9 @@
         <div class="form-group">
             <label for="edit_user_privilege">Права доступа</label>
             <select name="edit_user_privilege" id="edit_user_privilege" class="form-control">
-                <option value="пользователь" <?php if ($user_privilege == "пользователь") {echo "selected";} ?>>Пользователь</option>
-                <option value="модератор" <?php if ($user_privilege == "модератор") {echo "selected";} ?>>Модератор</option>
-                <option value="администратор" <?php if ($user_privilege == "администратор") {echo "selected";} ?>>Администратор</option>
+                <option value="пользователь" <?php if ($user_privilege == "пользователь") {echo "selected";} ?>>пользователь</option>
+                <option value="модератор" <?php if ($user_privilege == "модератор") {echo "selected";} ?>>модератор</option>
+                <option value="администратор" <?php if ($user_privilege == "администратор") {echo "selected";} ?>>администратор</option>
             </select>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_user['privilege'], "Выберите тип учетной записи"); ?></span>
         </div>

@@ -37,10 +37,10 @@
         <div class="form-group">
             <label for="user_privilege">Права доступа</label>
             <select name="user_privilege" id="user_privilege" class="form-control">
-                <option value="">Выберите тип учетной записи...</option>
-                <option value="пользователь">Пользователь</option>
-                <option value="модератор">Модератор</option>
-                <option value="администратор">Администратор</option>
+                <option value="">выберите тип учетной записи...</option>
+                <option value="пользователь">пользователь</option>
+                <option value="модератор">модератор</option>
+                <option value="администратор">администратор</option>
             </select>
             <span style='color: #a94442;'><?php displayErrorMessage($err_add_user['privilege'], "Выберите тип учетной записи"); ?></span>
         </div>
