@@ -32,7 +32,7 @@
                 <a href="index.php"><i class="fa fa-fw fa-dashboard"></i> Статистика</a>
             </li>
             <li>
-                <a href="javascript:;" data-toggle="collapse" data-target="#posts"><i class="fa fa-fw fa-edit"></i> Публикации <i class="fa fa-fw fa-caret-down"></i></a>
+                <a href="javascript:;" data-toggle="collapse" data-target="#posts"><i class="fa fa-fw fa-file-text"></i> Публикации <i class="fa fa-fw fa-caret-down"></i></a>
                 <ul id="posts" class="collapse">
                     <li>
                         <a href="admin_posts.php">Все публикации</a>
@@ -43,7 +43,7 @@
                 </ul>
             </li>
             <li>
-                <a href="admin_comments.php"><i class="fa fa-fw fa-desktop"></i> Комментарии</a>
+                <a href="admin_comments.php"><i class="fa fa-fw fa-comments"></i> Комментарии</a>
             </li>
             <li>
                 <a href="admin_categories.php"><i class="fa fa-fw fa-list"></i> Регионы</a>
