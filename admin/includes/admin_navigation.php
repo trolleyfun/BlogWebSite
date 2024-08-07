@@ -29,7 +29,7 @@
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
             <li class="active">
-                <a href="index.php"><i class="fa fa-fw fa-dashboard"></i> Информация</a>
+                <a href="index.php"><i class="fa fa-fw fa-dashboard"></i> Статистика</a>
             </li>
             <li>
                 <a href="javascript:;" data-toggle="collapse" data-target="#posts"><i class="fa fa-fw fa-edit"></i> Публикации <i class="fa fa-fw fa-caret-down"></i></a>
