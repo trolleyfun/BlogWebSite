@@ -29,13 +29,9 @@ if (isset($_POST['login_btn'])) {
             $_SESSION['email'] = $user_email;
             $_SESSION['image'] = $user_image_name;
             $_SESSION['privilege'] = $user_privilege;
-
-            header("Location: ../admin/");
-        } else {
-            header("Location: ../index.php");
         }
-    } else {
-        header("Location: ../index.php");
     }
+
+    header("Location: ../index.php");
 }
 ?>

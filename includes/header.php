@@ -1,5 +1,7 @@
 <?php include "includes/db.php"; ?>
 <?php include "functions.php"; ?>
+<?php ob_start(); ?>
+<?php include "includes/session.php"; ?>
 <!DOCTYPE html>
 <html lang="ru">
 
@@ -18,6 +20,9 @@
 
     <!-- Custom CSS -->
     <link href="css/blog-home.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

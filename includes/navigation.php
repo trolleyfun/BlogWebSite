@@ -17,8 +17,13 @@
                     /* Put categories from database */
                     showAllCategories(4);
                     ?>
-                    <li><a href='admin'>Управление</a></li>
                 </ul>
+                <?php
+                /* Display Profile Navigation Menu for authorized users */
+                if (isset($_SESSION['login'])) {
+                    include "includes/profile_nav.php";
+                }
+                ?>
             </div>
             <!-- /.navbar-collapse -->
         </div>

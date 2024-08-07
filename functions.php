@@ -66,7 +66,9 @@ function showPostById() {
             $err_add_comment = addComments($post_id, $err_add_comment);
 
             include "includes/post_form.php";
-            include "includes/add_comment_form.php";
+            if (isset($_SESSION['login'])) {
+                include "includes/add_comment_form.php";
+            }
             showCommentsOfPost($post_id);
         }
     }
@@ -243,5 +245,23 @@ function showCommentsOfPost($comment_post_id) {
 
         include "includes/comment_form.php";
     }
+}
+
+/* Get information about authorized user from database. Put login as a parameter and return an array with login, firstname, lastname and privilege of user */
+function getSessionInfo($user_login) {
+    global $connection;
+
+    $query = "SELECT * FROM users WHERE user_login = '{$user_login}';";
+    $sessionInfo = mysqli_query($connection, $query);
+    validateQuery($sessionInfo);
+    $session_user = ['login'=>$user_login, 'firstname'=>"", 'lastname'=>"", 'privilege'=>""];
+    if ($row = mysqli_fetch_assoc($sessionInfo)) {
+        $session_user['login'] = $row['user_login'];
+        $session_user['firstname'] = $row['user_firstname'];
+        $session_user['lastname'] = $row['user_lastname'];
+        $session_user['privilege'] = $row['user_privilege'];
+    }
+
+    return $session_user;
 }
 ?>

@@ -1,6 +1,5 @@
 <?php /* For showPostById() function */ ?>
 <!-- Comment -->
- <hr>
 <div class="media">
     <a class="pull-left" href="post.php?post_id=<?=$comment_post_id;?>">
         <img class="media-object" src="img/user_icon.png" alt="Фотография пользователя">
@@ -12,3 +11,4 @@
         <?=$comment_content;?>
     </div>
 </div>
+<hr>
