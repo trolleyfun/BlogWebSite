@@ -14,17 +14,17 @@
         <div class="form-group">
             <label for="edit_post_title">Название</label>
             <input type="text" name="edit_post_title" id="edit_post_title" class="form-control" value="<?=$post_title;?>">
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['title'], "Введите название публикации"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['title'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="edit_post_author">Автор</label>
             <input type="text" name="edit_post_author" id="edit_post_author" class="form-control" value="<?=$post_author;?>">
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['author'], "Введите автора публикации"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['author'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="edit_post_date">Дата публикации</label>
             <input type="date" name="edit_post_date" id="edit_post_date" class="form-control" value="<?=$post_date;?>">
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['date'], "Введите дату"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['date'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="edit_post_image">Изображение</label>
@@ -36,7 +36,7 @@
         <div class="form-group">
             <label for="edit_post_content">Текст</label>
             <textarea name="edit_post_content" id="edit_post_content" class="form-control" rows="10"><?=$post_content;?></textarea>
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['content'], "Введите текст публикации"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['content'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="edit_post_tags">Тэги</label>

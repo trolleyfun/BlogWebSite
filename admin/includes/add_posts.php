@@ -15,12 +15,12 @@
         <div class="form-group">
             <label for="post_title">Название</label>
             <input type="text" name="post_title" id="post_title" class="form-control">
-            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['title'], "Введите название публикации"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['title'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="post_author">Автор</label>
             <input type="text" name="post_author" id="post_author" class="form-control">
-            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['author'], "Введите автора публикации"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['author'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="post_image">Изображение</label>
@@ -30,7 +30,7 @@
         <div class="form-group">
             <label for="post_content">Текст</label>
             <textarea name="post_content" id="post_content" class="form-control" rows="10"></textarea>
-            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['content'], "Введите текст публикации"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['content'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="post_tags">Тэги</label>

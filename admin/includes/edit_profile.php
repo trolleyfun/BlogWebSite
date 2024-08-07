@@ -6,22 +6,22 @@
         <div class="form-group">
             <label for="profile_password">Пароль</label>
             <input type="password" name="profile_password" id="profile_password" class="form-control" minlength="8" value="<?=$user_password;?>">
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['password'], "Введите пароль"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['password'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="profile_firstname">Имя</label>
             <input type="text" name="profile_firstname" id="profile_firstname" class="form-control" value="<?=$user_firstname;?>">
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['firstname'], "Введите имя"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['firstname'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="profile_lastname">Фамилия</label>
             <input type="text" name="profile_lastname" id="profile_lastname" class="form-control" value="<?=$user_lastname;?>">
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['lastname'], "Введите фамилию"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['lastname'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="profile_email">E-mail</label>
             <input type="email" name="profile_email" id="profile_email" class="form-control" value="<?=$user_email;?>">
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['email'], "Введите e-mail"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['email'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="profile_image">Изображение</label>

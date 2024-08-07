@@ -467,7 +467,7 @@ function showAllUsers() {
 function addUsers() {
     global $connection;
 
-    $err_add_user = ['login'=>false, 'password'=>false, 'firstname'=>false, 'lastname'=>false, 'email'=>false, 'image'=>false, 'privilege'=>false];
+    $err_add_user = ['login_empty'=>false, 'login_exists'=>false, 'password'=>false, 'firstname'=>false, 'lastname'=>false, 'email'=>false, 'image'=>false, 'privilege'=>false];
 
     if (isset($_POST['add_user_btn'])) {
         $user_login = $_POST['user_login'];
@@ -485,8 +485,9 @@ function addUsers() {
         foreach($err_add_user as $err_item) {
             $err_item = false;
         }
+        $err_add_user['login_exists'] = ifLoginExists($user_login);
         if ($user_login == "" || empty($user_login)) {
-            $err_add_user['login'] = true;
+            $err_add_user['login_empty'] = true;
         }
         if ($user_password == "" || empty($user_password)) {
             $err_add_user['password'] = true;
@@ -749,5 +750,20 @@ function updateProfile($user_login, $err_status) {
 
     }
     return $err_status;
+}
+
+/* Check if login is already exists. Return true if login exists and return false if login doesn't exist */
+function ifLoginExists($login) {
+    global $connection;
+
+    $query = "SELECT * FROM users WHERE user_login = '{$login}';";
+    $loginExists = mysqli_query($connection, $query);
+    validateQuery($loginExists);
+    $num_rows = mysqli_num_rows($loginExists);
+    if ($num_rows > 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 ?>
