@@ -16,7 +16,7 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?=$session_user['login'];?> <b class="caret"></b></a>
             <ul class="dropdown-menu">
                 <li>
-                    <a href="#"><i class="fa fa-fw fa-user"></i> Профиль</a>
+                    <a href="admin_profile.php"><i class="fa fa-fw fa-user"></i> Профиль</a>
                 </li>
                 <li class="divider"></li>
                 <li>
@@ -60,7 +60,7 @@
                 </ul>
             </li>
             <li>
-                <a href="#"><i class="fa fa-fw fa-wrench"></i> Профиль</a>
+                <a href="admin_profile.php"><i class="fa fa-fw fa-wrench"></i> Профиль</a>
             </li>
         </ul>
     </div>

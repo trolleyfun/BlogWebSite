@@ -655,4 +655,99 @@ function getSessionInfo($user_login) {
 
     return $session_user;
 }
+
+/* Display Edit Form for authorized user with login $edit_user_login. Put data for this user from the database */
+function editProfile($edit_user_login) {
+    global $connection;
+
+    $query = "SELECT * FROM users WHERE user_login = '{$edit_user_login}';";
+    $editProfile = mysqli_query($connection, $query);
+    validateQuery($editProfile);
+    if ($row = mysqli_fetch_assoc($editProfile)) {
+        $user_login = $row['user_login'];
+        $user_password = $row['user_password'];
+        $user_firstname = $row['user_firstname'];
+        $user_lastname = $row['user_lastname'];
+        $user_email = $row['user_email'];
+        $user_image_name = $row['user_image'];
+        $user_privilege = $row['user_privilege'];
+
+        $err_edit_profile = ['password'=>false, 'firstname'=>false, 'lastname'=>false, 'email'=>false, 'image'=>false, 'privilege'=>false];
+
+        $err_edit_profile = updateProfile($user_login, $err_edit_profile);
+        include "includes/edit_profile.php";
+    }
+}
+
+/* Put User Data with login $user_login from the form to database. Get as parameter and return an array $err_status which contains Error Status for all fields in the form */
+function updateProfile($user_login, $err_status) {
+    global $connection;
+
+    if (isset($_POST['update_profile_btn'])) {
+        $user_password = $_POST['profile_password'];
+        $user_firstname = $_POST['profile_firstname'];
+        $user_lastname = $_POST['profile_lastname'];
+        $user_email = $_POST['profile_email'];
+        $user_privilege = $_POST['profile_privilege'];
+        
+        $current_user_image = $_POST['current_profile_image'];
+        $user_image_name = $_FILES['profile_image']['name'];
+        $user_image_tmp = $_FILES['profile_image']['tmp_name'];
+        $user_image_error = $_FILES['profile_image']['error'];
+
+        $is_new_image = true;
+        if ($user_image_name == "" || $user_image_error == UPLOAD_ERR_NO_FILE) {
+            $user_image_name = $current_user_image;
+            $is_new_image = false;
+        }
+
+        foreach($err_status as $err_item) {
+            $err_item = false;
+        }
+        if ($user_password == "" || empty($user_password)) {
+            $err_status['password'] = true;
+        }
+        if ($user_firstname == "" || empty($user_firstname)) {
+            $err_status['firstname'] = true;
+        }
+        if ($user_lastname == "" || empty($user_lastname)) {
+            $err_status['lastname'] = true;
+        }
+        if ($user_email == "" || empty($user_email)) {
+            $err_status['email'] = true;
+        }
+        if ($user_image_name == "" || empty($user_image_name)) {
+            $err_status['image'] = true;
+        }
+        if ($user_privilege == "" || empty($user_privilege)) {
+            $err_status['privilege'] = true;
+        }
+        $err_result = false;
+        foreach($err_status as $err_item) {
+            $err_result = $err_result || $err_item;
+        }
+
+        if (!$err_result) {
+            if ($is_new_image) {
+                move_uploaded_file($user_image_tmp, "../img/{$user_image_name}");
+            }
+
+            $query = "UPDATE users SET ";
+            $query .= "user_password = '{$user_password}', ";
+            $query .= "user_firstname = '{$user_firstname}', ";
+            $query .= "user_lastname = '{$user_lastname}', ";
+            $query .= "user_email = '{$user_email}', ";
+            $query .= "user_image = '{$user_image_name}', ";
+            $query .= "user_privilege = '{$user_privilege}' ";
+            $query .= "WHERE user_login = '{$user_login}';";
+
+            $updateUser = mysqli_query($connection, $query);
+            validateQuery($updateUser);
+
+            header("Location: admin_profile.php");
+        }
+
+    }
+    return $err_status;
+}
 ?>
