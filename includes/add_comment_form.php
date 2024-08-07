@@ -2,9 +2,9 @@
 <!-- Blog Comments -->
 
 <!-- Comments Form -->
-<div class="well">
+<div class="well" id="add_comment_form">
     <h4>Оставьте комментарий</h4>
-    <form role="form" action="" method="post">
+    <form role="form" action="#add_comment_form" method="post">
         <div class="form-group">
             <label for="comment_author">Пользователь:</label>
             <input type="text" name="comment_author" id="comment_author" class="form-control">
@@ -23,5 +23,6 @@
         <button type="submit" name="add_comment_btn" class="btn btn-primary">Отправить</button>
     </form>
 </div>
+<hr>
 
 <!-- Posted Comments -->
