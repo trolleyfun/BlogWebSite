@@ -9,8 +9,8 @@
         chart_elements.forEach((item) => {
             /* Get chart properties and data from the tag attributes */
             var chart_color = item.getAttribute('data-color');
-            var chart_names = item.getAttribute('data-names').split(' ');
-            var chart_values = item.getAttribute('data-values').split(' ');
+            var chart_names = item.getAttribute('data-names').split('#');
+            var chart_values = item.getAttribute('data-values').split('#');
             var chart_length = Math.min(chart_values.length, chart_names.length);
             var axis_x_title = item.getAttribute('data-x-title');
             var axis_y_title = item.getAttribute('data-y-title');

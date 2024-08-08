@@ -31,22 +31,18 @@
                     <!-- Users Statistics -->
                     <?php showUsersStatisticsWidget("red", "admin_users.php"); ?>
                 </div>
+                <hr>
                 <!-- /.row -->
 
                 <!-- Charts -->
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="dashboard_chart" style="width: auto; height: 300px;" data-color="#fff000" data-names="Европа Азия Россия" data-values="2 5 3" data-x-title="" data-y-title="количество публикаций" data-chart-title="Популярные регионы"></div>
+                        <!-- Posts Number By Category Chart -->
+                        <?php showPostsByCategoryChart("#337ab7", 6); ?>
+                        <!-- Comments Number By Post Chart -->
+                        <?php showCommentsByPostChart("#5cb85c", 5); ?>
                     </div>
-                    <!-- /.col-lg-4.col-md-6 -->
-                    <!-- <div class="col-lg-4 col-md-6">
-                        <div class="columnchart_material" style="width: auto; height: 200px;" data-color="red"></div>
-                    </div> -->
-                    <!-- /.col-lg-4.col-md-6 -->
-                    <!-- <div class="col-lg-4 col-md-6">
-                        <div class="columnchart_material" style="width: auto; height: 200px;"></div>
-                    </div> -->
-                    <!-- /.col-lg-4.col-md-6 -->
+                    <!-- /.col-lg-12 -->
                 </div>
                 <!-- /.row -->
 

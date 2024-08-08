@@ -886,4 +886,67 @@ function showUsersStatisticsWidget($widget_color, $link_name) {
 
     include "includes/statistics_widget_form.php";
 }
+
+function showPostsByCategoryChart($chart_color, $categories_num) {
+    global $connection;
+
+    $query = "SELECT cat_title, CASE WHEN posts_cnt IS NULL THEN 0 ELSE posts_cnt END AS posts_cnt "; 
+    $query .= "FROM categories AS cat LEFT JOIN ";
+    $query .= "(SELECT post_category_id, COUNT(*) AS posts_cnt FROM posts WHERE post_status = 'опубликовано' GROUP BY post_category_id) AS p_cnt ";
+    $query .= "ON cat.cat_id = p_cnt.post_category_id ORDER BY posts_cnt DESC LIMIT {$categories_num};";
+
+    $postsByCategoryChart = mysqli_query($connection, $query);
+    validateQuery($postsByCategoryChart);
+
+    $names_str = "";
+    $values_str = "";
+    while($row = mysqli_fetch_assoc($postsByCategoryChart)) {
+        $cat_title = $row['cat_title'];
+        $posts_cnt = $row['posts_cnt'];
+        if ($names_str != "") {
+            $names_str .= "#";
+        }
+        if ($values_str != "") {
+            $values_str .= "#";
+        }
+        $names_str .= $cat_title;
+        $values_str .= $posts_cnt;
+    }
+
+    $axis_x_title = "";
+    $axis_y_title = "количество публикаций";
+    $chart_title = "Популярные регионы";
+
+    include "includes/statistics_chart_form.php";
+}
+
+function showCommentsByPostChart($chart_color, $posts_num) {
+    global $connection;
+
+    $query = "SELECT * FROM posts WHERE post_status = 'опубликовано' ORDER BY post_comments_count DESC LIMIT {$posts_num};";
+
+    $commentsByPostChart = mysqli_query($connection, $query);
+    validateQuery($commentsByPostChart);
+
+    $names_str = "";
+    $values_str = "";
+    while($row = mysqli_fetch_assoc($commentsByPostChart)) {
+        $cat_title = $row['post_title'];
+        $posts_cnt = $row['post_comments_count'];
+        if ($names_str != "") {
+            $names_str .= "#";
+        }
+        if ($values_str != "") {
+            $values_str .= "#";
+        }
+        $names_str .= $cat_title;
+        $values_str .= $posts_cnt;
+    }
+
+    $axis_x_title = "";
+    $axis_y_title = "количество комментариев";
+    $chart_title = "Самые читаемые публикации";
+
+    include "includes/statistics_chart_form.php";
+}
 ?>
