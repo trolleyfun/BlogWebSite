@@ -35,9 +35,12 @@
 
                 <!-- Charts -->
                 <div class="row">
-                    <div id="columnchart_material" style="width: 800px; height: 500px;"></div>
+                    <div class="col-xs-12">
+                        <div id="columnchart_material" style="width: auto; height: 500px;"></div>
+                    </div>
+                    <!-- /.col-xs-12 -->
                 </div>
-                <!-- ./row -->
+                <!-- /.row -->
 
             </div>
             <!-- /.container-fluid -->
@@ -47,5 +50,7 @@
 
     </div>
     <!-- /#wrapper -->
+
+    <?php include "includes/admin_charts_script.php"; ?>
 
 <?php include "includes/admin_footer.php"; ?>
