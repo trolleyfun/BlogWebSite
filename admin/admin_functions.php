@@ -766,4 +766,124 @@ function ifLoginExists($login) {
         return false;
     }
 }
+
+/* Display number of published posts on the Statistics Page in admin. $widget_color is color of widget, $link_name is link to the Posts Page */
+function showPostsStatistics($widget_color, $link_name) {
+    global $connection;
+
+    $query = "SELECT * FROM posts WHERE post_status = 'опубликовано';";
+    $postsStatistics = mysqli_query($connection, $query);
+    validateQuery($postsStatistics);
+
+    $data_num = mysqli_num_rows($postsStatistics);
+    $data_str = "";
+    switch(true) {
+        case $data_num % 100 >= 11 && $data_num % 100 <= 19:
+            $data_str = "публикаций";
+            break;
+        case $data_num % 10 === 1:
+            $data_str = "публикация";
+            break;
+        case $data_num % 10 >= 2 && $data_num % 10 <= 4:
+            $data_str = "публикации";
+            break;
+        default:
+            $data_str = "публикаций";
+            break;
+    }
+
+    $widget_icon = "fa-file-text";
+
+    include "includes/statistics_form.php";
+}
+
+/* Display number of approved comments on the Statistics Page in admin. $widget_color is color of widget, $link_name is link to the Comments Page */
+function showCommentsStatistics($widget_color, $link_name) {
+    global $connection;
+
+    $query = "SELECT * FROM comments WHERE comment_status = 'одобрен';";
+    $commentsStatistics = mysqli_query($connection, $query);
+    validateQuery($commentsStatistics);
+
+    $data_num = mysqli_num_rows($commentsStatistics);
+    $data_str = "";
+    switch(true) {
+        case $data_num % 100 >= 11 && $data_num % 100 <= 19:
+            $data_str = "комментариев";
+            break;
+        case $data_num % 10 === 1:
+            $data_str = "комментарий";
+            break;
+        case $data_num % 10 >= 2 && $data_num % 10 <= 4:
+            $data_str = "комментария";
+            break;
+        default:
+            $data_str = "комментариев";
+            break;
+    }
+
+    $widget_icon = "fa-comments";
+
+    include "includes/statistics_form.php";
+}
+
+/* Display number of categories on the Statistics Page in admin. $widget_color is color of widget, $link_name is link to the Categories Page */
+function showCategoriesStatistics($widget_color, $link_name) {
+    global $connection;
+
+    $query = "SELECT * FROM categories;";
+    $categoriesStatistics = mysqli_query($connection, $query);
+    validateQuery($categoriesStatistics);
+
+    $data_num = mysqli_num_rows($categoriesStatistics);
+    $data_str = "";
+    switch(true) {
+        case $data_num % 100 >= 11 && $data_num % 100 <= 19:
+            $data_str = "регионов";
+            break;
+        case $data_num % 10 === 1:
+            $data_str = "регион";
+            break;
+        case $data_num % 10 >= 2 && $data_num % 10 <= 4:
+            $data_str = "региона";
+            break;
+        default:
+            $data_str = "регионов";
+            break;
+    }
+
+    $widget_icon = "fa-list";
+
+    include "includes/statistics_form.php";
+}
+
+/* Display number of users on the Statistics Page in admin. $widget_color is color of widget, $link_name is link to the Users Page */
+function showUsersStatistics($widget_color, $link_name) {
+    global $connection;
+
+    $query = "SELECT * FROM users;";
+    $usersStatistics = mysqli_query($connection, $query);
+    validateQuery($usersStatistics);
+
+    $data_num = mysqli_num_rows($usersStatistics);
+    $data_str = "";
+    switch(true) {
+        case $data_num % 100 >= 11 && $data_num % 100 <= 19:
+            $data_str = "пользователей";
+            break;
+        case $data_num % 10 === 1:
+            $data_str = "пользователь";
+            break;
+        case $data_num % 10 >= 2 && $data_num % 10 <= 4:
+            $data_str = "пользователя";
+            break;
+        default:
+            $data_str = "пользователей";
+            break;
+    }
+
+    $widget_icon = "fa-user";
+
+    include "includes/statistics_form.php";
+}
 ?>
