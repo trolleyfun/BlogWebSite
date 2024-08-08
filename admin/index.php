@@ -20,6 +20,7 @@
                 <!-- /.row -->
 
                 <!-- Dashboard Section -->
+                <!-- Widgets -->
                 <div class="row">
                     <!-- Posts Statistics -->
                     <?php showPostsStatistics("primary", "admin_posts.php"); ?>
@@ -31,6 +32,12 @@
                     <?php showUsersStatistics("red", "admin_users.php"); ?>
                 </div>
                 <!-- /.row -->
+
+                <!-- Charts -->
+                <div class="row">
+                    <div id="columnchart_material" style="width: 800px; height: 500px;"></div>
+                </div>
+                <!-- ./row -->
 
             </div>
             <!-- /.container-fluid -->
