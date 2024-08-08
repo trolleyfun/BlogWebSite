@@ -887,6 +887,7 @@ function showUsersStatisticsWidget($widget_color, $link_name) {
     include "includes/statistics_widget_form.php";
 }
 
+/* Get the number of published posts for all categories from database and put this data to the chart. Categories are sorted by number of posts from top to down. $chart_color is color of the chart, $categories_num is number of categories that is displayed on the chart */
 function showPostsByCategoryChart($chart_color, $categories_num) {
     global $connection;
 
@@ -920,6 +921,7 @@ function showPostsByCategoryChart($chart_color, $categories_num) {
     include "includes/statistics_chart_form.php";
 }
 
+/* Get the number of approved comments for all posts from database and put this data to the chart. Posts are sorted by number of comments from top to down. $chart_color is color of the chart, $posts_num is number of posts that is displayed on the chart */
 function showCommentsByPostChart($chart_color, $posts_num) {
     global $connection;
 
