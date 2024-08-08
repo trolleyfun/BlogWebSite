@@ -1,4 +1,4 @@
-<?php /* For functions showPostsStatistics() */ ?>
+<?php /* For functions showPostsStatisticsWidget(), showCommentsStatisticsWidget(), showCategoriesStatisticsWidget(), showUsersStatisticsWidget() */ ?>
 <div class="col-lg-3 col-md-6">
     <div class="panel panel-<?=$widget_color;?>">
         <div class="panel-heading">

@@ -23,22 +23,30 @@
                 <!-- Widgets -->
                 <div class="row">
                     <!-- Posts Statistics -->
-                    <?php showPostsStatistics("primary", "admin_posts.php"); ?>
+                    <?php showPostsStatisticsWidget("primary", "admin_posts.php"); ?>
                     <!-- Comments Statistics -->
-                    <?php showCommentsStatistics("green", "admin_comments.php"); ?>
+                    <?php showCommentsStatisticsWidget("green", "admin_comments.php"); ?>
                     <!-- Categories Statistics -->
-                    <?php showCategoriesStatistics("yellow", "admin_categories.php"); ?>
+                    <?php showCategoriesStatisticsWidget("yellow", "admin_categories.php"); ?>
                     <!-- Users Statistics -->
-                    <?php showUsersStatistics("red", "admin_users.php"); ?>
+                    <?php showUsersStatisticsWidget("red", "admin_users.php"); ?>
                 </div>
                 <!-- /.row -->
 
                 <!-- Charts -->
                 <div class="row">
-                    <div class="col-xs-12">
-                        <div id="columnchart_material" style="width: auto; height: 500px;"></div>
+                    <div class="col-lg-12">
+                        <div class="dashboard_chart" style="width: auto; height: 300px;" data-color="#fff000" data-names="Европа Азия Россия" data-values="2 5 3" data-x-title="" data-y-title="количество публикаций" data-chart-title="Популярные регионы"></div>
                     </div>
-                    <!-- /.col-xs-12 -->
+                    <!-- /.col-lg-4.col-md-6 -->
+                    <!-- <div class="col-lg-4 col-md-6">
+                        <div class="columnchart_material" style="width: auto; height: 200px;" data-color="red"></div>
+                    </div> -->
+                    <!-- /.col-lg-4.col-md-6 -->
+                    <!-- <div class="col-lg-4 col-md-6">
+                        <div class="columnchart_material" style="width: auto; height: 200px;"></div>
+                    </div> -->
+                    <!-- /.col-lg-4.col-md-6 -->
                 </div>
                 <!-- /.row -->
 

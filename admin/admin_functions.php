@@ -768,7 +768,7 @@ function ifLoginExists($login) {
 }
 
 /* Display number of published posts on the Statistics Page in admin. $widget_color is color of widget, $link_name is link to the Posts Page */
-function showPostsStatistics($widget_color, $link_name) {
+function showPostsStatisticsWidget($widget_color, $link_name) {
     global $connection;
 
     $query = "SELECT * FROM posts WHERE post_status = 'опубликовано';";
@@ -794,11 +794,11 @@ function showPostsStatistics($widget_color, $link_name) {
 
     $widget_icon = "fa-file-text";
 
-    include "includes/statistics_form.php";
+    include "includes/statistics_widget_form.php";
 }
 
 /* Display number of approved comments on the Statistics Page in admin. $widget_color is color of widget, $link_name is link to the Comments Page */
-function showCommentsStatistics($widget_color, $link_name) {
+function showCommentsStatisticsWidget($widget_color, $link_name) {
     global $connection;
 
     $query = "SELECT * FROM comments WHERE comment_status = 'одобрен';";
@@ -824,11 +824,11 @@ function showCommentsStatistics($widget_color, $link_name) {
 
     $widget_icon = "fa-comments";
 
-    include "includes/statistics_form.php";
+    include "includes/statistics_widget_form.php";
 }
 
 /* Display number of categories on the Statistics Page in admin. $widget_color is color of widget, $link_name is link to the Categories Page */
-function showCategoriesStatistics($widget_color, $link_name) {
+function showCategoriesStatisticsWidget($widget_color, $link_name) {
     global $connection;
 
     $query = "SELECT * FROM categories;";
@@ -854,11 +854,11 @@ function showCategoriesStatistics($widget_color, $link_name) {
 
     $widget_icon = "fa-list";
 
-    include "includes/statistics_form.php";
+    include "includes/statistics_widget_form.php";
 }
 
 /* Display number of users on the Statistics Page in admin. $widget_color is color of widget, $link_name is link to the Users Page */
-function showUsersStatistics($widget_color, $link_name) {
+function showUsersStatisticsWidget($widget_color, $link_name) {
     global $connection;
 
     $query = "SELECT * FROM users;";
@@ -884,6 +884,6 @@ function showUsersStatistics($widget_color, $link_name) {
 
     $widget_icon = "fa-user";
 
-    include "includes/statistics_form.php";
+    include "includes/statistics_widget_form.php";
 }
 ?>
