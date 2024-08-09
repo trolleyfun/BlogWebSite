@@ -7,17 +7,17 @@
     <span style='color: #008000;'><?php displayMessage($err_add_comment['if_sent'], "Ваш комментарий успешно отправлен. Дождитесь проверки модератором"); ?></span>
     <form role="form" action="#add_comment_form" method="post">
         <div class="form-group">
-            <label for="comment_author">Пользователь:</label>
+            <label for="comment_author">Пользователь<span style='color: #a94442;'> *</span></label>
             <input type="text" name="comment_author" id="comment_author" class="form-control" required>
             <span style='color: #a94442;'><?php displayMessage($err_add_comment['author'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
-            <label for="comment_email">E-mail:</label>
+            <label for="comment_email">E-mail<span style='color: #a94442;'> *</span></label>
             <input type="email" name="comment_email" id="comment_email" class="form-control" required>
             <span style='color: #a94442;'><?php displayMessage($err_add_comment['email'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
-            <label for="comment_content">Комментарий:</label>
+            <label for="comment_content">Комментарий<span style='color: #a94442;'> *</span></label>
             <textarea name="comment_content" id="comment_content" class="form-control" rows="3" required></textarea>
             <span style='color: #a94442;'><?php displayMessage($err_add_comment['content'], "Это поле не может быть пустым"); ?></span>
         </div>

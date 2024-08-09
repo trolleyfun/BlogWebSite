@@ -165,9 +165,15 @@ function addPosts() {
         $post_author = $_POST['post_author'];
         $post_date = date('Y-m-d');
 
+        $is_new_post_image = true;
+        $default_post_image_name = "post_image_default.png";
         $post_image_name = $_FILES['post_image']['name'];
         $post_image_temp = $_FILES['post_image']['tmp_name'];
         $post_image_err = $_FILES['post_image']['error'];
+        if ($post_image_name == "" || $post_image_err == UPLOAD_ERR_NO_FILE) {
+            $post_image_name = $default_post_image_name;
+            $is_new_post_image = false;
+        }
 
         $post_content = $_POST['post_content'];
         $post_tags = $_POST['post_tags'];
@@ -185,7 +191,7 @@ function addPosts() {
         if ($post_author == "" || empty($post_author)) {
             $err_add_post['author'] = true;
         }
-        if ($post_image_name == "" || $post_image_err == UPLOAD_ERR_NO_FILE) {
+        if ($post_image_name == "" || empty($post_image_name)) {
             $err_add_post['image'] = true;
         }
         if ($post_content == "" || empty($post_content)) {
@@ -200,7 +206,9 @@ function addPosts() {
         }
 
         if (!$err_result) {
-            move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
+            if ($is_new_post_image) {
+                move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
+            }
 
             $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_date, post_image, post_content, post_tags, post_status) ";
             $query .= "VALUES({$post_category_id}, '{$post_title}', '{$post_author}', '{$post_date}', '{$post_image_name}', '{$post_content}', '{$post_tags}', '{$post_status}');";
@@ -484,9 +492,15 @@ function addUsers() {
         $user_lastname = $_POST['user_lastname'];
         $user_email = $_POST['user_email'];
 
+        $is_new_user_image = true;
+        $default_user_image_name = "user_icon_default.png";
         $user_image_name = $_FILES['user_image']['name'];
         $user_image_tmp = $_FILES['user_image']['tmp_name'];
         $user_image_error = $_FILES['user_image']['error'];
+        if ($user_image_name == "" || $user_image_error == UPLOAD_ERR_NO_FILE) {
+            $user_image_name = $default_user_image_name;
+            $is_new_user_image = false;
+        }
 
         $user_privilege = $_POST['user_privilege'];
 
@@ -509,7 +523,7 @@ function addUsers() {
         if ($user_email == "" || empty($user_email)) {
             $err_status['email'] = true;
         }
-        if ($user_image_name == "" || $user_image_error == UPLOAD_ERR_NO_FILE) {
+        if ($user_image_name == "" || empty($user_image_name)) {
             $err_add_user['image'] = true;
         }
         if ($user_privilege == "" || empty($user_privilege)) {
@@ -521,7 +535,9 @@ function addUsers() {
         }
 
         if (!$err_result) {
-            move_uploaded_file($user_image_tmp, "../img/{$user_image_name}");
+            if ($is_new_user_image) {
+                move_uploaded_file($user_image_tmp, "../img/{$user_image_name}");
+            }
 
             $query = "INSERT INTO users(user_login, user_password, user_firstname, user_lastname, user_email, user_image, user_privilege) VALUES('{$user_login}', '{$user_password}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$user_image_name}', '{$user_privilege}');";
             $addUser = mysqli_query($connection, $query);
@@ -996,7 +1012,7 @@ function showCommentOperationInfo() {
         $comment_operation_message = "";
         switch($comment_operation) {
             case "add":
-                $comment_operation_message = "Ваш комментарий успешно добавлен";
+                $comment_operation_message = "Ваш комментарий успешно отправлен. Дождитесь проверки модератором";
                 break;
             case "delete":
                 $comment_operation_message = "Комментарий удален";
@@ -1046,7 +1062,7 @@ function showUserOperationInfo() {
         $user_operation_message = "";
         switch($user_operation) {
             case "add":
-                $user_operation_message = "Пользователь успешно добавлен";
+                $user_operation_message = "Пользователь успешно создан";
                 break;
             case "delete":
                 $user_operation_message = "Пользователь удален";
