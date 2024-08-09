@@ -528,7 +528,7 @@ function showAllUsers() {
 function addUsers() {
     global $connection;
 
-    $err_add_user = ['login_empty'=>false, 'login_exists'=>false, 'password'=>false, 'firstname'=>false, 'lastname'=>false, 'email'=>false, 'image'=>false, 'privilege'=>false];
+    $err_add_user = ['login_empty'=>false, 'login_exists'=>false, 'password_empty'=>false, 'password_correct'=>false, 'firstname'=>false, 'lastname'=>false, 'email_empty'=>false, 'email_exists'=>false, 'email_correct'=>false, 'image'=>false, 'privilege_empty'=>false, 'privilege_correct'=>false];
 
     if (isset($_POST['add_user_btn'])) {
         $user_login = $_POST['user_login'];
@@ -552,12 +552,15 @@ function addUsers() {
         foreach($err_add_user as $err_item) {
             $err_item = false;
         }
-        $err_add_user['login_exists'] = ifLoginExists($user_login);
         if ($user_login == "" || empty($user_login)) {
             $err_add_user['login_empty'] = true;
+        } else {
+            $err_add_user['login_exists'] = ifLoginExists($user_login);
         }
         if ($user_password == "" || empty($user_password)) {
-            $err_add_user['password'] = true;
+            $err_add_user['password_empty'] = true;
+        } else {
+            $err_add_user['password_correct'] = !passwordValidation($user_password);
         }
         if ($user_firstname == "" || empty($user_firstname)) {
             $err_add_user['firstname'] = true;
@@ -566,13 +569,18 @@ function addUsers() {
             $err_add_user['lastname'] = true;
         }
         if ($user_email == "" || empty($user_email)) {
-            $err_status['email'] = true;
+            $err_add_user['email_empty'] = true;
+        } else {
+            $err_add_user['email_correct'] = !emailValidation($user_email);
+            $err_add_user['email_exists'] = ifEmailExists($user_email);
         }
         if ($user_image_name == "" || empty($user_image_name)) {
             $err_add_user['image'] = true;
         }
         if ($user_privilege == "" || empty($user_privilege)) {
-            $err_add_user['privilege'] = true;
+            $err_add_user['privilege_empty'] = true;
+        } else {
+            $err_add_user['privilege_correct'] = !userPrivilegeValidation($user_privilege);
         }
         $err_result = false;
         foreach($err_add_user as $err_item) {
@@ -630,7 +638,7 @@ function editUsers() {
             $user_image_name = $row['user_image'];
             $user_privilege = $row['user_privilege'];
 
-            $err_edit_user = ['password'=>false, 'firstname'=>false, 'lastname'=>false, 'email'=>false, 'image'=>false, 'privilege'=>false];
+            $err_edit_user = ['password_empty'=>false, 'password_correct'=>false, 'firstname'=>false, 'lastname'=>false, 'email_empty'=>false, 'email_exists'=>false, 'email_correct'=>false, 'image'=>false, 'privilege_empty'=>false, 'privilege_correct'=>false];
 
             $err_edit_user = updateUsers($user_id, $err_edit_user);
             include "includes/edit_users.php";
@@ -664,7 +672,9 @@ function updateUsers($user_id, $err_status) {
             $err_item = false;
         }
         if ($user_password == "" || empty($user_password)) {
-            $err_status['password'] = true;
+            $err_status['password_empty'] = true;
+        } else {
+            $err_status['password_correct'] = !passwordValidation($user_password);
         }
         if ($user_firstname == "" || empty($user_firstname)) {
             $err_status['firstname'] = true;
@@ -673,13 +683,18 @@ function updateUsers($user_id, $err_status) {
             $err_status['lastname'] = true;
         }
         if ($user_email == "" || empty($user_email)) {
-            $err_status['email'] = true;
+            $err_status['email_empty'] = true;
+        } else {
+            $err_status['email_correct'] = !emailValidation($user_email);
+            $err_status['email_exists'] = ifEmailExists($user_email);
         }
         if ($user_image_name == "" || empty($user_image_name)) {
             $err_status['image'] = true;
         }
         if ($user_privilege == "" || empty($user_privilege)) {
-            $err_status['privilege'] = true;
+            $err_status['privilege_empty'] = true;
+        } else {
+            $err_status['privilege_correct'] = !userPrivilegeValidation($user_privilege);
         }
         $err_result = false;
         foreach($err_status as $err_item) {
@@ -744,7 +759,7 @@ function editProfile($edit_user_login) {
         $user_image_name = $row['user_image'];
         $user_privilege = $row['user_privilege'];
 
-        $err_edit_profile = ['password'=>false, 'firstname'=>false, 'lastname'=>false, 'email'=>false, 'image'=>false, 'privilege'=>false];
+        $err_edit_profile = ['password_empty'=>false, 'password_correct'=>false, 'firstname'=>false, 'lastname'=>false, 'email_empty'=>false, 'email_exists'=>false, 'email_correct'=>false, 'image'=>false, 'privilege_empty'=>false, 'privilege_correct'=>false];
 
         $err_edit_profile = updateProfile($user_login, $err_edit_profile);
         include "includes/edit_profile.php";
@@ -777,7 +792,9 @@ function updateProfile($user_login, $err_status) {
             $err_item = false;
         }
         if ($user_password == "" || empty($user_password)) {
-            $err_status['password'] = true;
+            $err_status['password_empty'] = true;
+        } else {
+            $err_status['password_correct'] = !passwordValidation($user_password);
         }
         if ($user_firstname == "" || empty($user_firstname)) {
             $err_status['firstname'] = true;
@@ -786,13 +803,18 @@ function updateProfile($user_login, $err_status) {
             $err_status['lastname'] = true;
         }
         if ($user_email == "" || empty($user_email)) {
-            $err_status['email'] = true;
+            $err_status['email_empty'] = true;
+        } else {
+            $err_status['email_correct'] = !emailValidation($user_email);
+            $err_status['email_exists'] = ifEmailExists($user_email);
         }
         if ($user_image_name == "" || empty($user_image_name)) {
             $err_status['image'] = true;
         }
         if ($user_privilege == "" || empty($user_privilege)) {
-            $err_status['privilege'] = true;
+            $err_status['privilege_empty'] = true;
+        } else {
+            $err_status['privilege_correct'] = !userPrivilegeValidation($user_privilege);
         }
         $err_result = false;
         foreach($err_status as $err_item) {
@@ -831,11 +853,56 @@ function ifLoginExists($login) {
     $loginExists = mysqli_query($connection, $query);
     validateQuery($loginExists);
     $num_rows = mysqli_num_rows($loginExists);
-    if ($num_rows > 0) {
-        return true;
-    } else {
-        return false;
-    }
+    return $num_rows > 0;
+}
+
+/* Check if e-mail is already used by another user. Return true if e-mail is used and return false if e-mail isn't used */
+function ifEmailExists($email) {
+    global $connection;
+
+    $query = "SELECT * FROM users WHERE user_email = '{$email}';";
+    $emailExists = mysqli_query($connection, $query);
+    validateQuery($emailExists);
+    $num_rows = mysqli_num_rows($emailExists);
+    return $num_rows > 0;
+}
+
+/* Check if e-mail is valid. Return true if e-mail is valid */
+function emailValidation($email) {
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
+}
+
+/* Check if password is reliable. The length should be 8 sybols or more */
+function passwordValidation($password) {
+    $min_length = 8;
+    return strlen($password) >= $min_length;
+}
+
+/* Check if category of post exists in database. Return true if category exists */
+function postCategoryValidation($post_category_id) {
+    global $connection;
+
+    $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id};";
+    $postCategory = mysqli_query($connection, $query);
+    validateQuery($postCategory);
+
+    $num_rows = mysqli_num_rows($postCategory);
+
+    return $num_rows > 0;
+}
+
+/* Check if status of post is valid. Return true if status is valid */
+function postStatusValidation($post_status) {
+    $post_status_values = ['черновик', 'опубликовано'];
+
+    return in_array($post_status, $post_status_values);
+}
+
+/* Check if privilege of user value is valid. Return true if privilege value is valid */
+function userPrivilegeValidation($user_privilege) {
+    $user_privilege_values = ['пользователь', 'модератор', 'администратор'];
+
+    return in_array($user_privilege, $user_privilege_values);
 }
 
 /* Display number of published posts on the Statistics Page in admin. $widget_color is color of widget, $link_name is link to the Posts Page */

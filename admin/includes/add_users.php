@@ -1,4 +1,5 @@
-<?php /* For function addUsers() */ ?>
+<?php /* For function addUsers() */ 
+?>
 
 <!-- Add User Form -->
  <div class="col-xs-6">
@@ -13,7 +14,8 @@
         <div class="form-group">
             <label for="user_password">Пароль<span style='color: #a94442;'> *</span></label>
             <input type="password" name="user_password" id="user_password" class="form-control" minlength="8" required>
-            <span style='color: #a94442;'><?php displayErrorMessage($err_add_user['password'], "Это поле не может быть пустым"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_user['password_empty'], "Это поле не может быть пустым"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_user['password_correct'], "Пароль должен содержать не менее 8 символов"); ?></span>
         </div>
         <div class="form-group">
             <label for="user_firstname">Имя<span style='color: #a94442;'> *</span></label>
@@ -28,7 +30,9 @@
         <div class="form-group">
             <label for="user_email">E-mail<span style='color: #a94442;'> *</span></label>
             <input type="email" name="user_email" id="user_email" class="form-control" required>
-            <span style='color: #a94442;'><?php displayErrorMessage($err_add_user['email'], "Это поле не может быть пустым"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_user['email_empty'], "Это поле не может быть пустым"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_user['email_correct'], "Некорректный e-mail"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_user['email_exists'], "Пользователь с таким e-mail уже существует. Выберите другой e-mail"); ?></span>
         </div>
         <div class="form-group">
             <label for="user_image">Изображение</label>
@@ -43,7 +47,8 @@
                 <option value="модератор">модератор</option>
                 <option value="администратор">администратор</option>
             </select>
-            <span style='color: #a94442;'><?php displayErrorMessage($err_add_user['privilege'], "Выберите тип учетной записи"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_user['privilege_empty'], "Выберите тип учетной записи"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_user['privilege_correct'], "Недопустимый тип учетной записи"); ?></span>
         </div>
         <div class="form-group">
             <input type="submit" name="add_user_btn" class="btn btn-primary" value="Добавить пользователя">
