@@ -5,22 +5,22 @@
     <form action="" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="profile_password">Пароль</label>
-            <input type="password" name="profile_password" id="profile_password" class="form-control" minlength="8" value="<?=$user_password;?>">
+            <input type="password" name="profile_password" id="profile_password" class="form-control" minlength="8" value="<?=$user_password;?>" required>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['password'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="profile_firstname">Имя</label>
-            <input type="text" name="profile_firstname" id="profile_firstname" class="form-control" value="<?=$user_firstname;?>">
+            <input type="text" name="profile_firstname" id="profile_firstname" class="form-control" value="<?=$user_firstname;?>" required>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['firstname'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="profile_lastname">Фамилия</label>
-            <input type="text" name="profile_lastname" id="profile_lastname" class="form-control" value="<?=$user_lastname;?>">
+            <input type="text" name="profile_lastname" id="profile_lastname" class="form-control" value="<?=$user_lastname;?>" required>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['lastname'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="profile_email">E-mail</label>
-            <input type="email" name="profile_email" id="profile_email" class="form-control" value="<?=$user_email;?>">
+            <input type="email" name="profile_email" id="profile_email" class="form-control" value="<?=$user_email;?>" required>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['email'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
@@ -32,7 +32,8 @@
         </div>
         <div class="form-group">
             <label for="profile_privilege">Права доступа</label>
-            <select name="profile_privilege" id="profile_privilege" class="form-control">
+            <select name="profile_privilege" id="profile_privilege" class="form-control" required>
+                <option value="">Выберите тип учетной записи...</option>
                 <option value="пользователь" <?php if ($user_privilege == "пользователь") {echo "selected";} ?>>пользователь</option>
                 <option value="модератор" <?php if ($user_privilege == "модератор") {echo "selected";} ?>>модератор</option>
                 <option value="администратор" <?php if ($user_privilege == "администратор") {echo "selected";} ?>>администратор</option>

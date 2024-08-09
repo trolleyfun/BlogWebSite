@@ -4,7 +4,7 @@
 <form action="" method="post">
     <div class="form-group">
         <label for="cat_title">Название региона:</label>
-        <input type="text" name="cat_title" id="cat_title" class="form-control">
+        <input type="text" name="cat_title" id="cat_title" class="form-control" required>
         <span style='color: #a94442;'><?php displayErrorMessage($err_add_cat['title'], "Это поле не может быть пустым"); ?></span>
     </div>
     <div class="form-group">

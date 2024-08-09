@@ -6,7 +6,7 @@
     <form action="" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="post_category_id">Регион</label>
-            <select name="post_category_id" id="post_category_id" class="form-control">
+            <select name="post_category_id" id="post_category_id" class="form-control" required>
                 <option value="">Выберите регион...</option>
                 <?php showAllCategories("includes/all_categories_list.php", ""); ?>
             </select>
@@ -14,22 +14,22 @@
         </div>
         <div class="form-group">
             <label for="post_title">Название</label>
-            <input type="text" name="post_title" id="post_title" class="form-control">
+            <input type="text" name="post_title" id="post_title" class="form-control" required>
             <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['title'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="post_author">Автор</label>
-            <input type="text" name="post_author" id="post_author" class="form-control">
+            <input type="text" name="post_author" id="post_author" class="form-control" required>
             <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['author'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
             <label for="post_image">Изображение</label>
-            <input type="file" name="post_image" id="post_image" class="form-control">
+            <input type="file" name="post_image" id="post_image" class="form-control" required>
             <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['image'], "Загрузите изображение"); ?></span>
         </div>
         <div class="form-group">
             <label for="post_content">Текст</label>
-            <textarea name="post_content" id="post_content" class="form-control" rows="10"></textarea>
+            <textarea name="post_content" id="post_content" class="form-control" rows="10" required></textarea>
             <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['content'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
@@ -38,7 +38,7 @@
         </div>
         <div class="form-group">
             <label for="post_status">Статус</label>
-            <select name="post_status" id="post_status" class="form-control">
+            <select name="post_status" id="post_status" class="form-control" required>
                 <option value="">Выберите стутус публикации...</option>
                 <option value="черновик">черновик</option>
                 <option value="опубликовано">опубликовано</option>
