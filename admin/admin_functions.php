@@ -37,6 +37,8 @@ function addCategories() {
             $query = "INSERT INTO categories(cat_title) VALUE('{$cat_title}');";
             $addCategory = mysqli_query($connection, $query);
             validateQuery($addCategory);
+
+            header("Location: admin_categories.php?source=info&operation=add");
         }
     }
 
@@ -66,7 +68,7 @@ function updateCategories($cat_id, $err_status) {
             $updateCategory = mysqli_query($connection, $query);
             validateQuery($updateCategory);
     
-            header("Location: admin_categories.php");
+            header("Location: admin_categories.php?source=info&operation=update");
         }
     }
 
@@ -122,7 +124,7 @@ function deleteCategories() {
         $deleteCategory = mysqli_query($connection, $query);
         validateQuery($deleteCategory);
 
-        header("Location: admin_categories.php");
+        header("Location: admin_categories.php?source=info&operation=delete");
     }
 }
 
@@ -380,7 +382,7 @@ function deleteComments() {
 
         commentsCountByPost($delete_comment_post_id);
 
-        header("Location: admin_comments.php");
+        header("Location: admin_comments.php?source=info&operation=delete");
     }
 }
 
@@ -520,6 +522,8 @@ function addUsers() {
             $query = "INSERT INTO users(user_login, user_password, user_firstname, user_lastname, user_email, user_image, user_privilege) VALUES('{$user_login}', '{$user_password}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$user_image_name}', '{$user_privilege}');";
             $addUser = mysqli_query($connection, $query);
             validateQuery($addUser);
+
+            header("Location: admin_users.php?source=info&operation=add");
         }
     }
 
@@ -537,7 +541,7 @@ function deleteUsers() {
         $delUser = mysqli_query($connection, $query);
         validateQuery($delUser);
 
-        header("Location: admin_users.php");
+        header("Location: admin_users.php?source=info&operation=delete");
     }
 }
 
@@ -634,7 +638,7 @@ function updateUsers($user_id, $err_status) {
             $updateUser = mysqli_query($connection, $query);
             validateQuery($updateUser);
 
-            header("Location: admin_users.php");
+            header("Location: admin_users.php?source=info&operation=update");
         }
 
     }
@@ -971,11 +975,86 @@ function showPostOperationInfo() {
                 $post_operation_message = "Изменения успешно сохранены";
                 break;
             default:
-            $post_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
-            break;
+                $post_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
+                break;
         }
 
         include "includes/post_operation_info.php";
+    }
+}
+
+/* Show info message if comment operation (add, delete or edit) was successful */
+function showCommentOperationInfo() {
+    if (isset($_GET['operation'])) {
+        $comment_operation = $_GET['operation'];
+
+        $comment_operation_message = "";
+        switch($comment_operation) {
+            case "add":
+                $comment_operation_message = "Ваш комментарий успешно добавлен";
+                break;
+            case "delete":
+                $comment_operation_message = "Комментарий удален";
+                break;
+            case "update":
+                $comment_operation_message = "Изменения успешно сохранены";
+                break;
+            default:
+                $comment_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
+                break;
+        }
+
+        include "includes/comment_operation_info.php";
+    }
+}
+
+/* Show info message if category operation (add, delete or edit) was successful */
+function showCategoryOperationInfo() {
+    if (isset($_GET['operation'])) {
+        $category_operation = $_GET['operation'];
+
+        $category_operation_message = "";
+        switch($category_operation) {
+            case "add":
+                $category_operation_message = "Регион успешно добавлен";
+                break;
+            case "delete":
+                $category_operation_message = "Регион удален";
+                break;
+            case "update":
+                $category_operation_message = "Изменения успешно сохранены";
+                break;
+            default:
+                $category_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
+                break;
+        }
+
+        include "includes/category_operation_info.php";
+    }
+}
+
+/* Show info message if user operation (add, delete or edit) was successful */
+function showUserOperationInfo() {
+    if (isset($_GET['operation'])) {
+        $user_operation = $_GET['operation'];
+
+        $user_operation_message = "";
+        switch($user_operation) {
+            case "add":
+                $user_operation_message = "Пользователь успешно добавлен";
+                break;
+            case "delete":
+                $user_operation_message = "Пользователь удален";
+                break;
+            case "update":
+                $user_operation_message = "Изменения успешно сохранены";
+                break;
+            default:
+                $user_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
+                break;
+        }
+
+        include "includes/user_operation_info.php";
     }
 }
 ?>

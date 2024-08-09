@@ -30,6 +30,9 @@
                             case "edit_users":
                                 editUsers();
                                 break;
+                            case "info":
+                                showUserOperationInfo();
+                                break;
                             default:
                                 include "includes/show_all_users.php";
                                 break;

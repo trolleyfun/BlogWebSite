@@ -24,6 +24,9 @@
                         }
 
                         switch($source) {
+                            case "info":
+                                showCommentOperationInfo();
+                                break;
                             default:
                                 include "includes/show_all_comments.php";
                                 break;

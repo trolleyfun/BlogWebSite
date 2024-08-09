@@ -15,23 +15,23 @@
                             Регионы
                         </h1>
 
-                        <div class="col-xs-6">
-                            <?php 
-                            /* Add category to database */
-                            addCategories();
-                            /* Edit selected Category */
-                            editCategories();
-                            /* Delete categories from database */
-                            deleteCategories();
-                            ?>
-                        </div>
+                        <!-- Categories Section -->
+                        <?php 
+                        if (isset($_GET['source'])) {
+                            $source = $_GET['source'];
+                        } else {
+                            $source = "";
+                        }
 
-                        <div class="col-xs-6">
-                            <?php 
-                            /* Display all categories from database */
-                            include "includes/show_all_categories.php";
-                            ?>
-                        </div>
+                        switch($source) {
+                            case "info":
+                                showCategoryOperationInfo();
+                                break;
+                            default:
+                                include "includes/show_categories_page.php";
+                                break;
+                        }
+                        ?>
                     </div>
                 </div>
                 <!-- /.row -->
