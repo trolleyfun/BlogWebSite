@@ -136,6 +136,7 @@ function showAllPosts() {
     $allPosts = mysqli_query($connection, $query);
     validateQuery($allPosts);
 
+    deletePosts();
     while($row = mysqli_fetch_assoc($allPosts)) {
         $post_id = $row['post_id'];
         $post_category_id = $row['post_category_id'];
@@ -347,6 +348,8 @@ function showAllComments() {
     $allComments = mysqli_query($connection, $query);
     validateQuery($allComments);
 
+    deleteComments();
+    confirmComments();
     while($row = mysqli_fetch_assoc($allComments)) {
         $comment_id = $row['comment_id'];
         $comment_post_id = $row['comment_post_id'];
@@ -453,6 +456,7 @@ function showAllUsers() {
     $query = "SELECT * FROM users;";
     $allUsers = mysqli_query($connection, $query);
     validateQuery($allUsers);
+    deleteUsers();
     while($row = mysqli_fetch_assoc($allUsers)) {
         $user_id = $row['user_id'];
         $user_login = $row['user_login'];

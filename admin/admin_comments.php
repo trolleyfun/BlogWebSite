@@ -31,11 +31,6 @@
                                 include "includes/show_all_comments.php";
                                 break;
                         }
-        
-                        /* Delete comments from the database */
-                        deleteComments();
-                        /* Confirm new comments */
-                        confirmComments();
                         ?>
                     </div>
                 </div>

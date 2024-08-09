@@ -37,9 +37,6 @@
                                 include "includes/show_all_posts.php";
                                 break;
                         }
-                        
-                        /* Delete post from the database */
-                        deletePosts();
                         ?>
                     </div>
                 </div>
