@@ -30,6 +30,9 @@
                             case "edit_posts":
                                 editPosts();
                                 break;
+                            case "info":
+                                showPostOperationInfo();
+                                break;
                             default:
                                 include "includes/show_all_posts.php";
                                 break;

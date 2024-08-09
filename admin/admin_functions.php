@@ -1,5 +1,5 @@
 <?php
-/* Check if the query is successful. If not, intercept the program and display an error message */
+/* Check if the query is successful. If not, intercept the program and display an error post_operation_message */
 function validateQuery($result) {
     global $connection;
 
@@ -8,10 +8,10 @@ function validateQuery($result) {
     }
 }
 
-/* Display Message from argument $message if input data is invalid. $status = false: data is valid, $status = true: data is invalid */
-function displayErrorMessage($status, $message) {
+/* Display Message from argument $post_operation_message if input data is invalid. $status = false: data is valid, $status = true: data is invalid */
+function displayErrorMessage($status, $post_operation_message) {
     if ($status) {
-        echo $message;
+        echo $post_operation_message;
     }
 }
 
@@ -204,6 +204,8 @@ function addPosts() {
 
             $addPost = mysqli_query($connection, $query);
             validateQuery($addPost);
+
+            header("Location: admin_posts.php?source=info&operation=add");
         }
     }
 
@@ -221,7 +223,7 @@ function deletePosts() {
         $deletePost = mysqli_query($connection, $query);
         validateQuery($deletePost);
 
-        header("Location: admin_posts.php");
+        header("Location: admin_posts.php?source=info&operation=delete");
     }
 }
 
@@ -328,7 +330,7 @@ function updatePosts($post_id, $err_status) {
             $updatePost = mysqli_query($connection, $query);
             validateQuery($updatePost);
 
-            header("Location: admin_posts.php");
+            header("Location: admin_posts.php?source=info&operation=update");
         }
     }
 
@@ -915,7 +917,7 @@ function showPostsByCategoryChart($chart_color, $categories_num) {
     }
 
     $axis_x_title = "";
-    $axis_y_title = "количество публикаций";
+    $axis_y_title = "количество\nпубликаций";
     $chart_title = "Популярные регионы";
 
     include "includes/statistics_chart_form.php";
@@ -946,9 +948,34 @@ function showCommentsByPostChart($chart_color, $posts_num) {
     }
 
     $axis_x_title = "";
-    $axis_y_title = "количество комментариев";
+    $axis_y_title = "количество\nкомментариев";
     $chart_title = "Самые читаемые публикации";
 
     include "includes/statistics_chart_form.php";
+}
+
+/* Show info message if post operation (add, delete or edit) was successful */
+function showPostOperationInfo() {
+    if (isset($_GET['operation'])) {
+        $post_operation = $_GET['operation'];
+
+        $post_operation_message = "";
+        switch($post_operation) {
+            case "add":
+                $post_operation_message = "Ваша публикация успешно добавлена";
+                break;
+            case "delete":
+                $post_operation_message = "Публикация удалена";
+                break;
+            case "update":
+                $post_operation_message = "Изменения успешно сохранены";
+                break;
+            default:
+            $post_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
+            break;
+        }
+
+        include "includes/post_operation_info.php";
+    }
 }
 ?>
