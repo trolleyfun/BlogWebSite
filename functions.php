@@ -9,7 +9,7 @@ function validateQuery($result) {
 }
 
 /* Display Message from argument $message if input data is invalid. $status = false: data is valid, $status = true: data is invalid */
-function displayErrorMessage($status, $message) {
+function displayMessage($status, $message) {
     if ($status) {
         echo $message;
     }
@@ -62,7 +62,7 @@ function showPostById() {
             $post_image = $row['post_image'];
             $post_content = $row['post_content'];
 
-            $err_add_comment = ['comment_author'=>false, 'comment_email'=>false, 'comment_content'=>false]; 
+            $err_add_comment = ['author'=>false, 'email'=>false, 'content'=>false, 'if_sent'=>false]; 
             $err_add_comment = addComments($post_id, $err_add_comment);
 
             include "includes/post_form.php";
@@ -207,13 +207,13 @@ function addComments($add_comment_post_id, $err_status) {
             $err_item = false;
         }
         if ($add_comment_author == "" || empty($add_comment_author)) {
-            $err_status['comment_author'] = true;
+            $err_status['author'] = true;
         }
         if ($add_comment_email == "" || empty($add_comment_email)) {
-            $err_status['comment_email'] = true;
+            $err_status['email'] = true;
         }
         if ($add_comment_content == "" || empty($add_comment_content)) {
-            $err_status['comment_content'] = true;
+            $err_status['content'] = true;
         }
         $err_result = false;
         foreach($err_status as $err_item) {
@@ -225,6 +225,7 @@ function addComments($add_comment_post_id, $err_status) {
 
             $addComment = mysqli_query($connection, $query);
             validateQuery($addComment);
+            $err_status['if_sent'] = true;
         }
     }
 
