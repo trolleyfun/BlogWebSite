@@ -28,6 +28,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <ul class="list-unstyled">
+                    <li><a href='index.php'>Все регионы</a></li>
                     <?php 
                     /* Put categories from database */
                     showAllCategories(100);

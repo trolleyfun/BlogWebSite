@@ -134,7 +134,7 @@ function showPostByCategory() {
 function showAllCategories($items_amount) {
     global $connection;
 
-    $query = "SELECT * FROM categories LIMIT $items_amount;";
+    $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC LIMIT $items_amount;";
 
     $allCategories = mysqli_query($connection, $query);
     validateQuery($allCategories);
@@ -142,7 +142,8 @@ function showAllCategories($items_amount) {
     while($row = mysqli_fetch_assoc($allCategories)) {
         $cat_id = $row['cat_id'];
         $cat_title = $row['cat_title'];
-        echo "<li><a href='category.php?cat_id={$cat_id}'>{$cat_title}</a></li>";
+        
+        include "includes/category_list.php";
     }
 }
 
