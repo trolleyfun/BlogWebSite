@@ -108,6 +108,7 @@ function showAllCategories($categoriesForm, $arg) {
     while($row = mysqli_fetch_assoc($adminCategories)) {
         $cat_id = $row['cat_id'];
         $cat_title = $row['cat_title'];
+        $cat_posts_count = $row['cat_posts_count'];
 
         include $categoriesForm;
     }
@@ -216,6 +217,8 @@ function addPosts() {
             $addPost = mysqli_query($connection, $query);
             validateQuery($addPost);
 
+            postsCountByCategory($post_category_id);
+
             header("Location: admin_posts.php?source=info&operation=add");
         }
     }
@@ -229,10 +232,21 @@ function deletePosts() {
 
     if (isset($_GET['delete_post_id'])) {
         $delete_post_id = $_GET['delete_post_id'];
-        $query = "DELETE FROM posts WHERE post_id={$delete_post_id};";
 
+        $query = "SELECT * FROM posts WHERE post_id = {$delete_post_id};";
+        $postInfo = mysqli_query($connection, $query);
+        validateQuery($postInfo);
+
+        $delete_post_category_id = 0;
+        if ($row = mysqli_fetch_assoc($postInfo)) {
+            $delete_post_category_id = $row['post_category_id'];
+        }
+
+        $query = "DELETE FROM posts WHERE post_id={$delete_post_id};";
         $deletePost = mysqli_query($connection, $query);
         validateQuery($deletePost);
+
+        postsCountByCategory($delete_post_category_id);
 
         header("Location: admin_posts.php?source=info&operation=delete");
     }
@@ -328,6 +342,15 @@ function updatePosts($post_id, $err_status) {
                 move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
             }
 
+            $query = "SELECT * FROM posts WHERE post_id = {$post_id};";
+            $postInfo = mysqli_query($connection, $query);
+            validateQuery($postInfo);
+
+            $current_post_category_id = 0;
+            if ($row = mysqli_fetch_assoc($postInfo)) {
+                $current_post_category_id = $row['post_category_id'];
+            }
+
             $query = "UPDATE posts SET post_category_id = {$post_category_id}, ";
             $query .= "post_title = '{$post_title}', ";
             $query .= "post_author = '{$post_author}', ";
@@ -340,6 +363,11 @@ function updatePosts($post_id, $err_status) {
 
             $updatePost = mysqli_query($connection, $query);
             validateQuery($updatePost);
+
+            postsCountByCategory($post_category_id);
+            if ($post_category_id !== $current_post_category_id) {
+                postsCountByCategory($current_post_category_id);
+            }
 
             header("Location: admin_posts.php?source=info&operation=update");
         }
@@ -455,6 +483,23 @@ function commentsCountByPost($post_id) {
     $query = "UPDATE posts SET post_comments_count = {$post_comments_count} WHERE post_id = {$post_id};";
     $updateCommentsCount = mysqli_query($connection, $query);
     validateQuery($updateCommentsCount);
+}
+
+function postsCountByCategory($cat_id) {
+    global $connection;
+
+    $query = "SELECT post_category_id, COUNT(*) AS posts_count FROM posts WHERE post_status = 'опубликовано' ";
+    $query .= "GROUP BY post_category_id HAVING post_category_id = {$cat_id};";
+    $postsCount = mysqli_query($connection, $query);
+    validateQuery($postsCount);
+    $cat_posts_count = 0;
+    if ($row = mysqli_fetch_assoc($postsCount)) {
+        $cat_posts_count = $row['posts_count'];
+    }
+
+    $query = "UPDATE categories SET cat_posts_count = {$cat_posts_count} WHERE cat_id = {$cat_id};";
+    $updatePostsCount = mysqli_query($connection, $query);
+    validateQuery($updatePostsCount);
 }
 
 /* Display all users from database */
@@ -917,10 +962,11 @@ function showUsersStatisticsWidget($widget_color, $link_name) {
 function showPostsByCategoryChart($chart_color, $categories_num) {
     global $connection;
 
-    $query = "SELECT cat_title, CASE WHEN posts_cnt IS NULL THEN 0 ELSE posts_cnt END AS posts_cnt "; 
-    $query .= "FROM categories AS cat LEFT JOIN ";
-    $query .= "(SELECT post_category_id, COUNT(*) AS posts_cnt FROM posts WHERE post_status = 'опубликовано' GROUP BY post_category_id) AS p_cnt ";
-    $query .= "ON cat.cat_id = p_cnt.post_category_id ORDER BY posts_cnt DESC LIMIT {$categories_num};";
+    // $query = "SELECT cat_title, CASE WHEN posts_cnt IS NULL THEN 0 ELSE posts_cnt END AS posts_cnt "; 
+    // $query .= "FROM categories AS cat LEFT JOIN ";
+    // $query .= "(SELECT post_category_id, COUNT(*) AS posts_cnt FROM posts WHERE post_status = 'опубликовано' GROUP BY post_category_id) AS p_cnt ";
+    // $query .= "ON cat.cat_id = p_cnt.post_category_id ORDER BY posts_cnt DESC LIMIT {$categories_num};";
+    $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC LIMIT {$categories_num};";
 
     $postsByCategoryChart = mysqli_query($connection, $query);
     validateQuery($postsByCategoryChart);
@@ -929,7 +975,7 @@ function showPostsByCategoryChart($chart_color, $categories_num) {
     $values_str = "";
     while($row = mysqli_fetch_assoc($postsByCategoryChart)) {
         $cat_title = $row['cat_title'];
-        $posts_cnt = $row['posts_cnt'];
+        $posts_cnt = $row['cat_posts_count'];
         /* '#' is divider between elements of array */
         if ($names_str != "") {
             $names_str .= "#";
@@ -962,6 +1008,7 @@ function showCommentsByPostChart($chart_color, $posts_num) {
     while($row = mysqli_fetch_assoc($commentsByPostChart)) {
         $cat_title = $row['post_title'];
         $posts_cnt = $row['post_comments_count'];
+        /* '#' is divider between elements of array */
         if ($names_str != "") {
             $names_str .= "#";
         }

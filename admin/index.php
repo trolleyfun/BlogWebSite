@@ -55,6 +55,7 @@
     </div>
     <!-- /#wrapper -->
 
-    <?php include "includes/admin_charts_script.php"; ?>
+    <!-- Google Charts -->
+    <script type="text/javascript" src="js/google_charts.js"></script>
 
 <?php include "includes/admin_footer.php"; ?>
