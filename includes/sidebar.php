@@ -9,7 +9,7 @@
     <!-- Blog Search Well -->
     <div class="well">
         <h4>Поиск</h4>
-        <form action="search.php" method="post">
+        <form action="search.php" method="get">
             <div class="input-group">
                 <input type="text" name="search_data" class="form-control">
                 <span class="input-group-btn">

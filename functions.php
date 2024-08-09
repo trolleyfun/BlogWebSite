@@ -151,8 +151,8 @@ function showAllCategories($items_amount) {
 function searchPosts() {
     global $connection;
 
-    if (isset($_POST['search_btn'])) {
-        $search_data = $_POST['search_data'];
+    if (isset($_GET['search_btn'])) {
+        $search_data = $_GET['search_data'];
     
         $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search_data%' AND post_status = 'опубликовано';";
         $search_result = mysqli_query($connection, $query);
