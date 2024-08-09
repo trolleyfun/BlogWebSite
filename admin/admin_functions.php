@@ -751,7 +751,7 @@ function updateProfile($user_login, $err_status) {
             $updateUser = mysqli_query($connection, $query);
             validateQuery($updateUser);
 
-            header("Location: admin_profile.php");
+            header("Location: admin_profile.php?source=info&operation=update");
         }
 
     }
@@ -910,6 +910,7 @@ function showPostsByCategoryChart($chart_color, $categories_num) {
     while($row = mysqli_fetch_assoc($postsByCategoryChart)) {
         $cat_title = $row['cat_title'];
         $posts_cnt = $row['posts_cnt'];
+        /* '#' is divider between elements of array */
         if ($names_str != "") {
             $names_str .= "#";
         }
@@ -1055,6 +1056,25 @@ function showUserOperationInfo() {
         }
 
         include "includes/user_operation_info.php";
+    }
+}
+
+/* Show info message if profile operation (add, delete or edit) was successful */
+function showProfileOperationInfo() {
+    if (isset($_GET['operation'])) {
+        $profile_operation = $_GET['operation'];
+
+        $profile_operation_message = "";
+        switch($profile_operation) {
+            case "update":
+                $profile_operation_message = "Изменения успешно сохранены";
+                break;
+            default:
+                $profile_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
+                break;
+        }
+
+        include "includes/profile_operation_info.php";
     }
 }
 ?>
