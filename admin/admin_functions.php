@@ -19,7 +19,7 @@ function displayErrorMessage($status, $post_operation_message) {
 function addCategories() {
     global $connection;
 
-    $err_add_cat = ['title'=>false];
+    $err_add_cat = ['title_empty'=>false, 'title_exists'=>false];
 
     if (isset($_POST['add_cat_btn'])) {
         $cat_title = $_POST['cat_title'];
@@ -27,8 +27,10 @@ function addCategories() {
             $err_item = false;
         }
         if ($cat_title == "" || empty($cat_title)) {
-            $err_add_cat['title'] = true;
-        } 
+            $err_add_cat['title_empty'] = true;
+        } else {
+            $err_add_cat['title_exists'] = ifCategoryTitleExists($cat_title, null);
+        }
         $err_result = false;
         foreach($err_add_cat as $err_item) {
             $err_result = $err_result || $err_item;
@@ -56,7 +58,9 @@ function updateCategories($cat_id, $err_status) {
             $err_item = false;
         }
         if ($cat_title == "" || empty($cat_title)) {
-            $err_status['title'] = true;
+            $err_status['title_empty'] = true;
+        } else {
+            $err_status['title_exists'] = ifCategoryTitleExists($cat_title, $cat_id);
         }
         $err_result = false;
         foreach($err_status as $err_item) {
@@ -89,7 +93,7 @@ function editCategories() {
             $cat_id = $row['cat_id'];
             $cat_title = $row['cat_title'];
 
-            $err_edit_cat = ['title'=>false];
+            $err_edit_cat = ['title_empty'=>false, 'title_exists'=>false];
 
             $err_edit_cat = updateCategories($cat_id, $err_edit_cat);
             include "includes/edit_categories.php";
@@ -555,7 +559,7 @@ function addUsers() {
         if ($user_login == "" || empty($user_login)) {
             $err_add_user['login_empty'] = true;
         } else {
-            $err_add_user['login_exists'] = ifLoginExists($user_login);
+            $err_add_user['login_exists'] = ifLoginExists($user_login, null);
         }
         if ($user_password == "" || empty($user_password)) {
             $err_add_user['password_empty'] = true;
@@ -572,7 +576,7 @@ function addUsers() {
             $err_add_user['email_empty'] = true;
         } else {
             $err_add_user['email_correct'] = !emailValidation($user_email);
-            $err_add_user['email_exists'] = ifEmailExists($user_email);
+            $err_add_user['email_exists'] = ifEmailExists($user_email, null);
         }
         if ($user_image_name == "" || empty($user_image_name)) {
             $err_add_user['image'] = true;
@@ -686,7 +690,7 @@ function updateUsers($user_id, $err_status) {
             $err_status['email_empty'] = true;
         } else {
             $err_status['email_correct'] = !emailValidation($user_email);
-            $err_status['email_exists'] = ifEmailExists($user_email);
+            $err_status['email_exists'] = ifEmailExists($user_email, $user_id);
         }
         if ($user_image_name == "" || empty($user_image_name)) {
             $err_status['image'] = true;
@@ -751,6 +755,7 @@ function editProfile($edit_user_login) {
     $editProfile = mysqli_query($connection, $query);
     validateQuery($editProfile);
     if ($row = mysqli_fetch_assoc($editProfile)) {
+        $user_id = $row['user_id'];
         $user_login = $row['user_login'];
         $user_password = $row['user_password'];
         $user_firstname = $row['user_firstname'];
@@ -761,13 +766,13 @@ function editProfile($edit_user_login) {
 
         $err_edit_profile = ['password_empty'=>false, 'password_correct'=>false, 'firstname'=>false, 'lastname'=>false, 'email_empty'=>false, 'email_exists'=>false, 'email_correct'=>false, 'image'=>false, 'privilege_empty'=>false, 'privilege_correct'=>false];
 
-        $err_edit_profile = updateProfile($user_login, $err_edit_profile);
+        $err_edit_profile = updateProfile($user_id, $err_edit_profile);
         include "includes/edit_profile.php";
     }
 }
 
 /* Put User Data with login $user_login from the form to database. Get as parameter and return an array $err_status which contains Error Status for all fields in the form */
-function updateProfile($user_login, $err_status) {
+function updateProfile($user_id, $err_status) {
     global $connection;
 
     if (isset($_POST['update_profile_btn'])) {
@@ -806,7 +811,7 @@ function updateProfile($user_login, $err_status) {
             $err_status['email_empty'] = true;
         } else {
             $err_status['email_correct'] = !emailValidation($user_email);
-            $err_status['email_exists'] = ifEmailExists($user_email);
+            $err_status['email_exists'] = ifEmailExists($user_email, $user_id);
         }
         if ($user_image_name == "" || empty($user_image_name)) {
             $err_status['image'] = true;
@@ -833,7 +838,7 @@ function updateProfile($user_login, $err_status) {
             $query .= "user_email = '{$user_email}', ";
             $query .= "user_image = '{$user_image_name}', ";
             $query .= "user_privilege = '{$user_privilege}' ";
-            $query .= "WHERE user_login = '{$user_login}';";
+            $query .= "WHERE user_id = {$user_id};";
 
             $updateUser = mysqli_query($connection, $query);
             validateQuery($updateUser);
@@ -845,25 +850,50 @@ function updateProfile($user_login, $err_status) {
     return $err_status;
 }
 
-/* Check if login is already exists. Return true if login exists and return false if login doesn't exist */
-function ifLoginExists($login) {
+/* Check if login is already used by another user. $user_id is ID of user who wants to set login $login, put this parameter equal to null if that's a new user. Return true if login is used and return false if login isn't used */
+function ifLoginExists($login, $user_id) {
     global $connection;
 
-    $query = "SELECT * FROM users WHERE user_login = '{$login}';";
+    if (is_null($user_id)) {
+        $user_id_int = 0;
+    } else {
+        $user_id_int = $user_id;
+    }
+    $query = "SELECT * FROM users WHERE user_login = '{$login}' AND user_id != {$user_id_int};";
     $loginExists = mysqli_query($connection, $query);
     validateQuery($loginExists);
     $num_rows = mysqli_num_rows($loginExists);
     return $num_rows > 0;
 }
 
-/* Check if e-mail is already used by another user. Return true if e-mail is used and return false if e-mail isn't used */
-function ifEmailExists($email) {
+/* Check if e-mail is already used by another user. $user_id is ID of user who wants to set e-mail $email, put this parameter equal to null if that's a new user. Return true if e-mail is used and return false if e-mail isn't used */
+function ifEmailExists($email, $user_id) {
     global $connection;
 
-    $query = "SELECT * FROM users WHERE user_email = '{$email}';";
+    if (is_null($user_id)) {
+        $user_id_int = 0;
+    } else {
+        $user_id_int = $user_id;
+    }
+    $query = "SELECT * FROM users WHERE user_email = '{$email}' AND user_id != {$user_id_int};";
     $emailExists = mysqli_query($connection, $query);
     validateQuery($emailExists);
     $num_rows = mysqli_num_rows($emailExists);
+    return $num_rows > 0;
+}
+/* Check if category already exists. $cat_id is ID of category which is edited, put this parameter equal to null if that's a new category. Return true if category exists and return false if category doesn't exists */
+function ifCategoryTitleExists($title, $cat_id) {
+    global $connection;
+
+    if (is_null($cat_id)) {
+        $cat_id_int = 0;
+    } else {
+        $cat_id_int = $cat_id;
+    }
+    $query = "SELECT * FROM categories WHERE cat_title = '{$title}' AND cat_id != {$cat_id_int};";
+    $categoryTitleExists = mysqli_query($connection, $query);
+    validateQuery($categoryTitleExists);
+    $num_rows = mysqli_num_rows($categoryTitleExists);
     return $num_rows > 0;
 }
 
