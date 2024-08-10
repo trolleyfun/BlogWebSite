@@ -37,7 +37,7 @@
         </div>
         <div class="form-group">
             <label for="edit_post_content">Текст<span style='color: #a94442;'> *</span></label>
-            <textarea name="edit_post_content" id="edit_post_content" class="form-control" rows="10" required><?=$post_content;?></textarea>
+            <textarea name="edit_post_content" id="edit_post_content" class="form-control summernote" rows="10" required><?=$post_content;?></textarea>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['content'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">

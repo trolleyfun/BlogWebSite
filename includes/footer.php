@@ -17,6 +17,12 @@
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
 
+    <!-- Summernote Editor -->
+    <script src="js/summernote.min.js"></script>
+
+    <!-- User Scripts -->
+    <script src="js/script.js"></script>
+
 </body>
 
 </html>
