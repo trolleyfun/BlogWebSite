@@ -1,2 +1,2 @@
-<?php /* Posts Form button for showAllPosts and searchPosts functions */ ?>
+<?php /* Posts Form button for showAllPosts(), showPostById(), showPostByCategory() and searchPosts() functions */ ?>
 <a class='btn btn-primary' href='post.php?post_id=<?=$post_id;?>'>Читать дальше <span class='glyphicon glyphicon-chevron-right'></span></a>

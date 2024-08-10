@@ -1,7 +1,7 @@
 <?php /* For function editPosts() */ ?>
 
 <!-- Edit Post Form -->
-<div class="col-xs-6">
+<div class="col-md-6 col-xs-12">
     <h3>Редактирование публикации</h3>
     <form action="" method="post" enctype="multipart/form-data">
         <div class="form-group">

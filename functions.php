@@ -29,7 +29,7 @@ function showAllPosts() {
         echo "<hr>";
     }
 
-    $is_btn = true; //the button will be displayed under each post
+    $is_view_more_btn = true; //the button will be displayed under each post
     while($row = mysqli_fetch_assoc($allPosts)) {
         $post_id = $row['post_id'];
         $post_title = $row['post_title'];
@@ -53,8 +53,8 @@ function showPostById() {
         $postById = mysqli_query($connection, $query);
         validateQuery($postById);
 
-        $is_btn = false; //the button won't be displayed under posts
-        while($row = mysqli_fetch_assoc($postById)) {
+        $is_view_more_btn = false; //the button won't be displayed under posts
+        if ($row = mysqli_fetch_assoc($postById)) {
             $post_id = $row['post_id'];
             $post_title = $row['post_title'];
             $post_author = $row['post_author'];
@@ -67,6 +67,7 @@ function showPostById() {
 
             include "includes/post_form.php";
             if (isset($_SESSION['login'])) {
+                include "includes/post_edit_button.php";
                 include "includes/add_comment_form.php";
             }
             showCommentsOfPost($post_id);
@@ -116,7 +117,7 @@ function showPostByCategory() {
         
         include "includes/category_header.php";
 
-        $is_btn = true; //the button will be displayed under each post
+        $is_view_more_btn = true; //the button will be displayed under each post
         while($row = mysqli_fetch_assoc($postByCategory)) {
             $post_id = $row['post_id'];
             $post_title = $row['post_title'];
@@ -180,7 +181,7 @@ function searchPosts() {
         
         include "includes/search_header.php";
 
-        $is_btn = true; //the button will be displayed under each post
+        $is_view_more_btn = true; //the button will be displayed under each post
         while($row = mysqli_fetch_assoc($search_result)) {
             $post_id = $row['post_id'];
             $post_title = $row['post_title'];

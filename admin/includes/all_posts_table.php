@@ -1,11 +1,11 @@
 <?php /* For function showAllPosts() */ ?>
 <tr>
     <td><?=$post_id;?></td>
-    <td><?=$post_category_title;?></td>
-    <td><?=$post_title;?></td>
+    <td><a href="../category.php?cat_id=<?=$post_category_id;?>"><?=$post_category_title;?></a></td>
+    <td><a href="../post.php?post_id=<?=$post_id;?>"><?=$post_title;?></a></td>
     <td><?=$post_author;?></td>
     <td><?=$post_date;?></td>
-    <td><img src="../img/<?=$post_image;?>" alt="<?=$post_title;?>" style="max-width: 100px;"></td>
+    <td><a href="../post.php?post_id=<?=$post_id;?>"><img src="../img/<?=$post_image;?>" alt="<?=$post_title;?>" style="max-width: 100px;"></a></td>
     <td><?=$post_tags;?></td>
     <td><?=$post_comments_count;?></td>
     <td><?=$post_status;?></td>

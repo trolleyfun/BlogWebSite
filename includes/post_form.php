@@ -12,5 +12,5 @@
 </a>
 <hr>
 <p><?=$post_content;?></p>
-<?php if ($is_btn) {include "includes/post_button.php";}?>
+<?php if ($is_view_more_btn) {include "includes/post_view_more_button.php";}?>
 <hr>
