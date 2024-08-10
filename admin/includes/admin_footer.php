@@ -6,6 +6,7 @@
 
     <!-- Summernote Editor -->
     <script src="js/summernote.min.js"></script>
+    <script src="js/lang/summernote-ru-RU.min.js"></script>
     
     <!-- Google Charts -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>

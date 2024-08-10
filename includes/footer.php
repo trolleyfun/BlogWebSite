@@ -19,6 +19,7 @@
 
     <!-- Summernote Editor -->
     <script src="js/summernote.min.js"></script>
+    <script src="js/lang/summernote-ru-RU.min.js"></script>
 
     <!-- User Scripts -->
     <script src="js/script.js"></script>

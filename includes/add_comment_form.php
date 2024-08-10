@@ -18,7 +18,7 @@
         </div>
         <div class="form-group">
             <label for="comment_content">Комментарий<span style='color: #a94442;'> *</span></label>
-            <textarea name="comment_content" id="comment_content" class="form-control summernote" rows="3" required></textarea>
+            <textarea name="comment_content" id="comment_content" class="form-control summernote-comment" rows="3" required></textarea>
             <span style='color: #a94442;'><?php displayMessage($err_add_comment['content'], "Это поле не может быть пустым"); ?></span>
         </div>
         <button type="submit" name="add_comment_btn" class="btn btn-primary">Отправить</button>
