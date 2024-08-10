@@ -162,7 +162,7 @@ function showAllPosts() {
 function addPosts() {
     global $connection;
 
-    $err_add_post = ['category_id'=>false, 'title'=>false, 'author'=>false, 'image'=>false, 'content'=>false, 'status'=>false];
+    $err_add_post = ['category_id_empty'=>false, 'category_id_exists'=>false, 'title'=>false, 'author'=>false, 'image'=>false, 'content'=>false, 'status_empty'=>false, 'status_correct'=>false];
 
     if (isset($_POST['add_post_btn'])) {
         $post_category_id = $_POST['post_category_id'];
@@ -187,8 +187,10 @@ function addPosts() {
         foreach($err_add_post as $err_item) {
             $err_item = false;
         }
-        if ($post_category_id <= 0) {
-            $err_add_post['category_id'] = true;
+        if ($post_category_id == "" || empty($post_category_id)) {
+            $err_add_post['category_id_empty'] = true;
+        } else {
+            $err_add_post['category_id_exists'] = !postCategoryValidation($post_category_id);
         }
         if ($post_title == "" || empty($post_title)) {
             $err_add_post['title'] = true;
@@ -203,7 +205,9 @@ function addPosts() {
             $err_add_post['content'] = true;
         }
         if ($post_status == "" || empty($post_status)) {
-            $err_add_post['status'] = true;
+            $err_add_post['status_empty'] = true;
+        } else {
+            $err_add_post['status_correct'] = !postStatusValidation($post_status);
         }
         $err_result = false;
         foreach($err_add_post as $err_item) {
@@ -279,7 +283,7 @@ function editPosts() {
             $post_comments_count = $row['post_comments_count'];
             $post_status = $row['post_status'];
 
-            $err_edit_post = ['category_id'=>false, 'title'=>false, 'author'=>false, 'date'=>false, 'image'=>false, 'content'=>false, 'status'=>false];
+            $err_edit_post = ['category_id_empty'=>false, 'category_id_exists'=>false, 'title'=>false, 'author'=>false, 'date'=>false, 'image'=>false, 'content'=>false, 'status_empty'=>false, 'status_correct'=>false];
 
             $err_edit_post = updatePosts($edit_post_id, $err_edit_post);
 
@@ -315,8 +319,10 @@ function updatePosts($post_id, $err_status) {
         foreach($err_status as $err_item) {
             $err_item = false;
         }
-        if ($post_category_id <= 0) {
-            $err_status['category_id'] = true;
+        if ($post_category_id == "" || empty($post_category_id)) {
+            $err_status['category_id_empty'] = true;
+        } else {
+            $err_status['category_id_exists'] = !postCategoryValidation($post_category_id);
         }
         if ($post_title == "" || empty($post_title)) {
             $err_status['title'] = true;
@@ -334,7 +340,9 @@ function updatePosts($post_id, $err_status) {
             $err_status['content'] = true;
         }
         if ($post_status == "" || empty($post_status)) {
-            $err_status['status'] = true;
+            $err_status['status_empty'] = true;
+        } else {
+            $err_status['status_correct'] = !postStatusValidation($post_status);
         }
         $err_result = false;
         foreach($err_status as $err_item) {

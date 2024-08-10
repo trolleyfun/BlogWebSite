@@ -10,7 +10,8 @@
                 <option value="">Выберите регион...</option>
                 <?php showAllCategories("includes/all_categories_list.php", ""); ?>
             </select>
-            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['category_id'], "Выберите регион"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['category_id_empty'], "Выберите регион"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['category_id_exists'], "Такого региона не существует. Выберите другой регион"); ?></span>
         </div>
         <div class="form-group">
             <label for="post_title">Название<span style='color: #a94442;'> *</span></label>
@@ -39,11 +40,12 @@
         <div class="form-group">
             <label for="post_status">Статус<span style='color: #a94442;'> *</span></label>
             <select name="post_status" id="post_status" class="form-control" required>
-                <option value="">Выберите стутус публикации...</option>
+                <option value="">Выберите статус публикации...</option>
                 <option value="черновик">черновик</option>
                 <option value="опубликовано">опубликовано</option>
             </select>
-            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['status'], "Выберите статус публикации"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['status_empty'], "Выберите статус публикации"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['status_correct'], "Недопустимое значение статуса публикации"); ?></span>
         </div>
         <div class="form-group">
             <input type="submit" name="add_post_btn" class="btn btn-primary" value="Добавить публикацию">
