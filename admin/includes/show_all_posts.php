@@ -22,7 +22,7 @@
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
-            <th><input type="checkbox" name="" class="allCheckBoxes"></th>
+            <th><input type="checkbox" name="" id="allCheckBoxes"></th>
             <th>Название</th>
             <th>Регион</th>
             <th>Автор</th>
