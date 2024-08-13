@@ -141,7 +141,6 @@ function showAllPosts() {
     $allPosts = mysqli_query($connection, $query);
     validateQuery($allPosts);
 
-    clickDeletePostIcon();
     while($row = mysqli_fetch_assoc($allPosts)) {
         $post_id = $row['post_id'];
         $post_category_id = $row['post_category_id'];

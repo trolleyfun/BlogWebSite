@@ -32,15 +32,7 @@
                 <a href="index.php"><i class="fa fa-fw fa-dashboard"></i> Статистика</a>
             </li>
             <li>
-                <a href="javascript:;" data-toggle="collapse" data-target="#posts"><i class="fa fa-fw fa-file-text"></i> Публикации <i class="fa fa-fw fa-caret-down"></i></a>
-                <ul id="posts" class="collapse">
-                    <li>
-                        <a href="admin_posts.php">Все публикации</a>
-                    </li>
-                    <li>
-                        <a href="admin_posts.php?source=add_posts">Добавить публикацию</a>
-                    </li>
-                </ul>
+                <a href="admin_posts.php"><i class="fa fa-fw fa-file-text"></i> Публикации</a>
             </li>
             <li>
                 <a href="admin_comments.php"><i class="fa fa-fw fa-comments"></i> Комментарии</a>
