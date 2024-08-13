@@ -1,19 +1,11 @@
-<?php 
-if (isset($_POST['checkBoxArray'])) {
-    $checkBoxArray = $_POST['checkBoxArray'];
-
-    foreach($checkBoxArray as $item) {
-        echo $item . " ";
-    }
-}
-?>
+<?php selectPostOptions(); ?>
 <form action="" method="post">
 <div id="post-options" class="col-xs-4 form-group">
     <div class="input-group">
     <select name="post_option" class="form-control">
         <option value="">Выберите действие...</option>
-        <option value="confirm">опубликовать</option>
-        <option value="block">заблокировать</option>
+        <option value="confirm">разрешить</option>
+        <option value="block">отклонить</option>
         <option value="delete">удалить</option>
     </select>
     <span class="input-group-btn">
@@ -31,9 +23,8 @@ if (isset($_POST['checkBoxArray'])) {
     <thead>
         <tr>
             <th><input type="checkbox" name="" class="allCheckBoxes"></th>
-            <th>Id публикации</th>
-            <th>Регион</th>
             <th>Название</th>
+            <th>Регион</th>
             <th>Автор</th>
             <th>Дата публикации</th>
             <th>Изображение</th>

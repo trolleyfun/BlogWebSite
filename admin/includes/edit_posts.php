@@ -49,7 +49,9 @@
             <select name="edit_post_status" id="edit_post_status" class="form-control" required>
                 <option value="">Выберите статус публикации...</option>
                 <option value="черновик" <?php if ($post_status == "черновик") {echo "selected";} ?>>черновик</option>
+                <option value="ожидает проверки" <?php if ($post_status == "ожидает проверки") {echo "selected";} ?>>ожидает проверки</option>
                 <option value="опубликовано" <?php if ($post_status == "опубликовано") {echo "selected";} ?>>опубликовано</option>
+                <option value="заблокировано" <?php if ($post_status == "заблокировано") {echo "selected";} ?>>заблокировано</option>
             </select>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['status_empty'], "Выберите статус публикации"); ?></span>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['status_correct'], "Недопустимое значение статуса публикации"); ?></span>

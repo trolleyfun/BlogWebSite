@@ -42,7 +42,9 @@
             <select name="post_status" id="post_status" class="form-control" required>
                 <option value="">Выберите статус публикации...</option>
                 <option value="черновик">черновик</option>
+                <option value="ожидает проверки">ожидает проверки</option>
                 <option value="опубликовано">опубликовано</option>
+                <option value="заблокировано">заблокировано</option>
             </select>
             <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['status_empty'], "Выберите статус публикации"); ?></span>
             <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['status_correct'], "Недопустимое значение статуса публикации"); ?></span>

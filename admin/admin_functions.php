@@ -141,7 +141,7 @@ function showAllPosts() {
     $allPosts = mysqli_query($connection, $query);
     validateQuery($allPosts);
 
-    deletePosts();
+    clickDeletePostIcon();
     while($row = mysqli_fetch_assoc($allPosts)) {
         $post_id = $row['post_id'];
         $post_category_id = $row['post_category_id'];
@@ -234,30 +234,56 @@ function addPosts() {
     include "includes/add_posts.php";
 }
 
-/* Delete selected post from the database */
-function deletePosts() {
+/* Change Post Status with post_id = $post_id. If $confirm_option is "confirm" the change $post_status to "опубликовано", if $confirm_option is "block" then change $post_status to "заблокировано", for other values nothing occurs */
+function confirmPosts($post_id, $confirm_option) {
     global $connection;
+    
+    $confirm_post_status = "";
+    switch($confirm_option) {
+        case "confirm":
+            $confirm_post_status = "опубликовано";
+            break;
+        case "block":
+            $confirm_post_status = "заблокировано";
+            break;
+    }
 
+    if ($confirm_post_status != "") {
+        $query = "UPDATE posts SET post_status = '{$confirm_post_status}' WHERE post_id = {$post_id};";
+        $confirmPost = mysqli_query($connection, $query);
+        validateQuery($confirmPost);
+    }
+}
+
+/* Delete selected post from the database if delete icon is clicked */
+function clickDeletePostIcon() {
     if (isset($_GET['delete_post_id'])) {
         $delete_post_id = $_GET['delete_post_id'];
 
-        $query = "SELECT * FROM posts WHERE post_id = {$delete_post_id};";
-        $postInfo = mysqli_query($connection, $query);
-        validateQuery($postInfo);
-
-        $delete_post_category_id = 0;
-        if ($row = mysqli_fetch_assoc($postInfo)) {
-            $delete_post_category_id = $row['post_category_id'];
-        }
-
-        $query = "DELETE FROM posts WHERE post_id={$delete_post_id};";
-        $deletePost = mysqli_query($connection, $query);
-        validateQuery($deletePost);
-
-        postsCountByCategory($delete_post_category_id);
-
-        header("Location: admin_posts.php?source=info&operation=delete");
+        deletePosts($delete_post_id);
     }
+}
+
+/* Delete selected post from the database */
+function deletePosts($delete_post_id) {
+    global $connection;
+
+    $query = "SELECT * FROM posts WHERE post_id = {$delete_post_id};";
+    $postInfo = mysqli_query($connection, $query);
+    validateQuery($postInfo);
+
+    $delete_post_category_id = 0;
+    if ($row = mysqli_fetch_assoc($postInfo)) {
+        $delete_post_category_id = $row['post_category_id'];
+    }
+
+    $query = "DELETE FROM posts WHERE post_id={$delete_post_id};";
+    $deletePost = mysqli_query($connection, $query);
+    validateQuery($deletePost);
+
+    postsCountByCategory($delete_post_category_id);
+
+    header("Location: admin_posts.php?source=info&operation=delete");
 }
 
 /* Create Edit Post Form and put selected post's values from database into the form */
@@ -931,7 +957,7 @@ function postCategoryValidation($post_category_id) {
 
 /* Check if status of post is valid. Return true if status is valid */
 function postStatusValidation($post_status) {
-    $post_status_values = ['черновик', 'опубликовано'];
+    $post_status_values = ['черновик', 'ожидает проверки', 'опубликовано', 'заблокировано'];
 
     return in_array($post_status, $post_status_values);
 }
@@ -1142,7 +1168,7 @@ function showPostOperationInfo() {
                 $post_operation_message = "Ваша публикация успешно добавлена";
                 break;
             case "delete":
-                $post_operation_message = "Публикация удалена";
+                $post_operation_message = "Выбранные публикации удалены";
                 break;
             case "update":
                 $post_operation_message = "Изменения успешно сохранены";
@@ -1247,6 +1273,31 @@ function showProfileOperationInfo() {
         }
 
         include "includes/profile_operation_info.php";
+    }
+}
+
+/* Apply selected options on the Post Page */
+function selectPostOptions() {
+    if (isset($_POST['apply_post_option_btn'])) {
+        $post_option = $_POST['post_option'];
+
+        if (isset($_POST['checkBoxArray'])) {
+            $post_id_array = $_POST['checkBoxArray'];
+
+            switch($post_option) {
+                case "confirm":
+                case "block":
+                    foreach($post_id_array as $post_id_item) {
+                        confirmPosts($post_id_item, $post_option);
+                    }
+                    break;
+                case "delete":
+                    foreach($post_id_array as $post_id_item) {
+                        deletePosts($post_id_item);
+                    }
+                    break;
+            }
+        }
     }
 }
 ?>
