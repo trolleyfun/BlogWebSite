@@ -17,15 +17,18 @@ clickDeletePostIcon();
             </span>
         </div>
     </div>
+    <!-- /.col-lg-4.col-md-6 -->
     <div class="col-lg-4 col-md-6 form-group">
         <a href="admin_posts.php?source=add_posts" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Добавить публикацию</a>
     </div>
+    <!-- /.col-lg-4.col-md-6 -->
+
     <!-- List of posts -->
     <div class="col-xs-12 form-group">
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
-                    <th><input type="checkbox" name="" id="allCheckBoxes"></th>
+                    <th><input type="checkbox" id="allCheckBoxes"></th>
                     <th>Название</th>
                     <th>Регион</th>
                     <th>Автор</th>
@@ -46,4 +49,5 @@ clickDeletePostIcon();
             </tbody>
         </table>
     </div>
+    <!-- /.col-xs-12 -->
 </form>

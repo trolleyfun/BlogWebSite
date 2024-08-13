@@ -248,9 +248,20 @@ function confirmPosts($post_id, $confirm_option) {
     }
 
     if ($confirm_post_status != "") {
+        $query = "SELECT * FROM posts WHERE post_id = {$post_id};";
+        $postInfo = mysqli_query($connection, $query);
+        validateQuery($postInfo);
+
+        $confirm_post_category_id = 0;
+        if ($row = mysqli_fetch_assoc($postInfo)) {
+            $confirm_post_category_id = $row['post_category_id'];
+        }
+
         $query = "UPDATE posts SET post_status = '{$confirm_post_status}' WHERE post_id = {$post_id};";
         $confirmPost = mysqli_query($connection, $query);
         validateQuery($confirmPost);
+
+        postsCountByCategory($confirm_post_category_id);
     }
 }
 
@@ -421,8 +432,6 @@ function showAllComments() {
     $allComments = mysqli_query($connection, $query);
     validateQuery($allComments);
 
-    deleteComments();
-    confirmComments();
     while($row = mysqli_fetch_assoc($allComments)) {
         $comment_id = $row['comment_id'];
         $comment_post_id = $row['comment_post_id'];
@@ -437,61 +446,81 @@ function showAllComments() {
     }
 }
 
-/* Delete selected comment from the database */
-function deleteComments() {
-    global $connection;
-
+/* Delete selected comment when Delete Comment icon is clicked */
+function clickDeleteCommentIcon() {
     if (isset($_GET['delete_comment_id'])) {
-        $delete_comment_id = $_GET['delete_comment_id'];
+        $comment_id = $_GET['delete_comment_id'];
 
-        $query = "SELECT * FROM comments WHERE comment_id = {$delete_comment_id};";
-        $statusDelComment = mysqli_query($connection, $query);
-        validateQuery($statusDelComment);
-        $delete_comment_post_id = 0;
-        if ($row = mysqli_fetch_assoc($statusDelComment)) {
-            $delete_comment_post_id = $row['comment_post_id'];
-        }
-
-        $query = "DELETE FROM comments WHERE comment_id = $delete_comment_id;";
-        $deleteComment = mysqli_query($connection, $query);
-        validateQuery($deleteComment);
-
-        commentsCountByPost($delete_comment_post_id);
-
-        header("Location: admin_comments.php?source=info&operation=delete");
+        deleteComments($comment_id);
     }
 }
 
-/* Change status of the comment: approved or unapproved */
-function confirmComments() {
+/* Delete selected comment from the database */
+function deleteComments($delete_comment_id) {
+    global $connection;
+
+    $query = "SELECT * FROM comments WHERE comment_id = {$delete_comment_id};";
+    $statusDelComment = mysqli_query($connection, $query);
+    validateQuery($statusDelComment);
+    $delete_comment_post_id = 0;
+    if ($row = mysqli_fetch_assoc($statusDelComment)) {
+        $delete_comment_post_id = $row['comment_post_id'];
+    }
+
+    $query = "DELETE FROM comments WHERE comment_id = $delete_comment_id;";
+    $deleteComment = mysqli_query($connection, $query);
+    validateQuery($deleteComment);
+
+    commentsCountByPost($delete_comment_post_id);
+
+    header("Location: admin_comments.php?source=info&operation=delete");
+}
+
+/* Change status of the comment if Confirm Comment icon is clicked */
+function clickConfirmCommentIcon() {
     global $connection;
 
     if (isset($_GET['confirm_comment'])) {
-        if ($_GET['confirm_comment'] == "true") {
-            $confirm_comment_status = "одобрен";
-        } else {
-            $confirm_comment_status = "заблокирован";
-        }
+        $confirm_comment_operation = $_GET['confirm_comment'];
 
         if (isset($_GET['comment_id'])) {
             $confirm_comment_id = $_GET['comment_id'];
 
-            $query = "SELECT * FROM comments WHERE comment_id = {$confirm_comment_id};";
-            $statusConfirmComment = mysqli_query($connection, $query);
-            validateQuery($statusConfirmComment);
-            $confirm_comment_post_id = 0;
-            if ($row = mysqli_fetch_assoc($statusConfirmComment)) {
-                $confirm_comment_post_id = $row['comment_post_id'];
-            }
-
-            $query = "UPDATE comments SET comment_status = '{$confirm_comment_status}' WHERE comment_id = {$confirm_comment_id};";
-            $confirmComment = mysqli_query($connection, $query);
-            validateQuery($confirmComment);
-
-            commentsCountByPost($confirm_comment_post_id);
-
-            header("Location: admin_comments.php");
+            confirmComments($confirm_comment_id, $confirm_comment_operation);
         }
+    }
+}
+
+/* Change status of the comment: approved or unapproved */
+function confirmComments($confirm_comment_id, $confirm_option) {
+    global $connection;
+
+    $confirm_comment_status = "";
+    switch($confirm_option) {
+        case "confirm":
+            $confirm_comment_status = "одобрен";
+            break;
+        case "block":
+            $confirm_comment_status = "заблокирован";
+            break;
+    }
+
+    if ($confirm_comment_status != "") {
+        $query = "SELECT * FROM comments WHERE comment_id = {$confirm_comment_id};";
+        $statusConfirmComment = mysqli_query($connection, $query);
+        validateQuery($statusConfirmComment);
+        $confirm_comment_post_id = 0;
+        if ($row = mysqli_fetch_assoc($statusConfirmComment)) {
+            $confirm_comment_post_id = $row['comment_post_id'];
+        }
+
+        $query = "UPDATE comments SET comment_status = '{$confirm_comment_status}' WHERE comment_id = {$confirm_comment_id};";
+        $confirmComment = mysqli_query($connection, $query);
+        validateQuery($confirmComment);
+
+        commentsCountByPost($confirm_comment_post_id);
+
+        header("Location: admin_comments.php");
     }
 }
 
@@ -1192,7 +1221,7 @@ function showCommentOperationInfo() {
                 $comment_operation_message = "Ваш комментарий успешно отправлен. Дождитесь проверки модератором";
                 break;
             case "delete":
-                $comment_operation_message = "Комментарий удален";
+                $comment_operation_message = "Выбранные комментарии удалены";
                 break;
             case "update":
                 $comment_operation_message = "Изменения успешно сохранены";
@@ -1275,7 +1304,7 @@ function showProfileOperationInfo() {
     }
 }
 
-/* Apply selected options on the Post Page */
+/* Apply selected options on the Posts Page */
 function selectPostOptions() {
     if (isset($_POST['apply_post_option_btn'])) {
         $post_option = $_POST['post_option'];
@@ -1293,6 +1322,31 @@ function selectPostOptions() {
                 case "delete":
                     foreach($post_id_array as $post_id_item) {
                         deletePosts($post_id_item);
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+/* Apply selected options on the Comments Page */
+function selectCommentOptions() {
+    if (isset($_POST['apply_comment_option_btn'])) {
+        $comment_option = $_POST['comment_option'];
+
+        if (isset($_POST['checkBoxArray'])) {
+            $comment_id_array = $_POST['checkBoxArray'];
+
+            switch($comment_option) {
+                case "confirm":
+                case "block":
+                    foreach($comment_id_array as $comment_id_item) {
+                        confirmComments($comment_id_item, $comment_option);
+                    }
+                    break;
+                case "delete":
+                    foreach($comment_id_array as $comment_id_item) {
+                        deleteComments($comment_id_item);
                     }
                     break;
             }
