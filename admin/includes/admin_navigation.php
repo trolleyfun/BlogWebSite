@@ -41,15 +41,7 @@
                 <a href="admin_categories.php"><i class="fa fa-fw fa-list"></i> Регионы</a>
             </li>
             <li>
-                <a href="javascript:;" data-toggle="collapse" data-target="#users"><i class="fa fa-fw fa-user"></i> Пользователи <i class="fa fa-fw fa-caret-down"></i></a>
-                <ul id="users" class="collapse">
-                    <li>
-                        <a href="admin_users.php">Все пользователи</a>
-                    </li>
-                    <li>
-                        <a href="admin_users.php?source=add_users">Добавить пользователя</a>
-                    </li>
-                </ul>
+                <a href="admin_users.php"><i class="fa fa-fw fa-user"></i> Пользователи</a>
             </li>
             <li>
                 <a href="admin_profile.php"><i class="fa fa-fw fa-wrench"></i> Профиль</a>

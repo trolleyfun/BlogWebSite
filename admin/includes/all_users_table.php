@@ -1,6 +1,6 @@
 <?php /* For function showAllUsers() */ ?>
 <tr>
-    <td><?=$user_id;?></td>
+    <td><input type="checkbox" name="checkBoxArray[]" class="checkBoxes" value="<?=$user_id;?>"></td>
     <td><?=$user_login;?></td>
     <td><?=$user_firstname;?></td>
     <td><?=$user_lastname;?></td>

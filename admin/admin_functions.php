@@ -585,7 +585,7 @@ function showAllUsers() {
     $query = "SELECT * FROM users;";
     $allUsers = mysqli_query($connection, $query);
     validateQuery($allUsers);
-    deleteUsers();
+
     while($row = mysqli_fetch_assoc($allUsers)) {
         $user_id = $row['user_id'];
         $user_login = $row['user_login'];
@@ -679,18 +679,49 @@ function addUsers() {
     include "includes/add_users.php";
 }
 
-/* Delete user from database */
-function deleteUsers() {
-    global $connection;
-
+/* Delete user if Delete Icon is clicked */
+function clickDeleteUserIcon() {
     if (isset($_GET['delete_user_id'])) {
         $delete_user_id = $_GET['delete_user_id'];
 
-        $query = "DELETE FROM users WHERE user_id = {$delete_user_id};";
-        $delUser = mysqli_query($connection, $query);
-        validateQuery($delUser);
+        deleteUsers($delete_user_id);
+    }
+}
 
-        header("Location: admin_users.php?source=info&operation=delete");
+/* Delete user from database */
+function deleteUsers($delete_user_id) {
+    global $connection;
+
+    $query = "DELETE FROM users WHERE user_id = {$delete_user_id};";
+    $delUser = mysqli_query($connection, $query);
+    validateQuery($delUser);
+
+    header("Location: admin_users.php?source=info&operation=delete");
+}
+
+/* Change privileges of user with $user_id. $privilege might take the following values: user, moderator, admin */
+function changeUserPrivilege($user_id, $privilege) {
+    global $connection;
+
+    switch ($privilege) {
+        case "user":
+            $new_user_privilege = "пользователь";
+            break;
+        case "moderator":
+            $new_user_privilege = "модератор";
+            break;
+        case "admin":
+            $new_user_privilege = "администратор";
+            break;
+        default:
+            $new_user_privilege = "";
+            break;
+    }
+
+    if ($new_user_privilege != "") {
+        $query = "UPDATE users SET user_privilege = '{$new_user_privilege}' WHERE user_id = {$user_id};";
+        $changeUserPrivilege = mysqli_query($connection, $query);
+        validateQuery($changeUserPrivilege);
     }
 }
 
@@ -1281,7 +1312,7 @@ function showUserOperationInfo() {
                 $user_operation_message = "Пользователь успешно создан";
                 break;
             case "delete":
-                $user_operation_message = "Пользователь удален";
+                $user_operation_message = "Выбранные пользователи удалены";
                 break;
             case "update":
                 $user_operation_message = "Изменения успешно сохранены";
@@ -1357,6 +1388,32 @@ function selectCommentOptions() {
                 case "delete":
                     foreach($comment_id_array as $comment_id_item) {
                         deleteComments($comment_id_item);
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+/* Apply selected options on the Users Page */
+function selectUserOptions() {
+    if (isset($_POST['apply_user_option_btn'])) {
+        $user_option = $_POST['user_option'];
+
+        if (isset($_POST['checkBoxArray'])) {
+            $user_id_array = $_POST['checkBoxArray'];
+
+            switch($user_option) {
+                case "moderator":
+                case "admin":
+                case "user":
+                    foreach($user_id_array as $user_id_item) {
+                        changeUserPrivilege($user_id_item, $user_option);
+                    }
+                    break;
+                case "delete":
+                    foreach($user_id_array as $user_id_item) {
+                        deleteUsers($user_id_item);
                     }
                     break;
             }
