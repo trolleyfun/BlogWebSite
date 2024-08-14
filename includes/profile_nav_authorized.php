@@ -2,7 +2,7 @@
 <ul class="nav navbar-right navbar-nav">
     <li><a href="admin/">Раздел администратора</a></li>
     <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?=$session_user['login'];?> <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> <?=$session_user['login'];?> <b class="caret"></b></a>
         <ul class="dropdown-menu">
             <li>
                 <a href="admin/admin_profile.php"><i class="fa fa-fw fa-user"></i> Профиль</a>

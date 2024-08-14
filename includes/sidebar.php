@@ -1,9 +1,9 @@
-<div class="col-md-4">
+<div class="col-md-4 col-xs-12">
     <?php 
     /* Login Section */
-    if (!isset($_SESSION['login'])) {
-        include "includes/login_form.php";
-    }
+    // if (!isset($_SESSION['login'])) {
+    //     include "includes/login_form.php";
+    // }
     ?>
 
     <!-- Blog Search Well -->

@@ -21,7 +21,9 @@
                 <?php
                 /* Display Profile Navigation Menu for authorized users */
                 if (isset($_SESSION['login'])) {
-                    include "includes/profile_nav.php";
+                    include "includes/profile_nav_authorized.php";
+                } else {
+                    include "includes/profile_nav_not_authorized.php";
                 }
                 ?>
             </div>
