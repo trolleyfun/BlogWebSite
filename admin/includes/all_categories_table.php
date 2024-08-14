@@ -1,6 +1,6 @@
 <?php /* For function showAllCategories() */ ?>
 <tr>
-    <td><?=$cat_id;?></td>
+    <td><input type="checkbox" class="checkBoxes" name="checkBoxArray[]" value="<?=$cat_id;?>"></td>
     <td><a href="../category.php?cat_id=<?=$cat_id;?>"><?=$cat_title;?></a></td>
     <td><?=$cat_posts_count;?></td>
     <td><a href="admin_categories.php?edit_cat_id=<?=$cat_id;?>"><span class="fa fa-fw fa-edit"></span></a></td>

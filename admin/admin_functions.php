@@ -118,19 +118,29 @@ function showAllCategories($categoriesForm, $arg) {
     }
 }
 
-/* Delete category in database */
-function deleteCategories() {
+/* Delete category if Delete Icon is clicked */
+function clickDeleteCategoryIcon() {
     global $connection;
 
     if (isset($_GET['delete_cat_id'])) {
         $delete_cat_id = $_GET['delete_cat_id'];
-        $query = "DELETE FROM categories WHERE cat_id = {$delete_cat_id};";
-
-        $deleteCategory = mysqli_query($connection, $query);
-        validateQuery($deleteCategory);
+        
+        deleteCategories($delete_cat_id);
 
         header("Location: admin_categories.php?source=info&operation=delete");
     }
+}
+
+/* Delete category in database */
+function deleteCategories($delete_cat_id) {
+    global $connection;
+
+    $query = "DELETE FROM categories WHERE cat_id = {$delete_cat_id};";
+
+    $deleteCategory = mysqli_query($connection, $query);
+    validateQuery($deleteCategory);
+
+    header("Location: admin_categories.php?source=info&operation=delete");
 }
 
 /* Read all posts from database and display them in Posts Section in admin */
@@ -1246,7 +1256,7 @@ function showCategoryOperationInfo() {
                 $category_operation_message = "Регион успешно добавлен";
                 break;
             case "delete":
-                $category_operation_message = "Регион удален";
+                $category_operation_message = "Выбранные регионы удалены";
                 break;
             case "update":
                 $category_operation_message = "Изменения успешно сохранены";
@@ -1349,6 +1359,19 @@ function selectCommentOptions() {
                         deleteComments($comment_id_item);
                     }
                     break;
+            }
+        }
+    }
+}
+
+/* Delete selected categories from database */
+function deleteSelectedCategories() {
+    if (isset($_POST['delete_categories_btn'])) {
+        if (isset($_POST['checkBoxArray'])) {
+            $category_id_array = $_POST['checkBoxArray'];
+
+            foreach($category_id_array as $category_id_item) {
+                deleteCategories($category_id_item);
             }
         }
     }
