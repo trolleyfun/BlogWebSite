@@ -208,13 +208,13 @@ function addComments($add_comment_post_id, $err_status) {
         foreach($err_status as $err_item) {
             $err_item = false;
         }
-        if ($add_comment_author == "" || empty($add_comment_author)) {
+        if (empty($add_comment_author)) {
             $err_status['author'] = true;
         }
-        if ($add_comment_email == "" || empty($add_comment_email)) {
+        if (empty($add_comment_email)) {
             $err_status['email'] = true;
         }
-        if ($add_comment_content == "" || empty($add_comment_content)) {
+        if (empty($add_comment_content)) {
             $err_status['content'] = true;
         }
         $err_result = false;

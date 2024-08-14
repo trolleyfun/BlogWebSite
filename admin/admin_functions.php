@@ -26,7 +26,7 @@ function addCategories() {
         foreach($err_add_cat as $err_item) {
             $err_item = false;
         }
-        if ($cat_title == "" || empty($cat_title)) {
+        if (empty($cat_title)) {
             $err_add_cat['title_empty'] = true;
         } else {
             $err_add_cat['title_exists'] = ifCategoryTitleExists($cat_title, null);
@@ -57,7 +57,7 @@ function updateCategories($cat_id, $err_status) {
         foreach($err_status as $err_item) {
             $err_item = false;
         }
-        if ($cat_title == "" || empty($cat_title)) {
+        if (empty($cat_title)) {
             $err_status['title_empty'] = true;
         } else {
             $err_status['title_exists'] = ifCategoryTitleExists($cat_title, $cat_id);
@@ -120,8 +120,6 @@ function showAllCategories($categoriesForm, $arg) {
 
 /* Delete category if Delete Icon is clicked */
 function clickDeleteCategoryIcon() {
-    global $connection;
-
     if (isset($_GET['delete_cat_id'])) {
         $delete_cat_id = $_GET['delete_cat_id'];
         
@@ -196,24 +194,24 @@ function addPosts() {
         foreach($err_add_post as $err_item) {
             $err_item = false;
         }
-        if ($post_category_id == "" || empty($post_category_id)) {
+        if (empty($post_category_id)) {
             $err_add_post['category_id_empty'] = true;
         } else {
             $err_add_post['category_id_exists'] = !postCategoryValidation($post_category_id);
         }
-        if ($post_title == "" || empty($post_title)) {
+        if (empty($post_title)) {
             $err_add_post['title'] = true;
         }
-        if ($post_author == "" || empty($post_author)) {
+        if (empty($post_author)) {
             $err_add_post['author'] = true;
         }
-        if ($post_image_name == "" || empty($post_image_name)) {
+        if (empty($post_image_name)) {
             $err_add_post['image'] = true;
         }
-        if ($post_content == "" || empty($post_content)) {
+        if (empty($post_content)) {
             $err_add_post['content'] = true;
         }
-        if ($post_status == "" || empty($post_status)) {
+        if (empty($post_status)) {
             $err_add_post['status_empty'] = true;
         } else {
             $err_add_post['status_correct'] = !postStatusValidation($post_status);
@@ -365,27 +363,27 @@ function updatePosts($post_id, $err_status) {
         foreach($err_status as $err_item) {
             $err_item = false;
         }
-        if ($post_category_id == "" || empty($post_category_id)) {
+        if (empty($post_category_id)) {
             $err_status['category_id_empty'] = true;
         } else {
             $err_status['category_id_exists'] = !postCategoryValidation($post_category_id);
         }
-        if ($post_title == "" || empty($post_title)) {
+        if (empty($post_title)) {
             $err_status['title'] = true;
         }
-        if ($post_author == "" || empty($post_author)) {
+        if (empty($post_author)) {
             $err_status['author'] = true;
         }
-        if ($post_date == "" || empty($post_date)) {
+        if (empty($post_date)) {
             $err_status['date'] = true;
         }
-        if ($post_image_name == "" || empty($post_image_name)) {
+        if (empty($post_image_name)) {
             $err_status['image'] = true;
         }
-        if ($post_content == "" || empty($post_content)) {
+        if (empty($post_content)) {
             $err_status['content'] = true;
         }
-        if ($post_status == "" || empty($post_status)) {
+        if (empty($post_status)) {
             $err_status['status_empty'] = true;
         } else {
             $err_status['status_correct'] = !postStatusValidation($post_status);
@@ -488,8 +486,6 @@ function deleteComments($delete_comment_id) {
 
 /* Change status of the comment if Confirm Comment icon is clicked */
 function clickConfirmCommentIcon() {
-    global $connection;
-
     if (isset($_GET['confirm_comment'])) {
         $confirm_comment_operation = $_GET['confirm_comment'];
 
@@ -628,32 +624,32 @@ function addUsers() {
         foreach($err_add_user as $err_item) {
             $err_item = false;
         }
-        if ($user_login == "" || empty($user_login)) {
+        if (empty($user_login)) {
             $err_add_user['login_empty'] = true;
         } else {
             $err_add_user['login_exists'] = ifLoginExists($user_login, null);
         }
-        if ($user_password == "" || empty($user_password)) {
+        if (empty($user_password)) {
             $err_add_user['password_empty'] = true;
         } else {
             $err_add_user['password_correct'] = !passwordValidation($user_password);
         }
-        if ($user_firstname == "" || empty($user_firstname)) {
+        if (empty($user_firstname)) {
             $err_add_user['firstname'] = true;
         }
-        if ($user_lastname == "" || empty($user_lastname)) {
+        if (empty($user_lastname)) {
             $err_add_user['lastname'] = true;
         }
-        if ($user_email == "" || empty($user_email)) {
+        if (empty($user_email)) {
             $err_add_user['email_empty'] = true;
         } else {
             $err_add_user['email_correct'] = !emailValidation($user_email);
             $err_add_user['email_exists'] = ifEmailExists($user_email, null);
         }
-        if ($user_image_name == "" || empty($user_image_name)) {
+        if (empty($user_image_name)) {
             $err_add_user['image'] = true;
         }
-        if ($user_privilege == "" || empty($user_privilege)) {
+        if (empty($user_privilege)) {
             $err_add_user['privilege_empty'] = true;
         } else {
             $err_add_user['privilege_correct'] = !userPrivilegeValidation($user_privilege);
@@ -778,27 +774,27 @@ function updateUsers($user_id, $err_status) {
         foreach($err_status as $err_item) {
             $err_item = false;
         }
-        if ($user_password == "" || empty($user_password)) {
+        if (empty($user_password)) {
             $err_status['password_empty'] = true;
         } else {
             $err_status['password_correct'] = !passwordValidation($user_password);
         }
-        if ($user_firstname == "" || empty($user_firstname)) {
+        if (empty($user_firstname)) {
             $err_status['firstname'] = true;
         }
-        if ($user_lastname == "" || empty($user_lastname)) {
+        if (empty($user_lastname)) {
             $err_status['lastname'] = true;
         }
-        if ($user_email == "" || empty($user_email)) {
+        if (empty($user_email)) {
             $err_status['email_empty'] = true;
         } else {
             $err_status['email_correct'] = !emailValidation($user_email);
             $err_status['email_exists'] = ifEmailExists($user_email, $user_id);
         }
-        if ($user_image_name == "" || empty($user_image_name)) {
+        if (empty($user_image_name)) {
             $err_status['image'] = true;
         }
-        if ($user_privilege == "" || empty($user_privilege)) {
+        if (empty($user_privilege)) {
             $err_status['privilege_empty'] = true;
         } else {
             $err_status['privilege_correct'] = !userPrivilegeValidation($user_privilege);
@@ -899,27 +895,27 @@ function updateProfile($user_id, $err_status) {
         foreach($err_status as $err_item) {
             $err_item = false;
         }
-        if ($user_password == "" || empty($user_password)) {
+        if (empty($user_password)) {
             $err_status['password_empty'] = true;
         } else {
             $err_status['password_correct'] = !passwordValidation($user_password);
         }
-        if ($user_firstname == "" || empty($user_firstname)) {
+        if (empty($user_firstname)) {
             $err_status['firstname'] = true;
         }
-        if ($user_lastname == "" || empty($user_lastname)) {
+        if (empty($user_lastname)) {
             $err_status['lastname'] = true;
         }
-        if ($user_email == "" || empty($user_email)) {
+        if (empty($user_email)) {
             $err_status['email_empty'] = true;
         } else {
             $err_status['email_correct'] = !emailValidation($user_email);
             $err_status['email_exists'] = ifEmailExists($user_email, $user_id);
         }
-        if ($user_image_name == "" || empty($user_image_name)) {
+        if (empty($user_image_name)) {
             $err_status['image'] = true;
         }
-        if ($user_privilege == "" || empty($user_privilege)) {
+        if (empty($user_privilege)) {
             $err_status['privilege_empty'] = true;
         } else {
             $err_status['privilege_correct'] = !userPrivilegeValidation($user_privilege);

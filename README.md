@@ -8,7 +8,7 @@ ____
 PHP, SQL, HTML, Javascript.
 ____
 ## Внешние модули
-В проекте используются следующие внешние модули: [диаграммы Google Charts](https://developers.google.com/chart), [визуальный редактор Summernote](https://summernote.org/). Для работы Google Charts необходимо подключение к сети интернет.
+В проекте используются следующие внешние модули: [диаграммы Google Charts](https://developers.google.com/chart), [визуальный текстовый редактор Summernote](https://summernote.org/). Для работы Google Charts необходимо подключение к сети интернет.
 ____
 ## Описание
 ### Структура базы данных
