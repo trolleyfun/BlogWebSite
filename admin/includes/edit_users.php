@@ -1,7 +1,7 @@
 <?php /* For function editUsers() */ ?>
 <!-- Edit User Form -->
 <div class="col-md-6 col-xs-12">
-    <h3>Редактирование пользователя <b><?=$user_login;?></b></h3>
+    <h3>Редактировать пользователя <b><?=$user_login;?></b></h3>
     <form action="" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="edit_user_password">Пароль<span style='color: #a94442;'> *</span></label>

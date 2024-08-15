@@ -1,3 +1,4 @@
+<?php /* For function userLogin() */ ?>
 <!-- Login Section -->
 <div class="well col-md-8 col-xs-12">
     <h4>Вход</h4>

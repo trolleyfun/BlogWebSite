@@ -747,6 +747,7 @@ function editUsers() {
 
             $err_edit_user = updateUsers($user_id, $err_edit_user);
             include "includes/edit_users.php";
+            include "includes/reset_password.php";
         }
     }
 }
@@ -871,6 +872,7 @@ function editProfile($edit_user_login) {
 
         $err_edit_profile = updateProfile($user_id, $err_edit_profile);
         include "includes/edit_profile.php";
+        include "includes/change_password.php";
     }
 }
 
