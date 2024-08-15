@@ -8,5 +8,5 @@
     <td><?=$comment_email;?></td>
     <td><?=$comment_status;?></td>
     <td><a href="admin_comments.php?confirm_comment=confirm&comment_id=<?=$comment_id;?>">разрешить</a> <a href="admin_comments.php?confirm_comment=block&comment_id=<?=$comment_id;?>">отклонить</a></td>
-    <td><a href="admin_comments.php?delete_comment_id=<?=$comment_id;?>"><span class="fa fa-fw fa-trash-o"></span></a></td>
+    <td><a href="admin_comments.php?delete_comment_id=<?=$comment_id;?>" onclick="return confirm('Вы уверены, что хотите удалить комментарий?');"><span class="fa fa-fw fa-trash-o"></span></a></td>
 </tr>

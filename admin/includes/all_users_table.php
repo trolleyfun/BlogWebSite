@@ -8,5 +8,5 @@
     <td><img src="../img/<?=$user_image;?>" alt="Изображение пользователя" style="max-width: 70px;"></td>
     <td><?=$user_privilege;?></td>
     <td><a href="admin_users.php?source=edit_users&edit_user_id=<?=$user_id;?>"><span class="fa fa-fw fa-edit"></span></a></td>
-    <td><a href="admin_users.php?delete_user_id=<?=$user_id;?>"><span class="fa fa-fw fa-trash-o"></span></a></td>
+    <td><a href="admin_users.php?delete_user_id=<?=$user_id;?>" onclick="return confirm('Вы уверены, что хотите удалить пользователя?');"><span class="fa fa-fw fa-trash-o"></span></a></td>
 </tr>

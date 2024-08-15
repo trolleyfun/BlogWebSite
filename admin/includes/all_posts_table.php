@@ -10,5 +10,5 @@
     <td><?=$post_comments_count;?></td>
     <td><?=$post_status;?></td>
     <td><a href="admin_posts.php?source=edit_posts&edit_post_id=<?=$post_id;?>"><span class="fa fa-fw fa-edit"></span></a></td>
-    <td><a href="admin_posts.php?delete_post_id=<?=$post_id;?>"><span class="fa fa-fw fa-trash-o"></span></a></td>
+    <td><a href="admin_posts.php?delete_post_id=<?=$post_id;?>" onclick="return confirm('Вы уверены, что хотите удалить публикацию?');"><span class="fa fa-fw fa-trash-o"></span></a></td>
 </tr>
