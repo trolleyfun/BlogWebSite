@@ -4,12 +4,6 @@
     <h3>Пользователь <b><?=$user_login;?></b></h3>
     <form action="" method="post" enctype="multipart/form-data">
         <div class="form-group">
-            <label for="profile_password">Пароль<span style='color: #a94442;'> *</span></label>
-            <input type="password" name="profile_password" id="profile_password" class="form-control" value="<?=$user_password;?>" minlength="8" required>
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['password_empty'], "Это поле не может быть пустым"); ?></span>
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['password_correct'], "Пароль должен содержать не менее 8 символов"); ?></span>
-        </div>
-        <div class="form-group">
             <label for="profile_firstname">Имя<span style='color: #a94442;'> *</span></label>
             <input type="text" name="profile_firstname" id="profile_firstname" class="form-control" value="<?=$user_firstname;?>" required>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_profile['firstname'], "Это поле не может быть пустым"); ?></span>

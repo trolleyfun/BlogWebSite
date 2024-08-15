@@ -743,9 +743,11 @@ function editUsers() {
             $user_image_name = $row['user_image'];
             $user_privilege = $row['user_privilege'];
 
-            $err_edit_user = ['password_empty'=>false, 'password_correct'=>false, 'firstname'=>false, 'lastname'=>false, 'email_empty'=>false, 'email_exists'=>false, 'email_correct'=>false, 'image'=>false, 'privilege_empty'=>false, 'privilege_correct'=>false];
+            $err_edit_user = ['firstname'=>false, 'lastname'=>false, 'email_empty'=>false, 'email_exists'=>false, 'email_correct'=>false, 'image'=>false, 'privilege_empty'=>false, 'privilege_correct'=>false];
+            $err_reset_password = ['password_empty'=>false, 'password_correct'=>false];
 
             $err_edit_user = updateUsers($user_id, $err_edit_user);
+            $err_reset_password = resetUserPassword($user_id, $err_reset_password);
             include "includes/edit_users.php";
             include "includes/reset_password.php";
         }
@@ -757,7 +759,6 @@ function updateUsers($user_id, $err_status) {
     global $connection;
 
     if (isset($_POST['update_user_btn'])) {
-        $user_password = $_POST['edit_user_password'];
         $user_firstname = $_POST['edit_user_firstname'];
         $user_lastname = $_POST['edit_user_lastname'];
         $user_email = $_POST['edit_user_email'];
@@ -776,11 +777,6 @@ function updateUsers($user_id, $err_status) {
 
         foreach($err_status as $err_item) {
             $err_item = false;
-        }
-        if (empty($user_password)) {
-            $err_status['password_empty'] = true;
-        } else {
-            $err_status['password_correct'] = !passwordValidation($user_password);
         }
         if (empty($user_firstname)) {
             $err_status['firstname'] = true;
@@ -812,10 +808,7 @@ function updateUsers($user_id, $err_status) {
                 move_uploaded_file($user_image_tmp, "../img/{$user_image_name}");
             }
 
-            $user_password = password_hash($user_password, PASSWORD_BCRYPT);
-
             $query = "UPDATE users SET ";
-            $query .= "user_password = '{$user_password}', ";
             $query .= "user_firstname = '{$user_firstname}', ";
             $query .= "user_lastname = '{$user_lastname}', ";
             $query .= "user_email = '{$user_email}', ";
@@ -868,9 +861,11 @@ function editProfile($edit_user_login) {
         $user_image_name = $row['user_image'];
         $user_privilege = $row['user_privilege'];
 
-        $err_edit_profile = ['password_empty'=>false, 'password_correct'=>false, 'firstname'=>false, 'lastname'=>false, 'email_empty'=>false, 'email_exists'=>false, 'email_correct'=>false, 'image'=>false, 'privilege_empty'=>false, 'privilege_correct'=>false];
+        $err_edit_profile = ['firstname'=>false, 'lastname'=>false, 'email_empty'=>false, 'email_exists'=>false, 'email_correct'=>false, 'image'=>false, 'privilege_empty'=>false, 'privilege_correct'=>false];
+        $err_change_password = ['current_password_empty'=>false, 'current_password_valid'=>false, 'new_password_empty'=>false, 'new_password_correct'=>false];
 
         $err_edit_profile = updateProfile($user_id, $err_edit_profile);
+        $err_change_password = changeUserPassword($user_id, $user_password, $err_change_password);
         include "includes/edit_profile.php";
         include "includes/change_password.php";
     }
@@ -881,7 +876,6 @@ function updateProfile($user_id, $err_status) {
     global $connection;
 
     if (isset($_POST['update_profile_btn'])) {
-        $user_password = $_POST['profile_password'];
         $user_firstname = $_POST['profile_firstname'];
         $user_lastname = $_POST['profile_lastname'];
         $user_email = $_POST['profile_email'];
@@ -900,11 +894,6 @@ function updateProfile($user_id, $err_status) {
 
         foreach($err_status as $err_item) {
             $err_item = false;
-        }
-        if (empty($user_password)) {
-            $err_status['password_empty'] = true;
-        } else {
-            $err_status['password_correct'] = !passwordValidation($user_password);
         }
         if (empty($user_firstname)) {
             $err_status['firstname'] = true;
@@ -936,10 +925,7 @@ function updateProfile($user_id, $err_status) {
                 move_uploaded_file($user_image_tmp, "../img/{$user_image_name}");
             }
 
-            $user_password = password_hash($user_password, PASSWORD_BCRYPT);
-
             $query = "UPDATE users SET ";
-            $query .= "user_password = '{$user_password}', ";
             $query .= "user_firstname = '{$user_firstname}', ";
             $query .= "user_lastname = '{$user_lastname}', ";
             $query .= "user_email = '{$user_email}', ";
@@ -953,6 +939,78 @@ function updateProfile($user_id, $err_status) {
             header("Location: admin_profile.php?source=info&operation=update");
         }
 
+    }
+    return $err_status;
+}
+
+/* Reset current user password and set new password */
+function resetUserPassword($user_id, $err_status) {
+    global $connection;
+
+    if (isset($_POST['reset_password_btn'])) {
+        $user_password = $_POST['reset_user_password'];
+
+        foreach($err_status as $key=>$value) {
+            $err_status[$key] = false;
+        }
+        if (empty($user_password)) {
+            $err_status['password_empty'] = true;
+        } else {
+            $err_status['password_correct'] = !passwordValidation($user_password);
+        }
+        $err_result = false;
+        foreach($err_status as $err_item) {
+            $err_result = $err_result || $err_item;
+        }
+
+        if (!$err_result) {
+            $user_password = password_hash($user_password, PASSWORD_BCRYPT);
+
+            $query = "UPDATE users SET user_password = '{$user_password}' WHERE user_id = {$user_id};";
+            $resetPassword = mysqli_query($connection, $query);
+            validateQuery($resetPassword);
+
+            header("Location: admin_users.php?source=info&operation=password");
+        }
+    }
+    return $err_status;
+}
+
+/* If input password agrees with the current password from database ($db_user_password) then set new password */
+function changeUserPassword($user_id, $db_user_password, $err_status) {
+    global $connection;
+
+    if (isset($_POST['change_password_btn'])) {
+        $current_user_password = $_POST['current_user_password'];
+        $new_user_password = $_POST['new_user_password'];
+
+        foreach($err_status as $key=>$value) {
+            $err_status[$key] = false;
+        }
+        if (empty($current_user_password)) {
+            $err_status['current_password_empty'] = true;
+        } else {
+            $err_status['current_password_valid'] = !password_verify($current_user_password, $db_user_password);
+        }
+        if (empty($new_user_password)) {
+            $err_status['new_password_empty'] = true;
+        } else {
+            $err_status['new_password_correct'] = !passwordValidation($new_user_password);
+        }
+        $err_result = false;
+        foreach($err_status as $err_item) {
+            $err_result = $err_result || $err_item;
+        }
+
+        if (!$err_result) {
+            $new_user_password = password_hash($new_user_password, PASSWORD_BCRYPT);
+
+            $query = "UPDATE users SET user_password = '{$new_user_password}' WHERE user_id = {$user_id};";
+            $changePassword = mysqli_query($connection, $query);
+            validateQuery($changePassword);
+
+            header("Location: admin_profile.php?source=info&operation=password");
+        }
     }
     return $err_status;
 }
@@ -1321,6 +1379,9 @@ function showUserOperationInfo() {
             case "update":
                 $user_operation_message = "Изменения успешно сохранены";
                 break;
+            case "password":
+                $user_operation_message = "Пароль успешно изменен";
+                break;
             default:
                 $user_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
                 break;
@@ -1339,6 +1400,9 @@ function showProfileOperationInfo() {
         switch($profile_operation) {
             case "update":
                 $profile_operation_message = "Изменения успешно сохранены";
+                break;
+            case "password":
+                $profile_operation_message = "Пароль успешно изменен";
                 break;
             default:
                 $profile_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
