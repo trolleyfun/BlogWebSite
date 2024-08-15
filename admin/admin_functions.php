@@ -169,7 +169,7 @@ function showAllPosts() {
 function addPosts() {
     global $connection;
 
-    $err_add_post = ['category_id_empty'=>false, 'category_id_exists'=>false, 'title'=>false, 'author'=>false, 'image'=>false, 'content'=>false, 'status_empty'=>false, 'status_correct'=>false];
+    $err_add_post = ['category_id_empty'=>false, 'category_id_exists'=>false, 'title'=>false, 'author'=>false, 'image'=>false, 'content'=>false];
 
     if (isset($_POST['add_post_btn'])) {
         $post_category_id = $_POST['post_category_id'];
@@ -189,7 +189,6 @@ function addPosts() {
 
         $post_content = $_POST['post_content'];
         $post_tags = $_POST['post_tags'];
-        $post_status = $_POST['post_status'];
 
         foreach($err_add_post as $err_item) {
             $err_item = false;
@@ -211,11 +210,6 @@ function addPosts() {
         if (empty($post_content)) {
             $err_add_post['content'] = true;
         }
-        if (empty($post_status)) {
-            $err_add_post['status_empty'] = true;
-        } else {
-            $err_add_post['status_correct'] = !postStatusValidation($post_status);
-        }
         $err_result = false;
         foreach($err_add_post as $err_item) {
             $err_result = $err_result || $err_item;
@@ -226,8 +220,8 @@ function addPosts() {
                 move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
             }
 
-            $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_date, post_image, post_content, post_tags, post_status) ";
-            $query .= "VALUES({$post_category_id}, '{$post_title}', '{$post_author}', '{$post_date}', '{$post_image_name}', '{$post_content}', '{$post_tags}', '{$post_status}');";
+            $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_date, post_image, post_content, post_tags) ";
+            $query .= "VALUES({$post_category_id}, '{$post_title}', '{$post_author}', '{$post_date}', '{$post_image_name}', '{$post_content}', '{$post_tags}');";
 
             $addPost = mysqli_query($connection, $query);
             validateQuery($addPost);
@@ -1296,7 +1290,7 @@ function showPostOperationInfo() {
         $post_operation_message = "";
         switch($post_operation) {
             case "add":
-                $post_operation_message = "Ваша публикация успешно добавлена";
+                $post_operation_message = "Ваша публикация успешно добавлена. Дождитесь проверки модератором";
                 break;
             case "delete":
                 $post_operation_message = "Выбранные публикации удалены";

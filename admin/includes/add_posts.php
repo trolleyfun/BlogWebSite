@@ -38,18 +38,6 @@
             <input type="text" name="post_tags" id="post_tags" class="form-control">
         </div>
         <div class="form-group">
-            <label for="post_status">Статус<span style='color: #a94442;'> *</span></label>
-            <select name="post_status" id="post_status" class="form-control" required>
-                <option value="">Выберите статус публикации...</option>
-                <option value="черновик">черновик</option>
-                <option value="ожидает проверки">ожидает проверки</option>
-                <option value="опубликовано">опубликовано</option>
-                <option value="заблокировано">заблокировано</option>
-            </select>
-            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['status_empty'], "Выберите статус публикации"); ?></span>
-            <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['status_correct'], "Недопустимое значение статуса публикации"); ?></span>
-        </div>
-        <div class="form-group">
             <input type="submit" name="add_post_btn" class="btn btn-primary" value="Добавить публикацию">
         </div>
     </form>
