@@ -5,11 +5,14 @@
         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> <?=$session_user['login'];?> <b class="caret"></b></a>
         <ul class="dropdown-menu">
             <li>
-                <a href="admin/admin_profile.php"><i class="fa fa-fw fa-user"></i> Профиль</a>
+                <a href="admin/admin_posts.php?source=add_posts"><span class="glyphicon glyphicon-plus"></span> Добавить публикацию</a>
+            </li>
+            <li>
+                <a href="admin/admin_profile.php"><span class="glyphicon glyphicon-cog"></span> Профиль</a>
             </li>
             <li class="divider"></li>
             <li>
-                <a href="includes/logout.php"><i class="fa fa-fw fa-power-off"></i> Выйти</a>
+                <a href="includes/logout.php"><span class="glyphicon glyphicon-off"></span> Выйти</a>
             </li>
         </ul>
     </li>

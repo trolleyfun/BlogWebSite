@@ -1,6 +1,6 @@
 <?php userLogin(); ?>
-<!-- Login Well -->
-<div class="well col-md-8">
+<!-- Login Section -->
+<div class="well col-md-8 col-xs-12">
     <h4>Вход</h4>
     <form action="" method="post">
         <div class="form-group">

@@ -1,6 +1,6 @@
 <?php userLogin(); ?>
-<!-- SignUp Well -->
-<div class="well col-md-8">
+<!-- SignUp Section -->
+<div class="well col-md-8 col-xs-12">
     <h4>Регистрация</h4>
     <form action="" method="post" enctype="multipart/form-data">
     <div class="form-group">
