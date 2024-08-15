@@ -664,6 +664,8 @@ function addUsers() {
                 move_uploaded_file($user_image_tmp, "../img/{$user_image_name}");
             }
 
+            $user_password = password_hash($user_password, PASSWORD_BCRYPT);
+
             $query = "INSERT INTO users(user_login, user_password, user_firstname, user_lastname, user_email, user_image, user_privilege) VALUES('{$user_login}', '{$user_password}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$user_image_name}', '{$user_privilege}');";
             $addUser = mysqli_query($connection, $query);
             validateQuery($addUser);
@@ -809,6 +811,8 @@ function updateUsers($user_id, $err_status) {
                 move_uploaded_file($user_image_tmp, "../img/{$user_image_name}");
             }
 
+            $user_password = password_hash($user_password, PASSWORD_BCRYPT);
+
             $query = "UPDATE users SET ";
             $query .= "user_password = '{$user_password}', ";
             $query .= "user_firstname = '{$user_firstname}', ";
@@ -929,6 +933,8 @@ function updateProfile($user_id, $err_status) {
             if ($is_new_image) {
                 move_uploaded_file($user_image_tmp, "../img/{$user_image_name}");
             }
+
+            $user_password = password_hash($user_password, PASSWORD_BCRYPT);
 
             $query = "UPDATE users SET ";
             $query .= "user_password = '{$user_password}', ";

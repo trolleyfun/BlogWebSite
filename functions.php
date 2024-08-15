@@ -321,7 +321,7 @@ function userLogin() {
                 $user_image_name = $row['user_image'];
                 $user_privilege = $row['user_privilege'];
                 
-                if ($user_login == $login_data['login'] && $user_password == $login_data['password']) {
+                if ($login_data['login'] == $user_login && password_verify($login_data['password'], $user_password)) {
                     $_SESSION['user_id'] = $user_id;
                     $_SESSION['login'] = $user_login;
                     $_SESSION['firstname'] = $user_firstname;
