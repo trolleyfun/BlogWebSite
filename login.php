@@ -31,7 +31,7 @@
                             userLogin();
                             break;
                         case "signup":
-                            include "includes/signup_form.php";
+                            userSignup();
                             break;
                         case "info":
                             include "includes/signup_info.php";

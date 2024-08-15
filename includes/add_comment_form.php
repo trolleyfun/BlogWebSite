@@ -4,7 +4,7 @@
 <!-- Comments Form -->
 <div class="well" id="add_comment_form">
     <h4>Оставьте комментарий</h4>
-    <span style='color: #008000;'><?php displayMessage($err_add_comment['if_sent'], "Ваш комментарий успешно отправлен. Дождитесь проверки модератором"); ?></span>
+    <span style='color: #008000;'><?php displayMessage($err_add_comment['if_sent'], "Ваш комментарий успешно отправлен"); ?></span>
     <form role="form" action="" method="post">
         <div class="form-group">
             <label for="comment_author">Пользователь<span style='color: #a94442;'> *</span></label>

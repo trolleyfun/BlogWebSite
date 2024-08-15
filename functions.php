@@ -336,4 +336,165 @@ function userLogin() {
 
     include "includes/login_form.php";
 }
+
+/* Check if login is already used by another user. $user_id is ID of user who wants to set login $login, put this parameter equal to null if that's a new user. Return true if login is used and return false if login isn't used */
+function ifLoginExists($login, $user_id) {
+    global $connection;
+
+    if (is_null($user_id)) {
+        $user_id_int = 0;
+    } else {
+        $user_id_int = $user_id;
+    }
+    $query = "SELECT * FROM users WHERE user_login = '{$login}' AND user_id != {$user_id_int};";
+    $loginExists = mysqli_query($connection, $query);
+    validateQuery($loginExists);
+    $num_rows = mysqli_num_rows($loginExists);
+    return $num_rows > 0;
+}
+
+/* Check if e-mail is already used by another user. $user_id is ID of user who wants to set e-mail $email, put this parameter equal to null if that's a new user. Return true if e-mail is used and return false if e-mail isn't used */
+function ifEmailExists($email, $user_id) {
+    global $connection;
+
+    if (is_null($user_id)) {
+        $user_id_int = 0;
+    } else {
+        $user_id_int = $user_id;
+    }
+    $query = "SELECT * FROM users WHERE user_email = '{$email}' AND user_id != {$user_id_int};";
+    $emailExists = mysqli_query($connection, $query);
+    validateQuery($emailExists);
+    $num_rows = mysqli_num_rows($emailExists);
+    return $num_rows > 0;
+}
+/* Check if category already exists. $cat_id is ID of category which is edited, put this parameter equal to null if that's a new category. Return true if category exists and return false if category doesn't exists */
+function ifCategoryTitleExists($title, $cat_id) {
+    global $connection;
+
+    if (is_null($cat_id)) {
+        $cat_id_int = 0;
+    } else {
+        $cat_id_int = $cat_id;
+    }
+    $query = "SELECT * FROM categories WHERE cat_title = '{$title}' AND cat_id != {$cat_id_int};";
+    $categoryTitleExists = mysqli_query($connection, $query);
+    validateQuery($categoryTitleExists);
+    $num_rows = mysqli_num_rows($categoryTitleExists);
+    return $num_rows > 0;
+}
+
+/* Check if e-mail is valid. Return true if e-mail is valid */
+function emailValidation($email) {
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
+}
+
+/* Check if password is reliable. The length should be 8 sybols or more */
+function passwordValidation($password) {
+    $min_length = 8;
+    return strlen($password) >= $min_length;
+}
+
+/* Check if category of post exists in database. Return true if category exists */
+function postCategoryValidation($post_category_id) {
+    global $connection;
+
+    $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id};";
+    $postCategory = mysqli_query($connection, $query);
+    validateQuery($postCategory);
+
+    $num_rows = mysqli_num_rows($postCategory);
+
+    return $num_rows > 0;
+}
+
+/* Check if status of post is valid. Return true if status is valid */
+function postStatusValidation($post_status) {
+    $post_status_values = ['черновик', 'ожидает проверки', 'опубликовано', 'заблокировано'];
+
+    return in_array($post_status, $post_status_values);
+}
+
+/* Check if privilege of user value is valid. Return true if privilege value is valid */
+function userPrivilegeValidation($user_privilege) {
+    $user_privilege_values = ['пользователь', 'модератор', 'администратор'];
+
+    return in_array($user_privilege, $user_privilege_values);
+}
+
+/* Users signup. Put data from the signup form to database */
+function userSignup() {
+    global $connection;
+
+    $err_user_signup = ['login_empty'=>false, 'login_exists'=>false, 'password_empty'=>false, 'password_correct'=>false, 'firstname'=>false, 'lastname'=>false, 'email_empty'=>false, 'email_exists'=>false, 'email_correct'=>false, 'image'=>false];
+
+    if (isset($_POST['signup_btn'])) {
+        $user['login'] = $_POST['signup_user_login'];
+        $user['password'] = $_POST['signup_user_password'];
+        $user['firstname'] = $_POST['signup_user_firstname'];
+        $user['lastname'] = $_POST['signup_user_lastname'];
+        $user['email'] = $_POST['signup_user_email'];
+
+        $is_new_user_image = true;
+        $default_user_image_name = "user_icon_default.png";
+        $user['image_name'] = $_FILES['signup_user_image']['name'];
+        $user['image_tmp'] = $_FILES['signup_user_image']['tmp_name'];
+        $user['image_error'] = $_FILES['signup_user_image']['error'];
+        if ($user['image_name'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
+            $user['image_name'] = $default_user_image_name;
+            $is_new_user_image = false;
+        }
+
+        $user = escapeArray($user);
+
+        foreach($err_user_signup as $key=>$value) {
+            $err_user_signup[$key] = false;
+        }
+        if (empty($user['login'])) {
+            $err_user_signup['login_empty'] = true;
+        } else {
+            $err_user_signup['login_exists'] = ifLoginExists($user['login'], null);
+        }
+        if (empty($user['password'])) {
+            $err_user_signup['password_empty'] = true;
+        } else {
+            $err_user_signup['password_correct'] = !passwordValidation($user['password']);
+        }
+        if (empty($user['firstname'])) {
+            $err_user_signup['firstname'] = true;
+        }
+        if (empty($user['lastname'])) {
+            $err_user_signup['lastname'] = true;
+        }
+        if (empty($user['email'])) {
+            $err_user_signup['email_empty'] = true;
+        } else {
+            $err_user_signup['email_correct'] = !emailValidation($user['email']);
+            $err_user_signup['email_exists'] = ifEmailExists($user['email'], null);
+        }
+        if (empty($user['image_name'])) {
+            $err_user_signup['image'] = true;
+        }
+        $err_result = false;
+        foreach($err_user_signup as $err_item) {
+            $err_result = $err_result || $err_item;
+        }
+
+        if (!$err_result) {
+            if ($is_new_user_image) {
+                move_uploaded_file($user['image_tmp'], "img/{$user['image_name']}");
+            }
+
+            $user['password'] = password_hash($user['password'], PASSWORD_BCRYPT);
+
+            $query = "INSERT INTO users(user_login, user_password, user_firstname, user_lastname, user_email, user_image) VALUES('{$user['login']}', '{$user['password']}', '{$user['firstname']}', '{$user['lastname']}', '{$user['email']}', '{$user['image_name']}');";
+            $userSignup = mysqli_query($connection, $query);
+            validateQuery($userSignup);
+
+            header("Location: login.php?source=info");
+        }
+    }
+
+    include "includes/signup_form.php";
+}
 ?>
