@@ -15,6 +15,18 @@ function displayMessage($status, $message) {
     }
 }
 
+/* Escape special characters in array elements for use in sql queries */
+function escapeArray($array) {
+    global $connection;
+
+    $escapedArray = $array;
+    foreach($escapedArray as $key=>$value) {
+        $escapedArray[$key] = mysqli_real_escape_string($connection, $value);
+    }
+
+    return $escapedArray;
+}
+
 /* Display all posts from database */
 function showAllPosts() { 
     global $connection;
@@ -268,39 +280,60 @@ function getSessionInfo($user_login) {
     return $session_user;
 }
 
+/* User Authorization. Check if login and password is correct. If they are correct, start user session */
 function userLogin() {
     global $connection;
+
+    $err_user_login = ['login'=>false, 'password'=>false];
+    $err_authorization = false;
     if (isset($_POST['login_btn'])) {
-        $received_login = $_POST['user_login'];
-        $received_password = $_POST['user_password'];
-    
-        $received_login = mysqli_real_escape_string($connection, $received_login);
-        $received_password = mysqli_real_escape_string($connection, $received_password);
-    
-        $query = "SELECT * FROM users WHERE user_login = '{$received_login}';";
-        $userLogin = mysqli_query($connection, $query);
-        if ($row = mysqli_fetch_assoc($userLogin)) {
-            $user_id = $row['user_id'];
-            $user_login = $row['user_login'];
-            $user_password = $row['user_password'];
-            $user_firstname = $row['user_firstname'];
-            $user_lastname = $row['user_lastname'];
-            $user_email = $row['user_email'];
-            $user_image_name = $row['user_image'];
-            $user_privilege = $row['user_privilege'];
-            
-            if ($user_login == $received_login && $user_password == $received_password) {
-                $_SESSION['user_id'] = $user_id;
-                $_SESSION['login'] = $user_login;
-                $_SESSION['firstname'] = $user_firstname;
-                $_SESSION['lastname'] = $user_lastname;
-                $_SESSION['email'] = $user_email;
-                $_SESSION['image'] = $user_image_name;
-                $_SESSION['privilege'] = $user_privilege;
-            }
+        $login_data['login'] = $_POST['user_login'];
+        $login_data['password'] = $_POST['user_password'];
+        $login_data = escapeArray($login_data);
+
+        foreach($err_user_login as $key=>$value) {
+            $err_user_login[$key] = false;
+        }
+        $err_authorization = false;
+        if (empty($login_data['login'])) {
+            $err_user_login['login'] = true;
+        }
+        if (empty($login_data['password'])) {
+            $err_user_login['password'] = true;
+        }
+        $err_result = false;
+        foreach($err_user_login as $err_item) {
+            $err_result = $err_result || $err_item;
         }
     
-        header("Location: index.php");
+        if (!$err_result) {
+            $query = "SELECT * FROM users WHERE user_login = '{$login_data['login']}';";
+            $userLogin = mysqli_query($connection, $query);
+            validateQuery($userLogin);
+            $err_authorization = true;
+            if ($row = mysqli_fetch_assoc($userLogin)) {
+                $user_id = $row['user_id'];
+                $user_login = $row['user_login'];
+                $user_password = $row['user_password'];
+                $user_firstname = $row['user_firstname'];
+                $user_lastname = $row['user_lastname'];
+                $user_email = $row['user_email'];
+                $user_image_name = $row['user_image'];
+                $user_privilege = $row['user_privilege'];
+                
+                if ($user_login == $login_data['login'] && $user_password == $login_data['password']) {
+                    $_SESSION['user_id'] = $user_id;
+                    $_SESSION['login'] = $user_login;
+                    $_SESSION['firstname'] = $user_firstname;
+                    $_SESSION['lastname'] = $user_lastname;
+                    $err_authorization = false;
+
+                    header("Location: index.php");
+                }
+            }
+        }
     }
+
+    include "includes/login_form.php";
 }
 ?>

@@ -9,5 +9,5 @@ $_SESSION['email'] = null;
 $_SESSION['image'] = null;
 $_SESSION['privilege'] = null;
 
-header("Location: ../index.php");
+header("Location: ../login.php?source=login");
 ?>

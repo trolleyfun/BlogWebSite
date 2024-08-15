@@ -28,7 +28,7 @@
                     
                     switch ($source) {
                         case "login":
-                            include "includes/login_form.php";
+                            userLogin();
                             break;
                         case "signup":
                             include "includes/signup_form.php";
