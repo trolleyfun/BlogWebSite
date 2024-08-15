@@ -23,7 +23,7 @@
                 </li>
                 <li class="divider"></li>
                 <li>
-                    <a href="../includes/logout.php"><i class="fa fa-fw fa-power-off"></i> Выйти</a>
+                    <a href="../includes/logout.php" onclick="return confirm('Вы уверены, что хотите завершить сеанс?');"><i class="fa fa-fw fa-power-off"></i> Выйти</a>
                 </li>
             </ul>
         </li>
