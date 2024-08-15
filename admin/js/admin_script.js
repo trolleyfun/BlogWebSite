@@ -29,3 +29,14 @@ $(document).ready(function() {
         }
     });
 });
+
+/* Display confirm message when user select delete option */
+function confirmDeleteOption(message) {
+    var selected_option = document.querySelector('#select-option').value;
+
+    if (selected_option === 'delete') {
+        return confirm(message);
+    } else {
+        return true;
+    }
+}

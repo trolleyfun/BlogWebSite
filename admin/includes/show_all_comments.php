@@ -5,7 +5,7 @@ selectCommentOptions();
 ?>
 <form action="" method="post">
     <!-- Comment Options Buttons -->
-    <div class="col-lg-4 col-md-6 form-group">
+    <div class="col-lg-4 col-md-6 form-group" id="select-option">
         <div class="input-group">
             <select name="comment_option" class="form-control">
                 <option value="">Выберите действие...</option>
@@ -14,7 +14,7 @@ selectCommentOptions();
                 <option value="delete">удалить</option>
             </select>
             <span class="input-group-btn">
-                <input type="submit" name="apply_comment_option_btn" class="btn btn-success" value="Применить">
+                <input type="submit" name="apply_comment_option_btn" class="btn btn-success" value="Применить" onclick="return confirmDeleteOption('Вы уверены, что хотите удалить выбранные комментарии?');">
             </span>
         </div>
     </div>

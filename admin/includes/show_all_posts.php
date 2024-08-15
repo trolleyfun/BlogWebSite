@@ -6,14 +6,14 @@ clickDeletePostIcon();
     <!-- Post Options Buttons -->
     <div class="col-lg-4 col-md-6 form-group">
         <div class="input-group">
-            <select name="post_option" class="form-control">
+            <select name="post_option" class="form-control" id="select-option">
                 <option value="">Выберите действие...</option>
                 <option value="confirm">разрешить</option>
                 <option value="block">отклонить</option>
                 <option value="delete">удалить</option>
             </select>
             <span class="input-group-btn">
-                <input type="submit" name="apply_post_option_btn" class="btn btn-success" value="Применить">
+                <input type="submit" name="apply_post_option_btn" class="btn btn-success" value="Применить" onclick="return confirmDeleteOption('Вы уверены, что хотите удалить выбранные публикации?');">
             </span>
         </div>
     </div>

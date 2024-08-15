@@ -6,7 +6,7 @@ selectUserOptions();
     <!-- User Options Buttons -->
     <div class="col-lg-4 col-md-6 form-group">
         <div class="input-group">
-            <select name="user_option" class="form-control">
+            <select name="user_option" class="form-control" id="select-option">
                 <option value="">Выберите действие...</option>
                 <option value="moderator">сделать модератором</option>
                 <option value="admin">сделать администратором</option>
@@ -14,7 +14,7 @@ selectUserOptions();
                 <option value="delete">удалить</option>
             </select>
             <span class="input-group-btn">
-                <input type="submit" name="apply_user_option_btn" class="btn btn-success" value="Применить">
+                <input type="submit" name="apply_user_option_btn" class="btn btn-success" value="Применить" onclick="return confirmDeleteOption('Вы уверены, что хотите удалить выбранных пользователей?');">
             </span>
         </div>
     </div>
