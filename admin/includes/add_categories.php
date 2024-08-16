@@ -2,7 +2,7 @@
 
 <!-- Category Add Form -->
 <form action="" method="post">
-    <div class="input-group form-group">
+    <div class="input-group">
         <input type="text" name="cat_title" class="form-control" placeholder="Введите название региона" required>
         <span class="input-group-btn">
             <button type="submit" name="add_cat_btn" class="btn btn-success">Добавить регион</button>

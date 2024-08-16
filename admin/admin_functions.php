@@ -105,7 +105,7 @@ function editCategories() {
 function showAllCategories($categoriesForm, $arg) {
     global $connection;
 
-    $query = "SELECT * FROM categories;";
+    $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC, cat_title;";
     $adminCategories = mysqli_query($connection,$query);
     validateQuery($adminCategories);
 
@@ -145,7 +145,7 @@ function deleteCategories($delete_cat_id) {
 function showAllPosts() {
     global $connection;
 
-    $query = "SELECT * FROM posts JOIN categories ON posts.post_category_id = categories.cat_id;";
+    $query = "SELECT * FROM posts JOIN categories ON posts.post_category_id = categories.cat_id ORDER BY post_date DESC, post_id DESC;";
     $allPosts = mysqli_query($connection, $query);
     validateQuery($allPosts);
 
@@ -430,7 +430,7 @@ function updatePosts($post_id, $err_status) {
 function showAllComments() {
     global $connection;
 
-    $query = "SELECT * FROM comments JOIN posts ON comments.comment_post_id = posts.post_id ORDER BY comment_id DESC;";
+    $query = "SELECT * FROM comments JOIN posts ON comments.comment_post_id = posts.post_id ORDER BY comment_date DESC, comment_id DESC;";
     $allComments = mysqli_query($connection, $query);
     validateQuery($allComments);
 
@@ -572,7 +572,7 @@ function postsCountByCategory($cat_id) {
 function showAllUsers() {
     global $connection;
 
-    $query = "SELECT * FROM users;";
+    $query = "SELECT * FROM users ORDER BY user_id DESC;";
     $allUsers = mysqli_query($connection, $query);
     validateQuery($allUsers);
 

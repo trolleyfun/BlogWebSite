@@ -31,7 +31,7 @@ function escapeArray($array) {
 function showAllPosts() { 
     global $connection;
     
-    $query = "SELECT * FROM posts WHERE post_status = 'опубликовано';";
+    $query = "SELECT * FROM posts WHERE post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
     $allPosts = mysqli_query($connection, $query);
     validateQuery($allPosts);
 
@@ -103,7 +103,7 @@ function showPostByCategory() {
             $category_title = $row['cat_title'];
         }
     
-        $query = "SELECT * FROM posts WHERE post_category_id = {$category_id} AND post_status = 'опубликовано';";
+        $query = "SELECT * FROM posts WHERE post_category_id = {$category_id} AND post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
         $postByCategory = mysqli_query($connection, $query);
         validateQuery($postByCategory);
 
@@ -147,7 +147,7 @@ function showPostByCategory() {
 function showAllCategories($items_amount) {
     global $connection;
 
-    $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC LIMIT $items_amount;";
+    $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC, cat_title LIMIT $items_amount;";
 
     $allCategories = mysqli_query($connection, $query);
     validateQuery($allCategories);
@@ -167,7 +167,7 @@ function searchPosts() {
     if (isset($_GET['search_btn'])) {
         $search_data = $_GET['search_data'];
     
-        $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search_data%' AND post_status = 'опубликовано';";
+        $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search_data%' AND post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
         $search_result = mysqli_query($connection, $query);
         validateQuery($search_result);
 
@@ -248,10 +248,11 @@ function addComments($add_comment_post_id, $err_status) {
     return $err_status;
 }
 
+/* Display all approved comments to post with $comment_post_id from database */
 function showCommentsOfPost($comment_post_id) {
     global $connection;
 
-    $query = "SELECT * FROM comments WHERE comment_post_id = $comment_post_id AND comment_status = 'одобрен' ORDER BY comment_id DESC;";
+    $query = "SELECT * FROM comments WHERE comment_post_id = $comment_post_id AND comment_status = 'одобрен' ORDER BY comment_date DESC, comment_id DESC;";
     $commentsOfPost = mysqli_query($connection, $query);
     validateQuery($commentsOfPost);
 
