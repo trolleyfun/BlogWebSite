@@ -412,9 +412,16 @@ function postCategoryValidation($post_category_id) {
 
 /* Check if status of post is valid. Return true if status is valid */
 function postStatusValidation($post_status) {
-    $post_status_values = ['черновик', 'ожидает проверки', 'опубликовано', 'заблокировано'];
+    $post_status_values = ['ожидает проверки', 'опубликовано', 'заблокировано'];
 
     return in_array($post_status, $post_status_values);
+}
+
+/* Check if status of comment is valid. Return true if status is valid */
+function commentStatusValidation($comment_status) {
+    $comment_status_values = ['одобрен', 'заблокирован'];
+
+    return in_array($comment_status, $comment_status_values);
 }
 
 /* Check if privilege of user value is valid. Return true if privilege value is valid */

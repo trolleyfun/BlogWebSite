@@ -1082,9 +1082,16 @@ function postCategoryValidation($post_category_id) {
 
 /* Check if status of post is valid. Return true if status is valid */
 function postStatusValidation($post_status) {
-    $post_status_values = ['черновик', 'ожидает проверки', 'опубликовано', 'заблокировано'];
+    $post_status_values = ['ожидает проверки', 'опубликовано', 'заблокировано'];
 
     return in_array($post_status, $post_status_values);
+}
+
+/* Check if status of comment is valid. Return true if status is valid */
+function commentStatusValidation($comment_status) {
+    $comment_status_values = ['одобрен', 'заблокирован'];
+
+    return in_array($comment_status, $comment_status_values);
 }
 
 /* Check if privilege of user value is valid. Return true if privilege value is valid */
@@ -1218,10 +1225,6 @@ function showUsersStatisticsWidget($widget_color, $link_name) {
 function showPostsByCategoryChart($chart_color, $categories_num) {
     global $connection;
 
-    // $query = "SELECT cat_title, CASE WHEN posts_cnt IS NULL THEN 0 ELSE posts_cnt END AS posts_cnt "; 
-    // $query .= "FROM categories AS cat LEFT JOIN ";
-    // $query .= "(SELECT post_category_id, COUNT(*) AS posts_cnt FROM posts WHERE post_status = 'опубликовано' GROUP BY post_category_id) AS p_cnt ";
-    // $query .= "ON cat.cat_id = p_cnt.post_category_id ORDER BY posts_cnt DESC LIMIT {$categories_num};";
     $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC LIMIT {$categories_num};";
 
     $postsByCategoryChart = mysqli_query($connection, $query);

@@ -2,7 +2,7 @@
 
 <!-- Edit Post Form -->
 <div class="col-md-6 col-xs-12">
-    <h3>Редактирование публикации</h3>
+    <h3>Редактировать публикацию</h3>
     <form action="" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="edit_post_category_id">Регион<span style='color: #a94442;'> *</span></label>
@@ -48,7 +48,6 @@
             <label for="edit_post_status">Статус<span style='color: #a94442;'> *</span></label>
             <select name="edit_post_status" id="edit_post_status" class="form-control" required>
                 <option value="">Выберите статус публикации...</option>
-                <option value="черновик" <?php if ($post_status == "черновик") {echo "selected";} ?>>черновик</option>
                 <option value="ожидает проверки" <?php if ($post_status == "ожидает проверки") {echo "selected";} ?>>ожидает проверки</option>
                 <option value="опубликовано" <?php if ($post_status == "опубликовано") {echo "selected";} ?>>опубликовано</option>
                 <option value="заблокировано" <?php if ($post_status == "заблокировано") {echo "selected";} ?>>заблокировано</option>

@@ -1,7 +1,7 @@
 <?php /* For function editCategories() */ ?>
 <div class="col-md-6">
     <!-- Category Edit Form -->
-    <h3>Редактирование региона</h3>
+    <h3>Редактировать регион</h3>
     <form action="" method="post">
         <div class="form-group">
             <label for="edit_cat_title">Новое название региона <?=$cat_title;?><span style='color: #a94442;'> *</span></label>
