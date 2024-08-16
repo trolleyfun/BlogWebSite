@@ -242,6 +242,8 @@ function addComments($add_comment_post_id, $err_status) {
             $err_status['if_sent'] = true;
 
             commentsCountByPost($add_comment_post_id);
+
+            header("Location: post.php?post_id={$add_comment_post_id}#add_comment_form");
         }
     }
 
