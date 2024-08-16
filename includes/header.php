@@ -21,9 +21,6 @@
     <!-- Custom CSS -->
     <link href="css/blog-home.css" rel="stylesheet">
 
-    <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-
     <!-- Summernote Editor -->
     <link rel="stylesheet" href="css/summernote.css">
 
@@ -34,6 +31,8 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <!-- User Styles -->
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>

@@ -27,8 +27,8 @@ function escapeArray($array) {
     return $escapedArray;
 }
 
-/* Display all posts from database */
-function showAllPosts() { 
+/* Display all posts from database. $post_per_page is number of posts on one page */
+function showAllPosts($posts_per_page) { 
     global $connection;
     
     $query = "SELECT * FROM posts WHERE post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
@@ -41,17 +41,48 @@ function showAllPosts() {
         echo "<hr>";
     }
 
-    $is_view_more_btn = true; //the button will be displayed under each post
-    while($row = mysqli_fetch_assoc($allPosts)) {
-        $post_id = $row['post_id'];
-        $post_title = $row['post_title'];
-        $post_author = $row['post_author'];
-        $post_date = $row['post_date'];
-        $post_image = $row['post_image'];
-        $post_content = substr($row['post_content'], 0, 500);
-
-        include "includes/post_form.php";
+    $pages_cnt = ceil($num_rows / $posts_per_page);
+    if ($pages_cnt == 0) {
+        $pages_cnt = 1;
     }
+
+    $page_num = 1;
+    if (isset($_GET['page'])) {
+        $page_num = $_GET['page'];
+    }
+
+    $previous_page_num = $page_num - 1;
+    if ($previous_page_num < 1) {
+        $previous_page_num = 1;
+    }
+    $prevous_page_link = "index.php?page=" . $previous_page_num;
+
+    $next_page_num = $page_num + 1;
+    if ($next_page_num > $pages_cnt) {
+        $next_page_num = $pages_cnt;
+    }
+    $next_page_link = "index.php?page=" . $next_page_num;
+
+    $post_offset = $posts_per_page * ($page_num - 1);
+    if ($post_offset < 0 || $post_offset >= $num_rows) {
+        $post_offset = 0;
+    }
+
+    $is_view_more_btn = true; //the button will be displayed under each post
+    for($i = 1; $row = mysqli_fetch_assoc($allPosts); $i++) {
+        if ($i > $post_offset && $i <= $post_offset + $posts_per_page) {
+            $post_id = $row['post_id'];
+            $post_title = $row['post_title'];
+            $post_author = $row['post_author'];
+            $post_date = $row['post_date'];
+            $post_image = $row['post_image'];
+            $post_content = substr($row['post_content'], 0, 500);
+
+            include "includes/post_form.php";
+        }
+    }
+
+    include "includes/pager_form.php";
 }
 
 /* Display selected post on the separate page */
@@ -526,5 +557,19 @@ function commentsCountByPost($post_id) {
     $query = "UPDATE posts SET post_comments_count = {$post_comments_count} WHERE post_id = {$post_id};";
     $updateCommentsCount = mysqli_query($connection, $query);
     validateQuery($updateCommentsCount);
+}
+
+/* Display Pager under the Posts on the Home Page of website. $pages_count is number of pages with post, $current_page is number of current page */
+function showPagesOfAllPosts($pages_count, $current_page) {
+    for($i = 1; $i <= $pages_count; $i++) {
+        $page_link = "index.php?page=" . $i;
+        $page_num = $i;
+        if ($page_num == $current_page) {
+            $item_class = "active-page";
+        } else {
+            $item_class = "";
+        }
+        include "includes/pager_item.php";
+    }
 }
 ?>

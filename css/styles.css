@@ -1,0 +1,12 @@
+/* Pager Section */
+.pager li .active-page {
+    background-color: #337ab7;
+    color: #fff;
+    border: none;
+}
+
+.pager li .active-page:hover {
+    background-color: #337ab7;
+    color: #fff;
+    border: none;
+}

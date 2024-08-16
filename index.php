@@ -19,19 +19,8 @@
                 <!-- Blog Posts -->
                 <?php 
                 /* Put Blog Posts from database */
-                showAllPosts();
+                showAllPosts(3);
                 ?>
-
-                <!-- Pager -->
-                <ul class="pager">
-                    <li class="previous">
-                        <a href="#">&larr; Старые</a>
-                    </li>
-                    <li class="next">
-                        <a href="#">Новые &rarr;</a>
-                    </li>
-                </ul>
-
             </div>
 
             <!-- Blog Sidebar Widgets Column -->
