@@ -50,4 +50,19 @@ clickDeletePostIcon();
         </table>
     </div>
     <!-- /.col-xs-12 -->
+    
+    <!-- Pager -->
+    <div class="col-xs-12">
+        <ul class="pager">
+            <li class="">
+                <a href="#">&larr; Предыдущая</a>
+            </li>
+            <?php 
+            
+            ?>
+            <li class="">
+                <a href="#">Следующая &rarr;</a>
+            </li>
+        </ul>
+    </div>
 </form>
