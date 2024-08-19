@@ -13,6 +13,7 @@
             showPagesPostsOfCategory($pages_cnt, $page_num, $cat_id);
             break;
         case "search":
+            showPagesSearchPosts($pages_cnt, $page_num, $search_data);
             break;
     }
     ?>

@@ -159,7 +159,7 @@ function showPostByCategory($posts_per_page) {
                 default:
                     $search_str = "найдено {$number_rows} публикаций";
                     break;            
-            };
+            }
             
             include "includes/category_header.php";
 
@@ -232,48 +232,87 @@ function showAllCategories($items_amount) {
 }
 
 /* Search posts on tags in database and display them on the page */
-function searchPosts() {
+function searchPosts($posts_per_page) {
     global $connection;
 
-    if (isset($_GET['search_btn'])) {
+    if (isset($_GET['search_data'])) {
         $search_data = $_GET['search_data'];
-    
-        $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search_data%' AND post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
-        $search_result = mysqli_query($connection, $query);
-        validateQuery($search_result);
 
-        $number_rows = mysqli_num_rows($search_result);
-        $search_str = "";
-        switch(true) {
-            case $number_rows == 0:
-                $search_str = "по Вашему запросу не найдено ни одной публикации";
-                break;
-            case $number_rows % 100 >= 11 && $number_rows % 100 <= 19:
-                $search_str = "по Вашему запросу найдено {$number_rows} публикаций";
-                break;
-            case $number_rows % 10 == 1:
-                $search_str = "по Вашему запросу найдена {$number_rows} публикация";
-                break;
-            case $number_rows % 10 >= 2 && $number_rows % 10 <= 4:
-                $search_str = "по Вашему запросу найдено {$number_rows} публикации";
-                break;
-            default:
-                $search_str = "по Вашему запросу найдено {$number_rows} публикаций";
-                break;            
-        };
-        
-        include "includes/search_header.php";
+        if ($search_data != "") {
+            $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search_data%' AND post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
+            $search_result = mysqli_query($connection, $query);
+            validateQuery($search_result);
 
-        while($row = mysqli_fetch_assoc($search_result)) {
-            $post_id = $row['post_id'];
-            $post_title = $row['post_title'];
-            $post_author = $row['post_author'];
-            $post_date = $row['post_date'];
-            $post_image = $row['post_image'];
-            $post_content = substr($row['post_content'], 0, 500);
+            $number_rows = mysqli_num_rows($search_result);
+            $search_str = "";
+            switch(true) {
+                case $number_rows == 0:
+                    $search_str = "по Вашему запросу не найдено ни одной публикации";
+                    break;
+                case $number_rows % 100 >= 11 && $number_rows % 100 <= 19:
+                    $search_str = "по Вашему запросу найдено {$number_rows} публикаций";
+                    break;
+                case $number_rows % 10 == 1:
+                    $search_str = "по Вашему запросу найдена {$number_rows} публикация";
+                    break;
+                case $number_rows % 10 >= 2 && $number_rows % 10 <= 4:
+                    $search_str = "по Вашему запросу найдено {$number_rows} публикации";
+                    break;
+                default:
+                    $search_str = "по Вашему запросу найдено {$number_rows} публикаций";
+                    break;            
+            }
+            
+            include "includes/search_header.php";
 
-            include "includes/post_form_short.php";
+            $pages_cnt = ceil($number_rows / $posts_per_page);
+                if ($pages_cnt == 0) {
+                    $pages_cnt = 1;
+                }
+
+                $page_num = 1;
+                if (isset($_GET['page'])) {
+                    $page_num = $_GET['page'];
+                }
+
+                $previous_page_num = $page_num - 1;
+                if ($previous_page_num < 1) {
+                    $previous_page_num = 1;
+                }
+                $prevous_page_link = "search.php?search_data={$search_data}&page={$previous_page_num}";
+
+                $next_page_num = $page_num + 1;
+                if ($next_page_num > $pages_cnt) {
+                    $next_page_num = $pages_cnt;
+                }
+                $next_page_link = "search.php?search_data={$search_data}&page={$next_page_num}";
+
+                $post_offset = $posts_per_page * ($page_num - 1);
+                if ($post_offset < 0 || $post_offset >= $number_rows) {
+                    $post_offset = 0;
+                }
+
+                $page_name = "search";
+
+            for($i = 1; $row = mysqli_fetch_assoc($search_result); $i++) {
+                if ($i > $post_offset && $i <= $post_offset + $posts_per_page) {
+                    $post_id = $row['post_id'];
+                    $post_title = $row['post_title'];
+                    $post_author = $row['post_author'];
+                    $post_date = $row['post_date'];
+                    $post_image = $row['post_image'];
+                    $post_content = substr($row['post_content'], 0, 500);
+
+                    include "includes/post_form_short.php";
+                }
+            }
+
+            include "includes/pager_form.php";
+        } else {
+            header("Location: index.php");
         }
+    } else {
+        header("Location: index.php");
     }
 }
 
@@ -629,7 +668,7 @@ function showPagesPostsOfCategory($pages_count, $current_page, $cat_id) {
 /* Display Pager under the Posts on the Search Page of website with search query $search. $pages_count is number of pages with posts, $current_page is number of current page */
 function showPagesSearchPosts($pages_count, $current_page, $search) {
     for($i = 1; $i <= $pages_count; $i++) {
-        $page_link = "search.php?search_data={$search}&search_btn=&page={$i}";
+        $page_link = "search.php?search_data={$search}&page={$i}";
         $page_num = $i;
         if ($page_num == $current_page) {
             $item_class = "active-page";

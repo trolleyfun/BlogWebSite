@@ -12,19 +12,8 @@
             <div class="col-md-8">
                 <?php 
                 /* Search posts on tags in database and display them */
-                searchPosts();
+                searchPosts(2);
                 ?>
-
-                <!-- Pager -->
-                <ul class="pager">
-                    <li class="previous">
-                        <a href="#">&larr; Старые</a>
-                    </li>
-                    <li class="next">
-                        <a href="#">Новые &rarr;</a>
-                    </li>
-                </ul>
-
             </div>
 
             <!-- Blog Sidebar Widgets Column -->
