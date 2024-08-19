@@ -102,20 +102,55 @@ function editCategories() {
 }
 
 /* Read all categories from database and display in $categoryFile Form */
-function showAllCategories($categoriesForm, $arg) {
+function showAllCategories($categoriesForm, $arg, $rows_per_page) {
     global $connection;
 
     $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC, cat_title;";
     $adminCategories = mysqli_query($connection,$query);
     validateQuery($adminCategories);
+    $num_rows = mysqli_num_rows($adminCategories);
 
-    while($row = mysqli_fetch_assoc($adminCategories)) {
-        $cat_id = $row['cat_id'];
-        $cat_title = $row['cat_title'];
-        $cat_posts_count = $row['cat_posts_count'];
-
-        include $categoriesForm;
+    $pager['pages_cnt'] = ceil($num_rows / $rows_per_page);
+    if ($pager['pages_cnt'] == 0) {
+        $pager['pages_cnt'] = 1;
     }
+
+    $pager['page_num'] = 1;
+    if (isset($_GET['page'])) {
+        $pager['page_num'] = $_GET['page'];
+    }
+    if ($pager['page_num'] < 1 || $pager['page_num'] > $pager['pages_cnt']) {
+        $pager['page_num'] = 1;
+    }
+
+    $previous_page_num = $pager['page_num'] - 1;
+    if ($previous_page_num < 1) {
+        $previous_page_num = 1;
+    }
+    $pager['previous_page_link'] = "admin_categories.php?page={$previous_page_num}";
+
+    $next_page_num = $pager['page_num'] + 1;
+    if ($next_page_num > $pager['pages_cnt']) {
+        $next_page_num = $pager['pages_cnt'];
+    }
+    $pager['next_page_link'] = "admin_categories.php?page={$next_page_num}";
+
+    $post_offset = $rows_per_page * ($pager['page_num'] - 1);
+    if ($post_offset < 0 || $post_offset >= $num_rows) {
+        $post_offset = 0;
+    }
+
+    for ($i = 1; $row = mysqli_fetch_assoc($adminCategories); $i++) {
+        if ($i > $post_offset && $i <= $post_offset + $rows_per_page) {
+            $cat_id = $row['cat_id'];
+            $cat_title = $row['cat_title'];
+            $cat_posts_count = $row['cat_posts_count'];
+
+            include $categoriesForm;
+        }
+    }
+
+    return $pager;
 }
 
 /* Delete category if Delete Icon is clicked */
@@ -1637,6 +1672,20 @@ function showPagesAdminComments($pages_count, $current_page) {
 function showPagesAdminUsers($pages_count, $current_page) {
     for($i = 1; $i <= $pages_count; $i++) {
         $page_link = "admin_users.php?page={$i}";
+        $page_num = $i;
+        if ($page_num == $current_page) {
+            $item_class = "active-page";
+        } else {
+            $item_class = "";
+        }
+        include "includes/admin_pager_item.php";
+    }
+}
+
+/* Display Pager on Categories Page in admin. $pages_count is number of pages, $current_page is number of current page */
+function showPagesAdminCategories($pages_count, $current_page) {
+    for($i = 1; $i <= $pages_count; $i++) {
+        $page_link = "admin_categories.php?page={$i}";
         $page_num = $i;
         if ($page_num == $current_page) {
             $item_class = "active-page";

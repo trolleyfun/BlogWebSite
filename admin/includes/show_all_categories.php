@@ -18,8 +18,19 @@
         <tbody>
             <?php 
             /* Put categories from database */
-            showAllCategories("includes/all_categories_table.php", null);
+            $pager_values = showAllCategories("includes/all_categories_table.php", null, 3);
             ?>
         </tbody> 
     </table>
 </form>
+
+<!-- Pager -->
+<ul class="pager">
+    <li class="previous">
+        <a href="<?=$pager_values['previous_page_link'];?>">&larr; Предыдущая</a>
+    </li>
+    <?php showPagesAdminCategories($pager_values['pages_cnt'], $pager_values['page_num']); ?>
+    <li>
+        <a href="<?=$pager_values['next_page_link'];?>">Следующая &rarr;</a>
+    </li>
+</ul>
