@@ -621,6 +621,7 @@ function commentsCountByPost($post_id) {
     validateQuery($updateCommentsCount);
 }
 
+/* Update number of posts to selected category in database */
 function postsCountByCategory($cat_id) {
     global $connection;
 
@@ -639,25 +640,60 @@ function postsCountByCategory($cat_id) {
 }
 
 /* Display all users from database */
-function showAllUsers() {
+function showAllUsers($rows_per_page) {
     global $connection;
 
     $query = "SELECT * FROM users ORDER BY user_id DESC;";
     $allUsers = mysqli_query($connection, $query);
     validateQuery($allUsers);
+    $num_rows = mysqli_num_rows($allUsers);
 
-    while($row = mysqli_fetch_assoc($allUsers)) {
-        $user_id = $row['user_id'];
-        $user_login = $row['user_login'];
-        $user_password = $row['user_password'];
-        $user_firstname = $row['user_firstname'];
-        $user_lastname = $row['user_lastname'];
-        $user_email = $row['user_email'];
-        $user_image = $row['user_image'];
-        $user_privilege = $row['user_privilege'];
-
-        include "includes/all_users_table.php";
+    $pager['pages_cnt'] = ceil($num_rows / $rows_per_page);
+    if ($pager['pages_cnt'] == 0) {
+        $pager['pages_cnt'] = 1;
     }
+
+    $pager['page_num'] = 1;
+    if (isset($_GET['page'])) {
+        $pager['page_num'] = $_GET['page'];
+    }
+    if ($pager['page_num'] < 1 || $pager['page_num'] > $pager['pages_cnt']) {
+        $pager['page_num'] = 1;
+    }
+
+    $previous_page_num = $pager['page_num'] - 1;
+    if ($previous_page_num < 1) {
+        $previous_page_num = 1;
+    }
+    $pager['previous_page_link'] = "admin_users.php?page={$previous_page_num}";
+
+    $next_page_num = $pager['page_num'] + 1;
+    if ($next_page_num > $pager['pages_cnt']) {
+        $next_page_num = $pager['pages_cnt'];
+    }
+    $pager['next_page_link'] = "admin_users.php?page={$next_page_num}";
+
+    $post_offset = $rows_per_page * ($pager['page_num'] - 1);
+    if ($post_offset < 0 || $post_offset >= $num_rows) {
+        $post_offset = 0;
+    }
+
+    for ($i = 1; $row = mysqli_fetch_assoc($allUsers); $i++) {
+        if ($i > $post_offset && $i <= $post_offset + $rows_per_page) {
+            $user_id = $row['user_id'];
+            $user_login = $row['user_login'];
+            $user_password = $row['user_password'];
+            $user_firstname = $row['user_firstname'];
+            $user_lastname = $row['user_lastname'];
+            $user_email = $row['user_email'];
+            $user_image = $row['user_image'];
+            $user_privilege = $row['user_privilege'];
+
+            include "includes/all_users_table.php";
+        }
+    }
+
+    return $pager;
 }
 
 /* Add information about new user to database */
@@ -1587,6 +1623,20 @@ function showPagesAdminPosts($pages_count, $current_page) {
 function showPagesAdminComments($pages_count, $current_page) {
     for($i = 1; $i <= $pages_count; $i++) {
         $page_link = "admin_comments.php?page={$i}";
+        $page_num = $i;
+        if ($page_num == $current_page) {
+            $item_class = "active-page";
+        } else {
+            $item_class = "";
+        }
+        include "includes/admin_pager_item.php";
+    }
+}
+
+/* Display Pager on Users Page in admin. $pages_count is number of pages, $current_page is number of current page */
+function showPagesAdminUsers($pages_count, $current_page) {
+    for($i = 1; $i <= $pages_count; $i++) {
+        $page_link = "admin_users.php?page={$i}";
         $page_num = $i;
         if ($page_num == $current_page) {
             $item_class = "active-page";
