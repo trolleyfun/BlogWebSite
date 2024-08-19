@@ -50,6 +50,9 @@ function showAllPosts($posts_per_page) {
     if (isset($_GET['page'])) {
         $page_num = $_GET['page'];
     }
+    if ($page_num < 1 || $page_num > $pages_cnt) {
+        $page_num = 1;
+    }
 
     $previous_page_num = $page_num - 1;
     if ($previous_page_num < 1) {
@@ -172,6 +175,9 @@ function showPostByCategory($posts_per_page) {
             if (isset($_GET['page'])) {
                 $page_num = $_GET['page'];
             }
+            if ($page_num < 1 || $page_num > $pages_cnt) {
+                $page_num = 1;
+            }
 
             $previous_page_num = $page_num - 1;
             if ($previous_page_num < 1) {
@@ -273,6 +279,9 @@ function searchPosts($posts_per_page) {
                 $page_num = 1;
                 if (isset($_GET['page'])) {
                     $page_num = $_GET['page'];
+                }
+                if ($page_num < 1 || $page_num > $pages_cnt) {
+                    $page_num = 1;
                 }
 
                 $previous_page_num = $page_num - 1;

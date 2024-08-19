@@ -39,9 +39,24 @@ selectCommentOptions();
             <tbody>
                 <?php 
                 /* Put All Comments from database */
-                showAllComments();
+                $pager_values = showAllComments(3);
                 ?>
             </tbody>
         </table>
     </div>
+    <!-- /.col-xs-12.form-group -->
 </form>
+
+<!-- Pager -->
+<div class="col-xs-12">
+    <ul class="pager">
+        <li>
+            <a href="<?=$pager_values['previous_page_link'];?>">&larr; Предыдущая</a>
+        </li>
+        <?php showPagesAdminComments($pager_values['pages_cnt'], $pager_values['page_num']); ?>
+        <li>
+            <a href="<?=$pager_values['next_page_link'];?>">Следующая &rarr;</a>
+        </li>
+    </ul>
+</div>
+<!-- /.col-xs-12 -->

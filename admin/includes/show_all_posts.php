@@ -50,17 +50,18 @@ clickDeletePostIcon();
         </table>
     </div>
     <!-- /.col-xs-12 -->
-    
-    <!-- Pager -->
-    <div class="col-xs-12">
-        <ul class="pager">
-            <li>
-                <a href="<?=$pager_values['previous_page_link'];?>">&larr; Предыдущая</a>
-            </li>
-            <?php showPagesAdminPosts($pager_values['pages_cnt'], $pager_values['page_num']); ?>
-            <li>
-                <a href="<?=$pager_values['next_page_link'];?>">Следующая &rarr;</a>
-            </li>
-        </ul>
-    </div>
 </form>
+
+<!-- Pager -->
+<div class="col-xs-12">
+    <ul class="pager">
+        <li>
+            <a href="<?=$pager_values['previous_page_link'];?>">&larr; Предыдущая</a>
+        </li>
+        <?php showPagesAdminPosts($pager_values['pages_cnt'], $pager_values['page_num']); ?>
+        <li>
+            <a href="<?=$pager_values['next_page_link'];?>">Следующая &rarr;</a>
+        </li>
+    </ul>
+</div>
+<!-- /.col-xs-12 -->
