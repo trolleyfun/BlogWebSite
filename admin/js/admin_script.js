@@ -31,8 +31,18 @@ $(document).ready(function() {
 });
 
 /* Display confirm message when user select delete option */
-function confirmDeleteOption(message) {
-    var selected_option = document.querySelector('#select-option').value;
+function confirmDeleteOptionTop(message) {
+    var selected_option = document.querySelector('#select-option-top').value;
+
+    if (selected_option === 'delete') {
+        return confirm(message);
+    } else {
+        return true;
+    }
+}
+
+function confirmDeleteOptionBottom(message) {
+    var selected_option = document.querySelector('#select-option-bottom').value;
 
     if (selected_option === 'delete') {
         return confirm(message);

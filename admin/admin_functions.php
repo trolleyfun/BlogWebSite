@@ -101,8 +101,8 @@ function editCategories() {
     }
 }
 
-/* Read all categories from database and display in $categoryFile Form */
-function showAllCategories($categoriesForm, $arg, $rows_per_page) {
+/* Read all categories from database and display as table */
+function showAllCategoriesInTable($rows_per_page) {
     global $connection;
 
     $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC, cat_title;";
@@ -146,11 +146,28 @@ function showAllCategories($categoriesForm, $arg, $rows_per_page) {
             $cat_title = $row['cat_title'];
             $cat_posts_count = $row['cat_posts_count'];
 
-            include $categoriesForm;
+            include "includes/all_categories_table.php";
         }
     }
 
     return $pager;
+}
+
+/* Read all categories from database and display as list. $post_category_id is selected item of the list */
+function showAllCategoriesInList($post_category_id) {
+    global $connection;
+
+    $query = "SELECT * FROM categories ORDER BY cat_title;";
+    $adminCategories = mysqli_query($connection,$query);
+    validateQuery($adminCategories);
+    
+    while($row = mysqli_fetch_assoc($adminCategories)) {
+        $cat_id = $row['cat_id'];
+        $cat_title = $row['cat_title'];
+        $cat_posts_count = $row['cat_posts_count'];
+
+        include "includes/all_categories_list.php";
+    }
 }
 
 /* Delete category if Delete Icon is clicked */
@@ -1553,8 +1570,12 @@ function showProfileOperationInfo() {
 
 /* Apply selected options on the Posts Page */
 function selectPostOptions() {
-    if (isset($_POST['apply_post_option_btn'])) {
-        $post_option = $_POST['post_option'];
+    if (isset($_POST['apply_post_option_btn_top']) || isset($_POST['apply_post_option_btn_bottom'])) {
+        if (isset($_POST['apply_post_option_btn_top'])) {
+            $post_option = $_POST['post_option_top'];
+        } else {
+            $post_option = $_POST['post_option_bottom'];
+        }
 
         if (isset($_POST['checkBoxArray'])) {
             $post_id_array = $_POST['checkBoxArray'];

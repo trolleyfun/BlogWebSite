@@ -8,7 +8,7 @@
             <label for="post_category_id">Регион<span style='color: #a94442;'> *</span></label>
             <select name="post_category_id" id="post_category_id" class="form-control" required>
                 <option value="">Выберите регион...</option>
-                <?php showAllCategories("includes/all_categories_list.php", ""); ?>
+                <?php showAllCategoriesInList($post_category_id); ?>
             </select>
             <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['category_id_empty'], "Выберите регион"); ?></span>
             <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['category_id_exists'], "Такого региона не существует. Выберите другой регион"); ?></span>

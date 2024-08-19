@@ -18,7 +18,7 @@
         <tbody>
             <?php 
             /* Put categories from database */
-            $pager_values = showAllCategories("includes/all_categories_table.php", null, 10);
+            $pager_values = showAllCategoriesInTable(10);
             ?>
         </tbody> 
     </table>

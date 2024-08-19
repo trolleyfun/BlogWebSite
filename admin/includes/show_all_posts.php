@@ -3,17 +3,17 @@ selectPostOptions();
 clickDeletePostIcon();
 ?>
 <form action="" method="post">
-    <!-- Post Options Buttons -->
+    <!-- Post Options Buttons Top -->
     <div class="col-lg-4 col-md-6 form-group">
         <div class="input-group">
-            <select name="post_option" class="form-control" id="select-option">
+            <select name="post_option_top" class="form-control" id="select-option-top">
                 <option value="">Выберите действие...</option>
                 <option value="confirm">разрешить</option>
                 <option value="block">отклонить</option>
                 <option value="delete">удалить</option>
             </select>
             <span class="input-group-btn">
-                <input type="submit" name="apply_post_option_btn" class="btn btn-success" value="Применить" onclick="return confirmDeleteOption('Вы уверены, что хотите удалить выбранные публикации?');">
+                <input type="submit" name="apply_post_option_btn_top" class="btn btn-success" value="Применить" onclick="return confirmDeleteOptionTop('Вы уверены, что хотите удалить выбранные публикации?');">
             </span>
         </div>
     </div>
@@ -50,6 +50,22 @@ clickDeletePostIcon();
         </table>
     </div>
     <!-- /.col-xs-12 -->
+
+    <!-- Post Options Buttons Bottom -->
+    <div class="col-lg-4 col-md-6 form-group">
+        <div class="input-group">
+            <select name="post_option_bottom" class="form-control" id="select-option-bottom">
+                <option value="">Выберите действие...</option>
+                <option value="confirm">разрешить</option>
+                <option value="block">отклонить</option>
+                <option value="delete">удалить</option>
+            </select>
+            <span class="input-group-btn">
+                <input type="submit" name="apply_post_option_btn_bottom" class="btn btn-success" value="Применить" onclick="return confirmDeleteOptionBottom('Вы уверены, что хотите удалить выбранные публикации?');">
+            </span>
+        </div>
+    </div>
+    <!-- /.col-lg-4.col-md-6 -->
 </form>
 
 <!-- Pager -->
