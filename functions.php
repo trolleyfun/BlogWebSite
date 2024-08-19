@@ -68,7 +68,8 @@ function showAllPosts($posts_per_page) {
         $post_offset = 0;
     }
 
-    $is_view_more_btn = true; //the button will be displayed under each post
+    $page_name = "posts";
+
     for($i = 1; $row = mysqli_fetch_assoc($allPosts); $i++) {
         if ($i > $post_offset && $i <= $post_offset + $posts_per_page) {
             $post_id = $row['post_id'];
@@ -78,7 +79,7 @@ function showAllPosts($posts_per_page) {
             $post_image = $row['post_image'];
             $post_content = substr($row['post_content'], 0, 500);
 
-            include "includes/post_form.php";
+            include "includes/post_form_short.php";
         }
     }
 
@@ -96,7 +97,6 @@ function showPostById() {
         $postById = mysqli_query($connection, $query);
         validateQuery($postById);
 
-        $is_view_more_btn = false; //the button won't be displayed under posts
         if ($row = mysqli_fetch_assoc($postById)) {
             $post_id = $row['post_id'];
             $post_title = $row['post_title'];
@@ -108,7 +108,7 @@ function showPostById() {
             $err_add_comment = ['author'=>false, 'email'=>false, 'content'=>false, 'if_sent'=>false]; 
             $err_add_comment = addComments($post_id, $err_add_comment);
 
-            include "includes/post_form.php";
+            include "includes/post_form_full.php";
             if (isset($_SESSION['login'])) {
                 include "includes/post_edit_button.php";
                 include "includes/add_comment_form.php";
@@ -160,7 +160,6 @@ function showPostByCategory() {
         
         include "includes/category_header.php";
 
-        $is_view_more_btn = true; //the button will be displayed under each post
         while($row = mysqli_fetch_assoc($postByCategory)) {
             $post_id = $row['post_id'];
             $post_title = $row['post_title'];
@@ -169,7 +168,7 @@ function showPostByCategory() {
             $post_image = $row['post_image'];
             $post_content = substr($row['post_content'], 0, 500);
 
-            include "includes/post_form.php";
+            include "includes/post_form_short.php";
         }
     }
 }
@@ -224,7 +223,6 @@ function searchPosts() {
         
         include "includes/search_header.php";
 
-        $is_view_more_btn = true; //the button will be displayed under each post
         while($row = mysqli_fetch_assoc($search_result)) {
             $post_id = $row['post_id'];
             $post_title = $row['post_title'];
@@ -233,7 +231,7 @@ function searchPosts() {
             $post_image = $row['post_image'];
             $post_content = substr($row['post_content'], 0, 500);
 
-            include "includes/post_form.php";
+            include "includes/post_form_short.php";
         }
     }
 }

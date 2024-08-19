@@ -1,4 +1,4 @@
-<?php /* Posts Form for showAllPosts and searchPosts functions */ ?>
+<?php /* Posts Form for showAllPosts(), showPostByCategory() and searchPosts() functions */ ?>
 <h2>
     <a href="post.php?post_id=<?=$post_id;?>"><?=$post_title;?></a>
 </h2>
@@ -12,5 +12,5 @@
 </a>
 <hr>
 <p><?=$post_content;?></p>
-<?php if ($is_view_more_btn) {include "includes/post_view_more_button.php";}?>
+<a class='btn btn-primary' href='post.php?post_id=<?=$post_id;?>'>Читать дальше <span class='glyphicon glyphicon-chevron-right'></span></a>
 <hr>
