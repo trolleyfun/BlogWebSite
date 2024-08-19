@@ -7,9 +7,10 @@
     <?php 
     switch($page_name) {
         case "posts":
-            showPagesOfAllPosts($pages_cnt, $page_num); 
+            showPagesAllPosts($pages_cnt, $page_num); 
             break;
         case "category":
+            showPagesPostsOfCategory($pages_cnt, $page_num, $cat_id);
             break;
         case "search":
             break;
