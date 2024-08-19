@@ -1624,8 +1624,12 @@ function selectCommentOptions() {
 
 /* Apply selected options on the Users Page */
 function selectUserOptions() {
-    if (isset($_POST['apply_user_option_btn'])) {
-        $user_option = $_POST['user_option'];
+    if (isset($_POST['apply_user_option_btn_top']) || isset($_POST['apply_user_option_btn_bottom'])) {
+        if (isset($_POST['apply_user_option_btn_top'])) {
+            $user_option = $_POST['user_option_top'];
+        } else {
+            $user_option = $_POST['user_option_bottom'];
+        }
 
         if (isset($_POST['checkBoxArray'])) {
             $user_id_array = $_POST['checkBoxArray'];
