@@ -142,27 +142,59 @@ function deleteCategories($delete_cat_id) {
 }
 
 /* Read all posts from database and display them in Posts Section in admin */
-function showAllPosts() {
+function showAllPosts($rows_per_page) {
     global $connection;
 
     $query = "SELECT * FROM posts JOIN categories ON posts.post_category_id = categories.cat_id ORDER BY post_date DESC, post_id DESC;";
     $allPosts = mysqli_query($connection, $query);
     validateQuery($allPosts);
+    $num_rows = mysqli_num_rows($allPosts);
 
-    while($row = mysqli_fetch_assoc($allPosts)) {
-        $post_id = $row['post_id'];
-        $post_category_id = $row['post_category_id'];
-        $post_category_title = $row['cat_title'];
-        $post_title = $row['post_title'];
-        $post_author = $row['post_author'];
-        $post_date = $row['post_date'];
-        $post_image = $row['post_image'];
-        $post_tags = $row['post_tags'];
-        $post_comments_count = $row['post_comments_count'];
-        $post_status = $row['post_status'];
-
-        include "includes/all_posts_table.php";
+    $pager['pages_cnt'] = ceil($num_rows / $rows_per_page);
+    if ($pager['pages_cnt'] == 0) {
+        $pager['pages_cnt'] = 1;
     }
+
+    $pager['page_num'] = 1;
+    if (isset($_GET['page'])) {
+        $pager['page_num'] = $_GET['page'];
+    }
+
+    $previous_page_num = $pager['page_num'] - 1;
+    if ($previous_page_num < 1) {
+        $previous_page_num = 1;
+    }
+    $pager['previous_page_link'] = "admin_posts.php?page={$previous_page_num}";
+
+    $next_page_num = $pager['page_num'] + 1;
+    if ($next_page_num > $pager['pages_cnt']) {
+        $next_page_num = $pager['pages_cnt'];
+    }
+    $pager['next_page_link'] = "admin_posts.php?page={$next_page_num}";
+
+    $post_offset = $rows_per_page * ($pager['page_num'] - 1);
+    if ($post_offset < 0 || $post_offset >= $num_rows) {
+        $post_offset = 0;
+    }
+
+    for ($i = 1; $row = mysqli_fetch_assoc($allPosts); $i++) {
+        if ($i > $post_offset && $i <= $post_offset + $rows_per_page) {
+            $post_id = $row['post_id'];
+            $post_category_id = $row['post_category_id'];
+            $post_category_title = $row['cat_title'];
+            $post_title = $row['post_title'];
+            $post_author = $row['post_author'];
+            $post_date = $row['post_date'];
+            $post_image = $row['post_image'];
+            $post_tags = $row['post_tags'];
+            $post_comments_count = $row['post_comments_count'];
+            $post_status = $row['post_status'];
+
+            include "includes/all_posts_table.php";
+        }
+    }
+
+    return $pager;
 }
 
 /* Put Post from Add Post Form to database */
@@ -1496,6 +1528,20 @@ function deleteSelectedCategories() {
                 deleteCategories($category_id_item);
             }
         }
+    }
+}
+
+/* Display Pager on Posts Page in admin. $pages_count is number of pages, $current_page is number of current page */
+function showPagesAdminPosts($pages_count, $current_page) {
+    for($i = 1; $i <= $pages_count; $i++) {
+        $page_link = "admin_posts.php?page={$i}";
+        $page_num = $i;
+        if ($page_num == $current_page) {
+            $item_class = "active-page";
+        } else {
+            $item_class = "";
+        }
+        include "includes/admin_pager_item.php";
     }
 }
 ?>

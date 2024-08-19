@@ -44,7 +44,7 @@ clickDeletePostIcon();
             <tbody>
                 <?php 
                 /* Put All Posts from database */
-                showAllPosts();
+                $pager_values = showAllPosts(3);
                 ?>
             </tbody>
         </table>
@@ -54,14 +54,12 @@ clickDeletePostIcon();
     <!-- Pager -->
     <div class="col-xs-12">
         <ul class="pager">
-            <li class="">
-                <a href="#">&larr; Предыдущая</a>
+            <li>
+                <a href="<?=$pager_values['previous_page_link'];?>">&larr; Предыдущая</a>
             </li>
-            <?php 
-            
-            ?>
-            <li class="">
-                <a href="#">Следующая &rarr;</a>
+            <?php showPagesAdminPosts($pager_values['pages_cnt'], $pager_values['page_num']); ?>
+            <li>
+                <a href="<?=$pager_values['next_page_link'];?>">Следующая &rarr;</a>
             </li>
         </ul>
     </div>

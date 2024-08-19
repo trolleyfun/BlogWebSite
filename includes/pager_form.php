@@ -2,7 +2,7 @@
 <!-- Pager -->
 <ul class="pager">
     <li class="previous">
-        <a href="<?=$prevous_page_link;?>">&larr; Предыдущая</a>
+        <a href="<?=$previous_page_link;?>">&larr; Предыдущая</a>
     </li>
     <?php 
     switch($page_name) {

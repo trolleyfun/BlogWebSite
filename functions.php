@@ -55,7 +55,7 @@ function showAllPosts($posts_per_page) {
     if ($previous_page_num < 1) {
         $previous_page_num = 1;
     }
-    $prevous_page_link = "index.php?page={$previous_page_num}";
+    $previous_page_link = "index.php?page={$previous_page_num}";
 
     $next_page_num = $page_num + 1;
     if ($next_page_num > $pages_cnt) {
@@ -177,7 +177,7 @@ function showPostByCategory($posts_per_page) {
             if ($previous_page_num < 1) {
                 $previous_page_num = 1;
             }
-            $prevous_page_link = "category.php?cat_id={$cat_id}&page={$previous_page_num}";
+            $previous_page_link = "category.php?cat_id={$cat_id}&page={$previous_page_num}";
 
             $next_page_num = $page_num + 1;
             if ($next_page_num > $pages_cnt) {
@@ -279,7 +279,7 @@ function searchPosts($posts_per_page) {
                 if ($previous_page_num < 1) {
                     $previous_page_num = 1;
                 }
-                $prevous_page_link = "search.php?search_data={$search_data}&page={$previous_page_num}";
+                $previous_page_link = "search.php?search_data={$search_data}&page={$previous_page_num}";
 
                 $next_page_num = $page_num + 1;
                 if ($next_page_num > $pages_cnt) {
