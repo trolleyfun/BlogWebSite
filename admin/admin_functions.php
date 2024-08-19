@@ -1629,7 +1629,7 @@ function selectUserOptions() {
 
 /* Delete selected categories from database */
 function deleteSelectedCategories() {
-    if (isset($_POST['delete_categories_btn'])) {
+    if (isset($_POST['delete_categories_btn_top']) || isset($_POST['delete_categories_btn_bottom'])) {
         if (isset($_POST['checkBoxArray'])) {
             $category_id_array = $_POST['checkBoxArray'];
 

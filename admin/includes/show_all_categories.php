@@ -1,7 +1,7 @@
 <form action="" method="post">
-    <!-- Delete Categories Button -->
+    <!-- Delete Categories Button Top -->
     <div class="form-group">
-        <input type="submit" name="delete_categories_btn" class="btn btn-primary" value="Удалить выбранные регионы" onclick="return confirm('Вы уверены, что хотите удалить выбранные регионы?');">
+        <input type="submit" name="delete_categories_btn_top" class="btn btn-primary" value="Удалить выбранные регионы" onclick="return confirm('Вы уверены, что хотите удалить выбранные регионы?');">
     </div>
 
     <!-- Category Table -->
@@ -18,15 +18,21 @@
         <tbody>
             <?php 
             /* Put categories from database */
-            $pager_values = showAllCategories("includes/all_categories_table.php", null, 3);
+            $pager_values = showAllCategories("includes/all_categories_table.php", null, 10);
             ?>
         </tbody> 
     </table>
+
+    <!-- Delete Categories Button Bottom -->
+    <div class="form-group">
+        <input type="submit" name="delete_categories_btn_bottom" class="btn btn-primary" value="Удалить выбранные регионы" onclick="return confirm('Вы уверены, что хотите удалить выбранные регионы?');">
+    </div>
+    <hr>
 </form>
 
 <!-- Pager -->
 <ul class="pager">
-    <li class="previous">
+    <li>
         <a href="<?=$pager_values['previous_page_link'];?>">&larr; Предыдущая</a>
     </li>
     <?php showPagesAdminCategories($pager_values['pages_cnt'], $pager_values['page_num']); ?>
