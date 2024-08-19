@@ -1599,8 +1599,12 @@ function selectPostOptions() {
 
 /* Apply selected options on the Comments Page */
 function selectCommentOptions() {
-    if (isset($_POST['apply_comment_option_btn'])) {
-        $comment_option = $_POST['comment_option'];
+    if (isset($_POST['apply_comment_option_btn_top']) || isset($_POST['apply_comment_option_btn_bottom'])) {
+        if (isset($_POST['apply_comment_option_btn_top'])) {
+            $comment_option = $_POST['comment_option_top'];
+        } else {
+            $comment_option = $_POST['comment_option_bottom'];
+        }
 
         if (isset($_POST['checkBoxArray'])) {
             $comment_id_array = $_POST['checkBoxArray'];
