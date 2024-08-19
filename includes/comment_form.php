@@ -2,7 +2,7 @@
 <!-- Comment -->
 <div class="media">
     <a class="pull-left" href="post.php?post_id=<?=$comment_post_id;?>">
-        <img class="media-object" src="img/user_icon.png" alt="Фотография пользователя">
+        <img class="media-object" src="img/user_icon.png" alt="Фотография пользователя" style="width: 70px;">
     </a>
     <div class="media-body">
         <h4 class="media-heading"><?=$comment_author;?>
