@@ -632,18 +632,20 @@ function userSignup() {
 function commentsCountByPost($post_id) {
     global $connection;
 
-    $query = "SELECT comment_post_id, COUNT(comment_post_id) AS comments_count FROM comments ";
-    $query .= "WHERE comment_status = 'одобрен' GROUP BY comment_post_id HAVING comment_post_id = {$post_id};";
-    $commentsCount = mysqli_query($connection, $query);
-    validateQuery($commentsCount);
-    $post_comments_count = 0;
-    if ($row = mysqli_fetch_assoc($commentsCount)) {
-        $post_comments_count = $row['comments_count'];
-    }
+    if (!is_null($post_id)) {
+        $query = "SELECT comment_post_id, COUNT(comment_post_id) AS comments_count FROM comments ";
+        $query .= "WHERE comment_status = 'одобрен' GROUP BY comment_post_id HAVING comment_post_id = {$post_id};";
+        $commentsCount = mysqli_query($connection, $query);
+        validateQuery($commentsCount);
+        $post_comments_count = 0;
+        if ($row = mysqli_fetch_assoc($commentsCount)) {
+            $post_comments_count = $row['comments_count'];
+        }
 
-    $query = "UPDATE posts SET post_comments_count = {$post_comments_count} WHERE post_id = {$post_id};";
-    $updateCommentsCount = mysqli_query($connection, $query);
-    validateQuery($updateCommentsCount);
+        $query = "UPDATE posts SET post_comments_count = {$post_comments_count} WHERE post_id = {$post_id};";
+        $updateCommentsCount = mysqli_query($connection, $query);
+        validateQuery($updateCommentsCount);
+    }
 }
 
 /* Display Pager under the Posts on the Home Page of website. $pages_count is number of pages with posts, $current_page is number of current page */

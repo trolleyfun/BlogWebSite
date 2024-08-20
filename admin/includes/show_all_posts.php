@@ -32,6 +32,7 @@ clickDeletePostIcon();
                     <th>Название</th>
                     <th>Регион</th>
                     <th>Автор</th>
+                    <th></th>
                     <th>Дата публикации</th>
                     <th>Изображение</th>
                     <th>Тэги</th>
