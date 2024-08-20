@@ -1,9 +1,7 @@
 <?php /* For showPostById() function */ ?>
 <!-- Comment -->
 <div class="media">
-    <a class="pull-left" href="post.php?post_id=<?=$comment_post_id;?>">
-        <img class="media-object" src="img/<?=$comment_user_image;?>" alt="Фотография пользователя" style="width: 70px;">
-    </a>
+    <img class="media-object pull-left" src="img/<?=$comment_user_image;?>" alt="Фотография пользователя" style="width: 80px;">
     <div class="media-body">
         <h4 class="media-heading">
             <?php if (!is_null($comment_user_id)) { ?>
