@@ -334,38 +334,41 @@ function addComments($add_comment_post_id, $err_status) {
     global $connection;
 
     if (isset($_POST['add_comment_btn'])) {
-        $add_comment_author = $_POST['comment_author'];
-        $add_comment_date = date('Y-m-d');
-        $add_comment_content = $_POST['comment_content'];
-        $add_comment_email = $_POST['comment_email'];
-        
-        foreach($err_status as $err_item) {
-            $err_item = false;
-        }
-        if (empty($add_comment_author)) {
-            $err_status['author'] = true;
-        }
-        if (empty($add_comment_email)) {
-            $err_status['email'] = true;
-        }
-        if (empty($add_comment_content)) {
-            $err_status['content'] = true;
-        }
-        $err_result = false;
-        foreach($err_status as $err_item) {
-            $err_result = $err_result || $err_item;
-        }
+        if (isset($_SESSION['user_id'])) {
+            $comment_user_id = $_SESSION['user_id'];
+            $add_comment_author = $_POST['comment_author'];
+            $add_comment_date = date('Y-m-d');
+            $add_comment_content = $_POST['comment_content'];
+            $add_comment_email = $_POST['comment_email'];
+            
+            foreach($err_status as $err_item) {
+                $err_item = false;
+            }
+            $err_status['author'] = !userValidation($comment_user_id);
+            if (empty($add_comment_email)) {
+                $err_status['email'] = true;
+            }
+            if (empty($add_comment_content)) {
+                $err_status['content'] = true;
+            }
+            $err_result = false;
+            foreach($err_status as $err_item) {
+                $err_result = $err_result || $err_item;
+            }
 
-        if (!$err_result) {
-            $query = "INSERT INTO comments(comment_post_id, comment_author, comment_date, comment_content, comment_email) VALUES({$add_comment_post_id}, '{$add_comment_author}', '{$add_comment_date}', '{$add_comment_content}', '{$add_comment_email}');";
+            if (!$err_result) {
+                $query = "INSERT INTO comments(comment_post_id, comment_user_id, comment_author, comment_date, comment_content, comment_email) VALUES({$add_comment_post_id}, {$comment_user_id}, '{$add_comment_author}', '{$add_comment_date}', '{$add_comment_content}', '{$add_comment_email}');";
 
-            $addComment = mysqli_query($connection, $query);
-            validateQuery($addComment);
-            $err_status['if_sent'] = true;
+                $addComment = mysqli_query($connection, $query);
+                validateQuery($addComment);
+                $err_status['if_sent'] = true;
 
-            commentsCountByPost($add_comment_post_id);
+                commentsCountByPost($add_comment_post_id);
 
-            header("Location: post.php?post_id={$add_comment_post_id}#add_comment_form");
+                header("Location: post.php?post_id={$add_comment_post_id}#add_comment_form");
+            }
+        } else {
+            header("Location: index.php");
         }
     }
 
