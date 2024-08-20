@@ -291,7 +291,7 @@ function addPosts() {
             if (empty($post_title)) {
                 $err_add_post['title'] = true;
             }
-            $err_add_post['author'] = !postAuthorValidation($post_author_id);
+            $err_add_post['author'] = !userValidation($post_author_id);
             if (empty($post_image_name)) {
                 $err_add_post['image'] = true;
             }
@@ -526,7 +526,8 @@ function updatePosts($post_id, $err_status) {
 function showAllComments($rows_per_page) {
     global $connection;
 
-    $query = "SELECT * FROM comments JOIN posts ON comments.comment_post_id = posts.post_id ORDER BY comment_date DESC, comment_id DESC;";
+    $query = "SELECT * FROM (comments AS c LEFT JOIN posts AS p ON c.comment_post_id = p.post_id) LEFT JOIN ";
+    $query .= "users AS u ON c.comment_user_id = u.user_id ORDER BY comment_date DESC, comment_id DESC;";
     $allComments = mysqli_query($connection, $query);
     validateQuery($allComments);
     $num_rows = mysqli_num_rows($allComments);
@@ -564,9 +565,11 @@ function showAllComments($rows_per_page) {
     for ($i = 1; $row = mysqli_fetch_assoc($allComments); $i++) {
         if ($i > $post_offset && $i <= $post_offset + $rows_per_page) {
             $comment_id = $row['comment_id'];
-            $comment_post_id = $row['comment_post_id'];
+            $comment_post_id = $row['post_id'];
             $comment_post_title = $row['post_title'];
             $comment_author = $row['comment_author'];
+            $comment_user_id = $row['user_id'];
+            $comment_user_login = $row['user_login'];
             $comment_date = $row['comment_date'];
             $comment_content = $row['comment_content'];
             $comment_email = $row['comment_email'];
@@ -1300,15 +1303,15 @@ function postCategoryValidation($post_category_id) {
 }
 
 /* Check if author of post exists in database. Return true if user exists */
-function postAuthorValidation($post_author_id) {
+function userValidation($user_id) {
     global $connection;
 
-    if (!is_null($post_author_id)) {
-    $query = "SELECT * FROM users WHERE user_id = {$post_author_id};";
-    $postAuthor = mysqli_query($connection, $query);
-    validateQuery($postAuthor);
+    if (!is_null($user_id)) {
+    $query = "SELECT * FROM users WHERE user_id = {$user_id};";
+    $userValidation = mysqli_query($connection, $query);
+    validateQuery($userValidation);
 
-    $num_rows = mysqli_num_rows($postAuthor);
+    $num_rows = mysqli_num_rows($userValidation);
 
     return $num_rows > 0;
     } else {

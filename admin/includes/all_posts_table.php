@@ -1,10 +1,7 @@
 <?php /* For function showAllPosts() */ ?>
 <tr>
     <td><input type="checkbox" class="checkBoxes" name="checkBoxArray[]" value="<?=$post_id;?>"></td>
-    <td>
-        
-        <a href="../post.php?post_id=<?=$post_id;?>"><?=$post_title;?></a>
-    </td>
+    <td><a href="../post.php?post_id=<?=$post_id;?>"><?=$post_title;?></a></td>
     <td>
         <?php if ((!is_null($post_category_id))) { ?>
         <a href="../category.php?cat_id=<?=$post_category_id;?>"><?=$post_category_title;?></a>

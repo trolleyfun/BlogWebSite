@@ -28,6 +28,7 @@ selectCommentOptions();
                     <th><input type="checkbox" id="allCheckBoxes"></th>
                     <th>Название публикации</th>
                     <th>Пользователь</th>
+                    <th></th>
                     <th>Дата комментария</th>
                     <th>Комментарий</th>
                     <th>E-mail</th>
@@ -39,7 +40,7 @@ selectCommentOptions();
             <tbody>
                 <?php 
                 /* Put All Comments from database */
-                $pager_values = showAllComments(3);
+                $pager_values = showAllComments(10);
                 ?>
             </tbody>
         </table>

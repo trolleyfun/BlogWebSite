@@ -535,6 +535,23 @@ function postCategoryValidation($post_category_id) {
     return $num_rows > 0;
 }
 
+/* Check if author of post exists in database. Return true if user exists */
+function userValidation($user_id) {
+    global $connection;
+
+    if (!is_null($user_id)) {
+    $query = "SELECT * FROM users WHERE user_id = {$user_id};";
+    $userValidation = mysqli_query($connection, $query);
+    validateQuery($userValidation);
+
+    $num_rows = mysqli_num_rows($userValidation);
+
+    return $num_rows > 0;
+    } else {
+        return false;
+    }
+}
+
 /* Check if status of post is valid. Return true if status is valid */
 function postStatusValidation($post_status) {
     $post_status_values = ['ожидает проверки', 'опубликовано', 'заблокировано'];
@@ -647,6 +664,26 @@ function commentsCountByPost($post_id) {
         }
 
         $query = "UPDATE posts SET post_comments_count = {$post_comments_count} WHERE post_id = {$post_id};";
+        $updateCommentsCount = mysqli_query($connection, $query);
+        validateQuery($updateCommentsCount);
+    }
+}
+
+/* Update number of comments by selected user in database */
+function commentsCountByUser($user_id) {
+    global $connection;
+
+    if (!is_null($user_id)) {
+        $query = "SELECT comment_user_id, COUNT(*) AS comments_count FROM comments WHERE comment_status = 'одобрен' ";
+        $query .= "GROUP BY comment_user_id HAVING comment_user_id = {$user_id};";
+        $commentsCount = mysqli_query($connection, $query);
+        validateQuery($commentsCount);
+        $user_comments_count = 0;
+        if ($row = mysqli_fetch_assoc($commentsCount)) {
+            $user_comments_count = $row['comments_count'];
+        }
+
+        $query = "UPDATE users SET user_comments_cnt = {$user_comments_count} WHERE user_id = {$user_id};";
         $updateCommentsCount = mysqli_query($connection, $query);
         validateQuery($updateCommentsCount);
     }

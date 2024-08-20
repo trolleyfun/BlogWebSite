@@ -1,8 +1,17 @@
 <?php /* For function showAllComments() */ ?>
 <tr>
     <td><input type="checkbox" name="checkBoxArray[]" class="checkBoxes" value="<?=$comment_id;?>"></td>
-    <td><a href="../post.php?post_id=<?=$comment_post_id;?>"><?=$comment_post_title;?></a></td>
+    <td>
+        <?php if (!is_null($comment_post_id)) { ?>
+        <a href="../post.php?post_id=<?=$comment_post_id;?>"><?=$comment_post_title;?></a>
+        <?php } ?>
+    </td>
     <td><?=$comment_author;?></td>
+    <td>
+        <?php if (!is_null($comment_user_id)) { ?>
+        <?=$comment_user_login;?>
+        <?php } ?>
+    </td>
     <td><?=$comment_date;?></td>
     <td><?=$comment_content;?></td>
     <td><?=$comment_email;?></td>

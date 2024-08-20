@@ -45,7 +45,7 @@ selectUserOptions();
             <tbody>
                 <?php 
                 /* Put All Users from database */
-                $pager_values = showAllUsers(3);
+                $pager_values = showAllUsers(10);
                 ?>
             </tbody>
         </table>
