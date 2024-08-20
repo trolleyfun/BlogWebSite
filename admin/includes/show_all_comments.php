@@ -28,10 +28,8 @@ selectCommentOptions();
                     <th><input type="checkbox" id="allCheckBoxes"></th>
                     <th>Название публикации</th>
                     <th>Пользователь</th>
-                    <th></th>
                     <th>Дата комментария</th>
                     <th>Комментарий</th>
-                    <th>E-mail</th>
                     <th>Статус</th>
                     <th></th>
                     <th></th>

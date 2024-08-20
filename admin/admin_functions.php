@@ -567,12 +567,10 @@ function showAllComments($rows_per_page) {
             $comment_id = $row['comment_id'];
             $comment_post_id = $row['post_id'];
             $comment_post_title = $row['post_title'];
-            $comment_author = $row['comment_author'];
             $comment_user_id = $row['user_id'];
             $comment_user_login = $row['user_login'];
             $comment_date = $row['comment_date'];
             $comment_content = $row['comment_content'];
-            $comment_email = $row['comment_email'];
             $comment_status = $row['comment_status'];
 
             include "includes/all_comments_table.php";

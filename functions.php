@@ -110,7 +110,7 @@ function showPostById() {
             $post_image = $row['post_image'];
             $post_content = $row['post_content'];
 
-            $err_add_comment = ['author'=>false, 'email'=>false, 'content'=>false, 'if_sent'=>false]; 
+            $err_add_comment = ['author'=>false, 'content'=>false, 'if_sent'=>false]; 
             $err_add_comment = addComments($post_id, $err_add_comment);
 
             include "includes/post_form_full.php";
@@ -336,18 +336,13 @@ function addComments($add_comment_post_id, $err_status) {
     if (isset($_POST['add_comment_btn'])) {
         if (isset($_SESSION['user_id'])) {
             $comment_user_id = $_SESSION['user_id'];
-            $add_comment_author = $_POST['comment_author'];
             $add_comment_date = date('Y-m-d');
             $add_comment_content = $_POST['comment_content'];
-            $add_comment_email = $_POST['comment_email'];
             
             foreach($err_status as $err_item) {
                 $err_item = false;
             }
             $err_status['author'] = !userValidation($comment_user_id);
-            if (empty($add_comment_email)) {
-                $err_status['email'] = true;
-            }
             if (empty($add_comment_content)) {
                 $err_status['content'] = true;
             }
@@ -357,7 +352,7 @@ function addComments($add_comment_post_id, $err_status) {
             }
 
             if (!$err_result) {
-                $query = "INSERT INTO comments(comment_post_id, comment_user_id, comment_author, comment_date, comment_content, comment_email) VALUES({$add_comment_post_id}, {$comment_user_id}, '{$add_comment_author}', '{$add_comment_date}', '{$add_comment_content}', '{$add_comment_email}');";
+                $query = "INSERT INTO comments(comment_post_id, comment_user_id, comment_date, comment_content) VALUES({$add_comment_post_id}, {$comment_user_id}, '{$add_comment_date}', '{$add_comment_content}');";
 
                 $addComment = mysqli_query($connection, $query);
                 validateQuery($addComment);
