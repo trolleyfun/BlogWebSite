@@ -336,14 +336,14 @@ function addComments($add_comment_post_id, $err_status) {
     if (isset($_POST['add_comment_btn'])) {
         if (isset($_SESSION['user_id'])) {
             $comment_user_id = $_SESSION['user_id'];
-            $add_comment_date = date('Y-m-d');
-            $add_comment_content = $_POST['comment_content'];
+            $comment_date = date('Y-m-d');
+            $comment_content = $_POST['comment_content'];
             
             foreach($err_status as $err_item) {
                 $err_item = false;
             }
             $err_status['author'] = !userValidation($comment_user_id);
-            if (empty($add_comment_content)) {
+            if (empty($comment_content)) {
                 $err_status['content'] = true;
             }
             $err_result = false;
@@ -352,13 +352,14 @@ function addComments($add_comment_post_id, $err_status) {
             }
 
             if (!$err_result) {
-                $query = "INSERT INTO comments(comment_post_id, comment_user_id, comment_date, comment_content) VALUES({$add_comment_post_id}, {$comment_user_id}, '{$add_comment_date}', '{$add_comment_content}');";
+                $query = "INSERT INTO comments(comment_post_id, comment_user_id, comment_date, comment_content) VALUES({$add_comment_post_id}, {$comment_user_id}, '{$comment_date}', '{$comment_content}');";
 
                 $addComment = mysqli_query($connection, $query);
                 validateQuery($addComment);
                 $err_status['if_sent'] = true;
 
                 commentsCountByPost($add_comment_post_id);
+                commentsCountByUser($comment_user_id);
 
                 header("Location: post.php?post_id={$add_comment_post_id}#add_comment_form");
             }

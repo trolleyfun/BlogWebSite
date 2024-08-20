@@ -597,8 +597,10 @@ function deleteComments($delete_comment_id) {
     $statusDelComment = mysqli_query($connection, $query);
     validateQuery($statusDelComment);
     $delete_comment_post_id = 0;
+    $delete_comment_user_id = 0;
     if ($row = mysqli_fetch_assoc($statusDelComment)) {
         $delete_comment_post_id = $row['comment_post_id'];
+        $delete_comment_user_id = $row['comment_user_id'];
     }
 
     $query = "DELETE FROM comments WHERE comment_id = $delete_comment_id;";
@@ -606,6 +608,7 @@ function deleteComments($delete_comment_id) {
     validateQuery($deleteComment);
 
     commentsCountByPost($delete_comment_post_id);
+    commentsCountByUser($delete_comment_user_id);
 
     header("Location: admin_comments.php?source=info&operation=delete");
 }
@@ -642,8 +645,10 @@ function confirmComments($confirm_comment_id, $confirm_option) {
         $statusConfirmComment = mysqli_query($connection, $query);
         validateQuery($statusConfirmComment);
         $confirm_comment_post_id = 0;
+        $confirm_comment_user_id = 0;
         if ($row = mysqli_fetch_assoc($statusConfirmComment)) {
             $confirm_comment_post_id = $row['comment_post_id'];
+            $confirm_comment_user_id = $row['comment_user_id'];
         }
 
         $query = "UPDATE comments SET comment_status = '{$confirm_comment_status}' WHERE comment_id = {$confirm_comment_id};";
@@ -651,6 +656,7 @@ function confirmComments($confirm_comment_id, $confirm_option) {
         validateQuery($confirmComment);
 
         commentsCountByPost($confirm_comment_post_id);
+        commentsCountByUser($confirm_comment_user_id);
 
         header("Location: admin_comments.php");
     }
