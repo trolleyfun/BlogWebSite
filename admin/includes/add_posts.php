@@ -9,7 +9,7 @@
             <label for="post_category_id">Регион<span style='color: #a94442;'> *</span></label>
             <select name="post_category_id" id="post_category_id" class="form-control" required>
                 <option value="">Выберите регион...</option>
-                <?php showAllCategoriesInList($post_category_id); ?>
+                <?php showAllCategoriesInList(null); ?>
             </select>
             <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['category_id_empty'], "Выберите регион"); ?></span>
             <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['category_id_exists'], "Такого региона не существует. Выберите другой регион"); ?></span>
@@ -26,7 +26,7 @@
         </div>
         <div class="form-group">
             <label for="post_content">Текст<span style='color: #a94442;'> *</span></label>
-            <textarea name="post_content" id="post_content" class="form-control summernote-post" rows="10" required></textarea>
+            <textarea name="post_content" id="post_content" class="form-control summernote-post" rows="10"></textarea>
             <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['content'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">

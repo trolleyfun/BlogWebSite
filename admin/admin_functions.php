@@ -15,6 +15,18 @@ function displayErrorMessage($status, $post_operation_message) {
     }
 }
 
+/* Escape special characters in array elements for use in sql queries */
+function escapeArray($array) {
+    global $connection;
+
+    $escapedArray = $array;
+    foreach($escapedArray as $key=>$value) {
+        $escapedArray[$key] = mysqli_real_escape_string($connection, $value);
+    }
+
+    return $escapedArray;
+}
+
 /* Add category from input field of Add Form to database */
 function addCategories() {
     global $connection;
@@ -23,8 +35,10 @@ function addCategories() {
 
     if (isset($_POST['add_cat_btn'])) {
         $cat_title = $_POST['cat_title'];
-        foreach($err_add_cat as $err_item) {
-            $err_item = false;
+        $cat_title = mysqli_real_escape_string($connection, $cat_title);
+
+        foreach($err_add_cat as $key=>$value) {
+            $err_add_cat[$key] = false;
         }
         if (empty($cat_title)) {
             $err_add_cat['title_empty'] = true;
@@ -53,9 +67,10 @@ function updateCategories($cat_id, $err_status) {
 
     if (isset($_POST['update_cat_btn'])) {
         $cat_title = $_POST['edit_cat_title'];
+        $cat_title = mysqli_real_escape_string($connection, $cat_title);
     
-        foreach($err_status as $err_item) {
-            $err_item = false;
+        foreach($err_status as $key=>$value) {
+            $err_status[$key] = false;
         }
         if (empty($cat_title)) {
             $err_status['title_empty'] = true;
@@ -262,40 +277,42 @@ function addPosts() {
 
     if (isset($_POST['add_post_btn'])) {
         if (isset($_SESSION['user_id'])) {
-            $post_author_id = $_SESSION['user_id'];
-            $post_category_id = $_POST['post_category_id'];
-            $post_title = $_POST['post_title'];
-            $post_date = date('Y-m-d');
+            $post['author_id'] = $_SESSION['user_id'];
+            $post['category_id'] = $_POST['post_category_id'];
+            $post['title'] = $_POST['post_title'];
+            $post['date'] = date('Y-m-d');
 
             $is_new_post_image = true;
             $default_post_image_name = "post_image_default.png";
-            $post_image_name = $_FILES['post_image']['name'];
-            $post_image_temp = $_FILES['post_image']['tmp_name'];
-            $post_image_err = $_FILES['post_image']['error'];
-            if ($post_image_name == "" || $post_image_err == UPLOAD_ERR_NO_FILE) {
-                $post_image_name = $default_post_image_name;
+            $post['image_name'] = $_FILES['post_image']['name'];
+            $post['image_temp'] = $_FILES['post_image']['tmp_name'];
+            $post['image_err'] = $_FILES['post_image']['error'];
+            if ($post['image_name'] == "" || $post['image_err'] == UPLOAD_ERR_NO_FILE) {
+                $post['image_name'] = $default_post_image_name;
                 $is_new_post_image = false;
             }
 
-            $post_content = $_POST['post_content'];
-            $post_tags = $_POST['post_tags'];
+            $post['content'] = $_POST['post_content'];
+            $post['tags'] = $_POST['post_tags'];
 
-            foreach($err_add_post as $err_item) {
-                $err_item = false;
+            $post = escapeArray($post);
+
+            foreach($err_add_post as $key=>$value) {
+                $err_add_post[$key] = false;
             }
-            if (empty($post_category_id)) {
+            if (empty($post['category_id'])) {
                 $err_add_post['category_id_empty'] = true;
             } else {
-                $err_add_post['category_id_exists'] = !postCategoryValidation($post_category_id);
+                $err_add_post['category_id_exists'] = !postCategoryValidation($post['category_id']);
             }
-            if (empty($post_title)) {
+            if (empty($post['title'])) {
                 $err_add_post['title'] = true;
             }
-            $err_add_post['author'] = !userValidation($post_author_id);
-            if (empty($post_image_name)) {
+            $err_add_post['author'] = !userValidation($post['author_id']);
+            if (empty($post['image_name'])) {
                 $err_add_post['image'] = true;
             }
-            if (empty($post_content)) {
+            if (empty($post['content'])) {
                 $err_add_post['content'] = true;
             }
             $err_result = false;
@@ -305,17 +322,17 @@ function addPosts() {
 
             if (!$err_result) {
                 if ($is_new_post_image) {
-                    move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
+                    move_uploaded_file($post['image_temp'], "../img/{$post['image_name']}");
                 }
 
                 $query = "INSERT INTO posts(post_category_id, post_title, post_author_id, post_date, post_image, post_content, post_tags) ";
-                $query .= "VALUES({$post_category_id}, '{$post_title}', {$post_author_id}, '{$post_date}', '{$post_image_name}', '{$post_content}', '{$post_tags}');";
+                $query .= "VALUES({$post['category_id']}, '{$post['title']}', {$post['author_id']}, '{$post['date']}', '{$post['image_name']}', '{$post['content']}', '{$post['tags']}');";
 
                 $addPost = mysqli_query($connection, $query);
                 validateQuery($addPost);
 
-                postsCountByCategory($post_category_id);
-                postsCountByUser($post_author_id);
+                postsCountByCategory($post['category_id']);
+                postsCountByUser($post['author_id']);
 
                 header("Location: admin_posts.php?source=info&operation=add");
             }
@@ -433,48 +450,50 @@ function updatePosts($post_id, $err_status) {
     global $connection;
 
     if (isset($_POST['update_post_btn'])) {
-        $post_category_id = $_POST['edit_post_category_id'];
-        $post_title = $_POST['edit_post_title'];
-        $post_date = $_POST['edit_post_date'];
+        $post['category_id'] = $_POST['edit_post_category_id'];
+        $post['title'] = $_POST['edit_post_title'];
+        $post['date'] = $_POST['edit_post_date'];
 
         $is_new_post_image = true;
         $current_post_image_name = $_POST['current_post_image'];
-        $post_image_name = $_FILES['edit_post_image']['name'];
-        $post_image_temp = $_FILES['edit_post_image']['tmp_name'];
-        $post_image_err = $_FILES['edit_post_image']['error'];
-        if ($post_image_name == "" || $post_image_err == UPLOAD_ERR_NO_FILE) {
-            $post_image_name = $current_post_image_name;
+        $post['image_name'] = $_FILES['edit_post_image']['name'];
+        $post['image_temp'] = $_FILES['edit_post_image']['tmp_name'];
+        $post['image_err'] = $_FILES['edit_post_image']['error'];
+        if ($post['image_name'] == "" || $post['image_err'] == UPLOAD_ERR_NO_FILE) {
+            $post['image_name'] = $current_post_image_name;
             $is_new_post_image = false;
         }
 
-        $post_content = $_POST['edit_post_content'];
-        $post_tags = $_POST['edit_post_tags'];
-        $post_status = $_POST['edit_post_status'];
+        $post['content'] = $_POST['edit_post_content'];
+        $post['tags'] = $_POST['edit_post_tags'];
+        $post['status'] = $_POST['edit_post_status'];
 
-        foreach($err_status as $err_item) {
-            $err_item = false;
+        $post = escapeArray($post);
+
+        foreach($err_status as $key=>$value) {
+            $err_status[$key] = false;
         }
-        if (empty($post_category_id)) {
+        if (empty($post['category_id'])) {
             $err_status['category_id_empty'] = true;
         } else {
-            $err_status['category_id_exists'] = !postCategoryValidation($post_category_id);
+            $err_status['category_id_exists'] = !postCategoryValidation($post['category_id']);
         }
-        if (empty($post_title)) {
+        if (empty($post['title'])) {
             $err_status['title'] = true;
         }
-        if (empty($post_date)) {
+        if (empty($post['date'])) {
             $err_status['date'] = true;
         }
-        if (empty($post_image_name)) {
+        if (empty($post['image_name'])) {
             $err_status['image'] = true;
         }
-        if (empty($post_content)) {
+        if (empty($post['content'])) {
             $err_status['content'] = true;
         }
-        if (empty($post_status)) {
+        if (empty($post['status'])) {
             $err_status['status_empty'] = true;
         } else {
-            $err_status['status_correct'] = !postStatusValidation($post_status);
+            $err_status['status_correct'] = !postStatusValidation($post['status']);
         }
         $err_result = false;
         foreach($err_status as $err_item) {
@@ -483,7 +502,7 @@ function updatePosts($post_id, $err_status) {
 
         if (!$err_result) {
             if ($is_new_post_image) {
-                move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
+                move_uploaded_file($post['image_temp'], "../img/{$post['image_name']}");
             }
 
             $query = "SELECT * FROM posts WHERE post_id = {$post_id};";
@@ -497,21 +516,21 @@ function updatePosts($post_id, $err_status) {
                 $post_author_id = $row['post_author_id'];
             }
 
-            $query = "UPDATE posts SET post_category_id = {$post_category_id}, ";
-            $query .= "post_title = '{$post_title}', ";
-            $query .= "post_date = '{$post_date}', ";
-            $query .= "post_image = '{$post_image_name}', ";
-            $query .= "post_content = '{$post_content}', ";
-            $query .= "post_tags = '{$post_tags}', ";
-            $query .= "post_status = '{$post_status}' ";
+            $query = "UPDATE posts SET post_category_id = {$post['category_id']}, ";
+            $query .= "post_title = '{$post['title']}', ";
+            $query .= "post_date = '{$post['date']}', ";
+            $query .= "post_image = '{$post['image_name']}', ";
+            $query .= "post_content = '{$post['content']}', ";
+            $query .= "post_tags = '{$post['tags']}', ";
+            $query .= "post_status = '{$post['status']}' ";
             $query .= "WHERE post_id = {$post_id};";
 
             $updatePost = mysqli_query($connection, $query);
             validateQuery($updatePost);
 
-            postsCountByCategory($post_category_id);
+            postsCountByCategory($post['category_id']);
             postsCountByUser($post_author_id);
-            if ($post_category_id !== $current_post_category_id) {
+            if ($post['category_id'] !== $current_post_category_id) {
                 postsCountByCategory($current_post_category_id);
             }
 
@@ -819,56 +838,58 @@ function addUsers() {
     $err_add_user = ['login_empty'=>false, 'login_exists'=>false, 'password_empty'=>false, 'password_correct'=>false, 'firstname'=>false, 'lastname'=>false, 'email_empty'=>false, 'email_exists'=>false, 'email_correct'=>false, 'image'=>false, 'privilege_empty'=>false, 'privilege_correct'=>false];
 
     if (isset($_POST['add_user_btn'])) {
-        $user_login = $_POST['user_login'];
-        $user_password = $_POST['user_password'];
-        $user_firstname = $_POST['user_firstname'];
-        $user_lastname = $_POST['user_lastname'];
-        $user_email = $_POST['user_email'];
+        $user['login'] = $_POST['user_login'];
+        $user['password'] = $_POST['user_password'];
+        $user['firstname'] = $_POST['user_firstname'];
+        $user['lastname'] = $_POST['user_lastname'];
+        $user['email'] = $_POST['user_email'];
 
         $is_new_user_image = true;
         $default_user_image_name = "user_icon_default.png";
-        $user_image_name = $_FILES['user_image']['name'];
-        $user_image_tmp = $_FILES['user_image']['tmp_name'];
-        $user_image_error = $_FILES['user_image']['error'];
-        if ($user_image_name == "" || $user_image_error == UPLOAD_ERR_NO_FILE) {
-            $user_image_name = $default_user_image_name;
+        $user['image_name'] = $_FILES['user_image']['name'];
+        $user['image_tmp'] = $_FILES['user_image']['tmp_name'];
+        $user['image_error'] = $_FILES['user_image']['error'];
+        if ($user['image_name'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
+            $user['image_name'] = $default_user_image_name;
             $is_new_user_image = false;
         }
 
-        $user_privilege = $_POST['user_privilege'];
+        $user['privilege'] = $_POST['user_privilege'];
 
-        foreach($err_add_user as $err_item) {
-            $err_item = false;
+        $user = escapeArray($user);
+
+        foreach($err_add_user as $key=>$value) {
+            $err_add_user[$key] = false;
         }
-        if (empty($user_login)) {
+        if (empty($user['login'])) {
             $err_add_user['login_empty'] = true;
         } else {
-            $err_add_user['login_exists'] = ifLoginExists($user_login, null);
+            $err_add_user['login_exists'] = ifLoginExists($user['login'], null);
         }
-        if (empty($user_password)) {
+        if (empty($user['password'])) {
             $err_add_user['password_empty'] = true;
         } else {
-            $err_add_user['password_correct'] = !passwordValidation($user_password);
+            $err_add_user['password_correct'] = !passwordValidation($user['password']);
         }
-        if (empty($user_firstname)) {
+        if (empty($user['firstname'])) {
             $err_add_user['firstname'] = true;
         }
-        if (empty($user_lastname)) {
+        if (empty($user['lastname'])) {
             $err_add_user['lastname'] = true;
         }
-        if (empty($user_email)) {
+        if (empty($user['email'])) {
             $err_add_user['email_empty'] = true;
         } else {
-            $err_add_user['email_correct'] = !emailValidation($user_email);
-            $err_add_user['email_exists'] = ifEmailExists($user_email, null);
+            $err_add_user['email_correct'] = !emailValidation($user['email']);
+            $err_add_user['email_exists'] = ifEmailExists($user['email'], null);
         }
-        if (empty($user_image_name)) {
+        if (empty($user['image_name'])) {
             $err_add_user['image'] = true;
         }
-        if (empty($user_privilege)) {
+        if (empty($user['privilege'])) {
             $err_add_user['privilege_empty'] = true;
         } else {
-            $err_add_user['privilege_correct'] = !userPrivilegeValidation($user_privilege);
+            $err_add_user['privilege_correct'] = !userPrivilegeValidation($user['privilege']);
         }
         $err_result = false;
         foreach($err_add_user as $err_item) {
@@ -877,12 +898,12 @@ function addUsers() {
 
         if (!$err_result) {
             if ($is_new_user_image) {
-                move_uploaded_file($user_image_tmp, "../img/{$user_image_name}");
+                move_uploaded_file($user['image_tmp'], "../img/{$user['image_name']}");
             }
 
-            $user_password = password_hash($user_password, PASSWORD_BCRYPT);
+            $user['password'] = password_hash($user['password'], PASSWORD_BCRYPT);
 
-            $query = "INSERT INTO users(user_login, user_password, user_firstname, user_lastname, user_email, user_image, user_privilege) VALUES('{$user_login}', '{$user_password}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$user_image_name}', '{$user_privilege}');";
+            $query = "INSERT INTO users(user_login, user_password, user_firstname, user_lastname, user_email, user_image, user_privilege) VALUES('{$user['login']}', '{$user['password']}', '{$user['firstname']}', '{$user['lastname']}', '{$user['email']}', '{$user['image_name']}', '{$user['privilege']}');";
             $addUser = mysqli_query($connection, $query);
             validateQuery($addUser);
 
@@ -975,44 +996,46 @@ function updateUsers($user_id, $err_status) {
     global $connection;
 
     if (isset($_POST['update_user_btn'])) {
-        $user_firstname = $_POST['edit_user_firstname'];
-        $user_lastname = $_POST['edit_user_lastname'];
-        $user_email = $_POST['edit_user_email'];
-        $user_privilege = $_POST['edit_user_privilege'];
+        $user['firstname'] = $_POST['edit_user_firstname'];
+        $user['lastname'] = $_POST['edit_user_lastname'];
+        $user['email'] = $_POST['edit_user_email'];
+        $user['privilege'] = $_POST['edit_user_privilege'];
         
         $current_user_image = $_POST['current_user_image'];
-        $user_image_name = $_FILES['edit_user_image']['name'];
-        $user_image_tmp = $_FILES['edit_user_image']['tmp_name'];
-        $user_image_error = $_FILES['edit_user_image']['error'];
+        $user['image_name'] = $_FILES['edit_user_image']['name'];
+        $user['image_tmp'] = $_FILES['edit_user_image']['tmp_name'];
+        $user['image_error'] = $_FILES['edit_user_image']['error'];
 
         $is_new_image = true;
-        if ($user_image_name == "" || $user_image_error == UPLOAD_ERR_NO_FILE) {
-            $user_image_name = $current_user_image;
+        if ($user['image_name'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
+            $user['image_name'] = $current_user_image;
             $is_new_image = false;
         }
 
-        foreach($err_status as $err_item) {
-            $err_item = false;
+        $user = escapeArray($user);
+
+        foreach($err_status as $key=>$value) {
+            $err_status[$key] = false;
         }
-        if (empty($user_firstname)) {
+        if (empty($user['firstname'])) {
             $err_status['firstname'] = true;
         }
-        if (empty($user_lastname)) {
+        if (empty($user['lastname'])) {
             $err_status['lastname'] = true;
         }
-        if (empty($user_email)) {
+        if (empty($user['email'])) {
             $err_status['email_empty'] = true;
         } else {
-            $err_status['email_correct'] = !emailValidation($user_email);
-            $err_status['email_exists'] = ifEmailExists($user_email, $user_id);
+            $err_status['email_correct'] = !emailValidation($user['email']);
+            $err_status['email_exists'] = ifEmailExists($user['email'], $user_id);
         }
-        if (empty($user_image_name)) {
+        if (empty($user['image_name'])) {
             $err_status['image'] = true;
         }
-        if (empty($user_privilege)) {
+        if (empty($user['privilege'])) {
             $err_status['privilege_empty'] = true;
         } else {
-            $err_status['privilege_correct'] = !userPrivilegeValidation($user_privilege);
+            $err_status['privilege_correct'] = !userPrivilegeValidation($user['privilege']);
         }
         $err_result = false;
         foreach($err_status as $err_item) {
@@ -1021,15 +1044,15 @@ function updateUsers($user_id, $err_status) {
 
         if (!$err_result) {
             if ($is_new_image) {
-                move_uploaded_file($user_image_tmp, "../img/{$user_image_name}");
+                move_uploaded_file($user['image_tmp'], "../img/{$user['image_name']}");
             }
 
             $query = "UPDATE users SET ";
-            $query .= "user_firstname = '{$user_firstname}', ";
-            $query .= "user_lastname = '{$user_lastname}', ";
-            $query .= "user_email = '{$user_email}', ";
-            $query .= "user_image = '{$user_image_name}', ";
-            $query .= "user_privilege = '{$user_privilege}' ";
+            $query .= "user_firstname = '{$user['firstname']}', ";
+            $query .= "user_lastname = '{$user['lastname']}', ";
+            $query .= "user_email = '{$user['email']}', ";
+            $query .= "user_image = '{$user['image_name']}', ";
+            $query .= "user_privilege = '{$user['privilege']}' ";
             $query .= "WHERE user_id = {$user_id};";
 
             $updateUser = mysqli_query($connection, $query);
@@ -1092,44 +1115,46 @@ function updateProfile($user_id, $err_status) {
     global $connection;
 
     if (isset($_POST['update_profile_btn'])) {
-        $user_firstname = $_POST['profile_firstname'];
-        $user_lastname = $_POST['profile_lastname'];
-        $user_email = $_POST['profile_email'];
-        $user_privilege = $_POST['profile_privilege'];
+        $user['firstname'] = $_POST['profile_firstname'];
+        $user['lastname'] = $_POST['profile_lastname'];
+        $user['email'] = $_POST['profile_email'];
+        $user['privilege'] = $_POST['profile_privilege'];
         
         $current_user_image = $_POST['current_profile_image'];
-        $user_image_name = $_FILES['profile_image']['name'];
-        $user_image_tmp = $_FILES['profile_image']['tmp_name'];
-        $user_image_error = $_FILES['profile_image']['error'];
+        $user['image_name'] = $_FILES['profile_image']['name'];
+        $user['image_tmp'] = $_FILES['profile_image']['tmp_name'];
+        $user['image_error'] = $_FILES['profile_image']['error'];
 
         $is_new_image = true;
-        if ($user_image_name == "" || $user_image_error == UPLOAD_ERR_NO_FILE) {
-            $user_image_name = $current_user_image;
+        if ($user['image_name'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
+            $user['image_name'] = $current_user_image;
             $is_new_image = false;
         }
 
-        foreach($err_status as $err_item) {
-            $err_item = false;
+        $user = escapeArray($user);
+
+        foreach($err_status as $key=>$value) {
+            $err_status[$key] = false;
         }
-        if (empty($user_firstname)) {
+        if (empty($user['firstname'])) {
             $err_status['firstname'] = true;
         }
-        if (empty($user_lastname)) {
+        if (empty($user['lastname'])) {
             $err_status['lastname'] = true;
         }
-        if (empty($user_email)) {
+        if (empty($user['email'])) {
             $err_status['email_empty'] = true;
         } else {
-            $err_status['email_correct'] = !emailValidation($user_email);
-            $err_status['email_exists'] = ifEmailExists($user_email, $user_id);
+            $err_status['email_correct'] = !emailValidation($user['email']);
+            $err_status['email_exists'] = ifEmailExists($user['email'], $user_id);
         }
-        if (empty($user_image_name)) {
+        if (empty($user['image_name'])) {
             $err_status['image'] = true;
         }
-        if (empty($user_privilege)) {
+        if (empty($user['privilege'])) {
             $err_status['privilege_empty'] = true;
         } else {
-            $err_status['privilege_correct'] = !userPrivilegeValidation($user_privilege);
+            $err_status['privilege_correct'] = !userPrivilegeValidation($user['privilege']);
         }
         $err_result = false;
         foreach($err_status as $err_item) {
@@ -1138,15 +1163,15 @@ function updateProfile($user_id, $err_status) {
 
         if (!$err_result) {
             if ($is_new_image) {
-                move_uploaded_file($user_image_tmp, "../img/{$user_image_name}");
+                move_uploaded_file($user['image_tmp'], "../img/{$user['image_name']}");
             }
 
             $query = "UPDATE users SET ";
-            $query .= "user_firstname = '{$user_firstname}', ";
-            $query .= "user_lastname = '{$user_lastname}', ";
-            $query .= "user_email = '{$user_email}', ";
-            $query .= "user_image = '{$user_image_name}', ";
-            $query .= "user_privilege = '{$user_privilege}' ";
+            $query .= "user_firstname = '{$user['firstname']}', ";
+            $query .= "user_lastname = '{$user['lastname']}', ";
+            $query .= "user_email = '{$user['email']}', ";
+            $query .= "user_image = '{$user['image_name']}', ";
+            $query .= "user_privilege = '{$user['privilege']}' ";
             $query .= "WHERE user_id = {$user_id};";
 
             $updateUser = mysqli_query($connection, $query);
@@ -1165,6 +1190,7 @@ function resetUserPassword($user_id, $err_status) {
 
     if (isset($_POST['reset_password_btn'])) {
         $user_password = $_POST['reset_user_password'];
+        $user_password = mysqli_real_escape_string($connection, $user_password);
 
         foreach($err_status as $key=>$value) {
             $err_status[$key] = false;
@@ -1199,6 +1225,8 @@ function changeUserPassword($user_id, $db_user_password, $err_status) {
     if (isset($_POST['change_password_btn'])) {
         $current_user_password = $_POST['current_user_password'];
         $new_user_password = $_POST['new_user_password'];
+        $current_user_password = mysqli_real_escape_string($connection, $current_user_password);
+        $new_user_password = mysqli_real_escape_string($connection, $new_user_password);
 
         foreach($err_status as $key=>$value) {
             $err_status[$key] = false;

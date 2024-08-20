@@ -119,7 +119,11 @@ function showPostById() {
                 include "includes/add_comment_form.php";
             }
             showCommentsOfPost($post_id);
+        } else {
+            header("Location: index.php");
         }
+    } else {
+        header("Location: index.php");
     }
 }
 
@@ -246,6 +250,7 @@ function searchPosts($posts_per_page) {
 
     if (isset($_GET['search_data'])) {
         $search_data = $_GET['search_data'];
+        $search_data = mysqli_real_escape_string($connection, $search_data);
 
         if ($search_data != "") {
             $query = "SELECT * FROM posts AS p LEFT JOIN users AS u ON p.post_author_id = u.user_id WHERE post_tags LIKE '%$search_data%' AND post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
@@ -338,9 +343,10 @@ function addComments($add_comment_post_id, $err_status) {
             $comment_user_id = $_SESSION['user_id'];
             $comment_date = date('Y-m-d');
             $comment_content = $_POST['comment_content'];
+            $comment_content = mysqli_real_escape_string($connection, $comment_content);
             
-            foreach($err_status as $err_item) {
-                $err_item = false;
+            foreach($err_status as $key=>$value) {
+                $err_status[$key] = false;
             }
             $err_status['author'] = !userValidation($comment_user_id);
             if (empty($comment_content)) {
