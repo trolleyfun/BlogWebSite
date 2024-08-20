@@ -3,7 +3,12 @@
     <a href="post.php?post_id=<?=$post_id;?>"><?=$post_title;?></a>
 </h2>
 <p class="lead">
-    автор: <?=$post_author;?>
+    автор: 
+    <?php if (!is_null($post_author_id)) { ?>
+    <?=$post_author_login;?>
+    <?php } else { ?>
+    Неизвестный пользователь
+    <?php } ?>
 </p>
 <p><span class="glyphicon glyphicon-time"></span> Опубликовано <?=$post_date;?></p>
 <hr>

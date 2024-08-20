@@ -31,7 +31,7 @@ function escapeArray($array) {
 function showAllPosts($posts_per_page) { 
     global $connection;
     
-    $query = "SELECT * FROM posts WHERE post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
+    $query = "SELECT * FROM posts AS p LEFT JOIN users AS u ON p.post_author_id = u.user_id WHERE post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
     $allPosts = mysqli_query($connection, $query);
     validateQuery($allPosts);
 
@@ -78,6 +78,8 @@ function showAllPosts($posts_per_page) {
             $post_id = $row['post_id'];
             $post_title = $row['post_title'];
             $post_author = $row['post_author'];
+            $post_author_id = $row['user_id'];
+            $post_author_login = $row['user_login'];
             $post_date = $row['post_date'];
             $post_image = $row['post_image'];
             $post_content = substr($row['post_content'], 0, 500);
@@ -96,7 +98,7 @@ function showPostById() {
     if (isset($_GET['post_id'])) {
         $selected_post_id = $_GET['post_id'];
     
-        $query = "SELECT * FROM posts WHERE post_id = {$selected_post_id};";
+        $query = "SELECT * FROM posts AS p LEFT JOIN users AS u ON p.post_author_id = u.user_id WHERE post_id = {$selected_post_id};";
         $postById = mysqli_query($connection, $query);
         validateQuery($postById);
 
@@ -104,6 +106,8 @@ function showPostById() {
             $post_id = $row['post_id'];
             $post_title = $row['post_title'];
             $post_author = $row['post_author'];
+            $post_author_id = $row['user_id'];
+            $post_author_login = $row['user_login'];
             $post_date = $row['post_date'];
             $post_image = $row['post_image'];
             $post_content = $row['post_content'];
@@ -140,7 +144,7 @@ function showPostByCategory($posts_per_page) {
                 $cat_title = $row['cat_title'];
             }
         
-            $query = "SELECT * FROM posts WHERE post_category_id = {$cat_id} AND post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
+            $query = "SELECT * FROM posts AS p LEFT JOIN users AS u ON p.post_author_id = u.user_id WHERE post_category_id = {$cat_id} AND post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
             $postByCategory = mysqli_query($connection, $query);
             validateQuery($postByCategory);
 
@@ -203,6 +207,8 @@ function showPostByCategory($posts_per_page) {
                     $post_id = $row['post_id'];
                     $post_title = $row['post_title'];
                     $post_author = $row['post_author'];
+                    $post_author_id = $row['user_id'];
+                    $post_author_login = $row['user_login'];
                     $post_date = $row['post_date'];
                     $post_image = $row['post_image'];
                     $post_content = substr($row['post_content'], 0, 500);
@@ -245,7 +251,7 @@ function searchPosts($posts_per_page) {
         $search_data = $_GET['search_data'];
 
         if ($search_data != "") {
-            $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search_data%' AND post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
+            $query = "SELECT * FROM posts AS p LEFT JOIN users AS u ON p.post_author_id = u.user_id WHERE post_tags LIKE '%$search_data%' AND post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
             $search_result = mysqli_query($connection, $query);
             validateQuery($search_result);
 
@@ -308,6 +314,8 @@ function searchPosts($posts_per_page) {
                     $post_id = $row['post_id'];
                     $post_title = $row['post_title'];
                     $post_author = $row['post_author'];
+                    $post_author_id = $row['user_id'];
+                    $post_author_login = $row['user_login'];
                     $post_date = $row['post_date'];
                     $post_image = $row['post_image'];
                     $post_content = substr($row['post_content'], 0, 500);
