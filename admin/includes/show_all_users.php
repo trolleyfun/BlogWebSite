@@ -36,6 +36,8 @@ selectUserOptions();
                     <th>E-mail</th>
                     <th>Изображение</th>
                     <th>Права доступа</th>
+                    <th>Количество<br>публикаций</th>
+                    <th>Количество<br>комментариев</th>
                     <th></th>
                     <th></th>
                 </tr>

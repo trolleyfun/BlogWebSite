@@ -315,6 +315,7 @@ function addPosts() {
                 validateQuery($addPost);
 
                 postsCountByCategory($post_category_id);
+                postsCountByUser($post_author_id);
 
                 header("Location: admin_posts.php?source=info&operation=add");
             }
@@ -346,8 +347,10 @@ function confirmPosts($post_id, $confirm_option) {
         validateQuery($postInfo);
 
         $confirm_post_category_id = 0;
+        $confirm_post_author_id = 0;
         if ($row = mysqli_fetch_assoc($postInfo)) {
             $confirm_post_category_id = $row['post_category_id'];
+            $confirm_post_author_id = $row['post_author_id'];
         }
 
         $query = "UPDATE posts SET post_status = '{$confirm_post_status}' WHERE post_id = {$post_id};";
@@ -355,6 +358,7 @@ function confirmPosts($post_id, $confirm_option) {
         validateQuery($confirmPost);
 
         postsCountByCategory($confirm_post_category_id);
+        postsCountByUser($confirm_post_author_id);
     }
 }
 
@@ -376,8 +380,10 @@ function deletePosts($delete_post_id) {
     validateQuery($postInfo);
 
     $delete_post_category_id = 0;
+    $delete_post_author_id = 0;
     if ($row = mysqli_fetch_assoc($postInfo)) {
         $delete_post_category_id = $row['post_category_id'];
+        $delete_post_author_id = $row['post_author_id'];
     }
 
     $query = "DELETE FROM posts WHERE post_id={$delete_post_id};";
@@ -385,6 +391,7 @@ function deletePosts($delete_post_id) {
     validateQuery($deletePost);
 
     postsCountByCategory($delete_post_category_id);
+    postsCountByUser($delete_post_author_id);
 
     header("Location: admin_posts.php?source=info&operation=delete");
 }
@@ -484,8 +491,10 @@ function updatePosts($post_id, $err_status) {
             validateQuery($postInfo);
 
             $current_post_category_id = 0;
+            $post_author_id = 0;
             if ($row = mysqli_fetch_assoc($postInfo)) {
                 $current_post_category_id = $row['post_category_id'];
+                $post_author_id = $row['post_author_id'];
             }
 
             $query = "UPDATE posts SET post_category_id = {$post_category_id}, ";
@@ -501,6 +510,7 @@ function updatePosts($post_id, $err_status) {
             validateQuery($updatePost);
 
             postsCountByCategory($post_category_id);
+            postsCountByUser($post_author_id);
             if ($post_category_id !== $current_post_category_id) {
                 postsCountByCategory($current_post_category_id);
             }
@@ -661,7 +671,7 @@ function commentsCountByPost($post_id) {
     global $connection;
 
     if (!is_null($post_id)) {
-        $query = "SELECT comment_post_id, COUNT(comment_post_id) AS comments_count FROM comments ";
+        $query = "SELECT comment_post_id, COUNT(*) AS comments_count FROM comments ";
         $query .= "WHERE comment_status = 'одобрен' GROUP BY comment_post_id HAVING comment_post_id = {$post_id};";
         $commentsCount = mysqli_query($connection, $query);
         validateQuery($commentsCount);
@@ -691,6 +701,46 @@ function postsCountByCategory($cat_id) {
         }
 
         $query = "UPDATE categories SET cat_posts_count = {$cat_posts_count} WHERE cat_id = {$cat_id};";
+        $updatePostsCount = mysqli_query($connection, $query);
+        validateQuery($updatePostsCount);
+    }
+}
+
+/* Update number of comments by selected user in database */
+function commentsCountByUser($user_id) {
+    global $connection;
+
+    if (!is_null($user_id)) {
+        $query = "SELECT comment_user_id, COUNT(*) AS comments_count FROM comments WHERE comment_status = 'одобрен' ";
+        $query .= "GROUP BY comment_user_id HAVING comment_user_id = {$user_id};";
+        $commentsCount = mysqli_query($connection, $query);
+        validateQuery($commentsCount);
+        $user_comments_count = 0;
+        if ($row = mysqli_fetch_assoc($commentsCount)) {
+            $user_comments_count = $row['comments_count'];
+        }
+
+        $query = "UPDATE users SET user_comments_cnt = {$user_comments_count} WHERE user_id = {$user_id};";
+        $updateCommentsCount = mysqli_query($connection, $query);
+        validateQuery($updateCommentsCount);
+    }
+}
+
+/* Update number of posts by selected user in database */
+function postsCountByUser($user_id) {
+    global $connection;
+
+    if (!is_null($user_id)) {
+        $query = "SELECT post_author_id, COUNT(*) AS posts_count FROM posts WHERE post_status = 'опубликовано' ";
+        $query .= "GROUP BY post_author_id HAVING post_author_id = {$user_id};";
+        $postsCount = mysqli_query($connection, $query);
+        validateQuery($postsCount);
+        $user_posts_count = 0;
+        if ($row = mysqli_fetch_assoc($postsCount)) {
+            $user_posts_count = $row['posts_count'];
+        }
+
+        $query = "UPDATE users SET user_posts_cnt = {$user_posts_count} WHERE user_id = {$user_id};";
         $updatePostsCount = mysqli_query($connection, $query);
         validateQuery($updatePostsCount);
     }
@@ -745,6 +795,8 @@ function showAllUsers($rows_per_page) {
             $user_email = $row['user_email'];
             $user_image = $row['user_image'];
             $user_privilege = $row['user_privilege'];
+            $user_posts_count = $row['user_posts_cnt'];
+            $user_comments_count = $row['user_comments_cnt'];
 
             include "includes/all_users_table.php";
         }
