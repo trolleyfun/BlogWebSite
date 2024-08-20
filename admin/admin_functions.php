@@ -239,7 +239,6 @@ function showAllPosts($rows_per_page) {
             $post_category_id = $row['cat_id'];
             $post_category_title = $row['cat_title'];
             $post_title = $row['post_title'];
-            $post_author = $row['post_author'];
             $post_author_id = $row['user_id'];
             $post_author_login = $row['user_login'];
             $post_date = $row['post_date'];
@@ -266,7 +265,6 @@ function addPosts() {
             $post_author_id = $_SESSION['user_id'];
             $post_category_id = $_POST['post_category_id'];
             $post_title = $_POST['post_title'];
-            $post_author = $_POST['post_author'];
             $post_date = date('Y-m-d');
 
             $is_new_post_image = true;
@@ -310,8 +308,8 @@ function addPosts() {
                     move_uploaded_file($post_image_temp, "../img/{$post_image_name}");
                 }
 
-                $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_author_id, post_date, post_image, post_content, post_tags) ";
-                $query .= "VALUES({$post_category_id}, '{$post_title}', '{$post_author}', {$post_author_id}, '{$post_date}', '{$post_image_name}', '{$post_content}', '{$post_tags}');";
+                $query = "INSERT INTO posts(post_category_id, post_title, post_author_id, post_date, post_image, post_content, post_tags) ";
+                $query .= "VALUES({$post_category_id}, '{$post_title}', {$post_author_id}, '{$post_date}', '{$post_image_name}', '{$post_content}', '{$post_tags}');";
 
                 $addPost = mysqli_query($connection, $query);
                 validateQuery($addPost);
@@ -406,7 +404,7 @@ function editPosts() {
             $post_id = $row['post_id'];
             $post_category_id = $row['post_category_id'];
             $post_title = $row['post_title'];
-            $post_author = $row['post_author'];
+            $post_author_id = $row['post_author_id'];
             $post_date = $row['post_date'];
             $post_image = $row['post_image'];
             $post_content = $row['post_content'];
@@ -414,7 +412,7 @@ function editPosts() {
             $post_comments_count = $row['post_comments_count'];
             $post_status = $row['post_status'];
 
-            $err_edit_post = ['category_id_empty'=>false, 'category_id_exists'=>false, 'title'=>false, 'author'=>false, 'date'=>false, 'image'=>false, 'content'=>false, 'status_empty'=>false, 'status_correct'=>false];
+            $err_edit_post = ['category_id_empty'=>false, 'category_id_exists'=>false, 'title'=>false, 'date'=>false, 'image'=>false, 'content'=>false, 'status_empty'=>false, 'status_correct'=>false];
 
             $err_edit_post = updatePosts($edit_post_id, $err_edit_post);
 
@@ -430,7 +428,6 @@ function updatePosts($post_id, $err_status) {
     if (isset($_POST['update_post_btn'])) {
         $post_category_id = $_POST['edit_post_category_id'];
         $post_title = $_POST['edit_post_title'];
-        $post_author = $_POST['edit_post_author'];
         $post_date = $_POST['edit_post_date'];
 
         $is_new_post_image = true;
@@ -457,9 +454,6 @@ function updatePosts($post_id, $err_status) {
         }
         if (empty($post_title)) {
             $err_status['title'] = true;
-        }
-        if (empty($post_author)) {
-            $err_status['author'] = true;
         }
         if (empty($post_date)) {
             $err_status['date'] = true;
@@ -496,7 +490,6 @@ function updatePosts($post_id, $err_status) {
 
             $query = "UPDATE posts SET post_category_id = {$post_category_id}, ";
             $query .= "post_title = '{$post_title}', ";
-            $query .= "post_author = '{$post_author}', ";
             $query .= "post_date = '{$post_date}', ";
             $query .= "post_image = '{$post_image_name}', ";
             $query .= "post_content = '{$post_content}', ";

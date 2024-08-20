@@ -77,7 +77,6 @@ function showAllPosts($posts_per_page) {
         if ($i > $post_offset && $i <= $post_offset + $posts_per_page) {
             $post_id = $row['post_id'];
             $post_title = $row['post_title'];
-            $post_author = $row['post_author'];
             $post_author_id = $row['user_id'];
             $post_author_login = $row['user_login'];
             $post_date = $row['post_date'];
@@ -105,7 +104,6 @@ function showPostById() {
         if ($row = mysqli_fetch_assoc($postById)) {
             $post_id = $row['post_id'];
             $post_title = $row['post_title'];
-            $post_author = $row['post_author'];
             $post_author_id = $row['user_id'];
             $post_author_login = $row['user_login'];
             $post_date = $row['post_date'];
@@ -206,7 +204,6 @@ function showPostByCategory($posts_per_page) {
                 if ($i > $post_offset && $i <= $post_offset + $posts_per_page) {
                     $post_id = $row['post_id'];
                     $post_title = $row['post_title'];
-                    $post_author = $row['post_author'];
                     $post_author_id = $row['user_id'];
                     $post_author_login = $row['user_login'];
                     $post_date = $row['post_date'];
@@ -313,7 +310,6 @@ function searchPosts($posts_per_page) {
                 if ($i > $post_offset && $i <= $post_offset + $posts_per_page) {
                     $post_id = $row['post_id'];
                     $post_title = $row['post_title'];
-                    $post_author = $row['post_author'];
                     $post_author_id = $row['user_id'];
                     $post_author_login = $row['user_login'];
                     $post_date = $row['post_date'];

@@ -10,7 +10,6 @@
         <a href="../category.php?cat_id=<?=$post_category_id;?>"><?=$post_category_title;?></a>
         <?php } ?>
     </td>
-    <td><?=$post_author;?></td>
     <td>
         <?php if ((!is_null($post_author_id))) { ?>
         <?=$post_author_login;?>
