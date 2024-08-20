@@ -197,7 +197,8 @@ function deleteCategories($delete_cat_id) {
 function showAllPosts($rows_per_page) {
     global $connection;
 
-    $query = "SELECT * FROM posts LEFT JOIN categories ON posts.post_category_id = categories.cat_id ORDER BY post_date DESC, post_id DESC;";
+    $query = "SELECT * FROM (posts AS p LEFT JOIN categories AS cat ON p.post_category_id = cat.cat_id) LEFT JOIN ";
+    $query .= "users AS u ON p.post_author_id = u.user_id ORDER BY post_date DESC, post_id DESC;";
     $allPosts = mysqli_query($connection, $query);
     validateQuery($allPosts);
     $num_rows = mysqli_num_rows($allPosts);
@@ -239,6 +240,8 @@ function showAllPosts($rows_per_page) {
             $post_category_title = $row['cat_title'];
             $post_title = $row['post_title'];
             $post_author = $row['post_author'];
+            $post_author_id = $row['user_id'];
+            $post_author_login = $row['user_login'];
             $post_date = $row['post_date'];
             $post_image = $row['post_image'];
             $post_tags = $row['post_tags'];
