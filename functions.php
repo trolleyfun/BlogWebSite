@@ -376,15 +376,20 @@ function addComments($add_comment_post_id, $err_status) {
 function showCommentsOfPost($comment_post_id) {
     global $connection;
 
-    $query = "SELECT * FROM comments WHERE comment_post_id = $comment_post_id AND comment_status = 'одобрен' ORDER BY comment_date DESC, comment_id DESC;";
+    $query = "SELECT * FROM comments AS c LEFT JOIN users AS u ON c.comment_user_id = u.user_id WHERE comment_post_id = $comment_post_id AND comment_status = 'одобрен' ORDER BY comment_date DESC, comment_id DESC;";
     $commentsOfPost = mysqli_query($connection, $query);
     validateQuery($commentsOfPost);
 
     while($row = mysqli_fetch_assoc($commentsOfPost)) {
-        $comment_author = $row['comment_author'];
+        $comment_user_id = $row['user_id'];
+        $comment_user_login = $row['user_login'];
+        $comment_user_image = $row['user_image'];
         $comment_date = $row['comment_date'];
         $comment_content = $row['comment_content'];
 
+        if (is_null($comment_user_id)) {
+            $comment_user_image = "user_icon_default.png";
+        }
         include "includes/comment_form.php";
     }
 }
