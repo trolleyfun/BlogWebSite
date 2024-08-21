@@ -666,10 +666,17 @@ function showAllComments($rows_per_page) {
 
 /* Delete selected comment when Delete Comment icon is clicked */
 function clickDeleteCommentIcon() {
+    global $connection;
+
     if (isset($_GET['delete_comment_id'])) {
         $comment_id = $_GET['delete_comment_id'];
+        $comment_id = mysqli_real_escape_string($connection, $comment_id);
 
-        deleteComments($comment_id);
+        if (!commentIdValidation($comment_id)) {
+            header("Location: admin_comments.php?source=info&operation=error");
+        } else {
+            deleteComments($comment_id);
+        }
     }
 }
 
@@ -677,72 +684,89 @@ function clickDeleteCommentIcon() {
 function deleteComments($delete_comment_id) {
     global $connection;
 
-    $query = "SELECT * FROM comments WHERE comment_id = {$delete_comment_id};";
-    $statusDelComment = mysqli_query($connection, $query);
-    validateQuery($statusDelComment);
-    $delete_comment_post_id = 0;
-    $delete_comment_user_id = 0;
-    if ($row = mysqli_fetch_assoc($statusDelComment)) {
-        $delete_comment_post_id = $row['comment_post_id'];
-        $delete_comment_user_id = $row['comment_user_id'];
+    $delete_comment_id_escaped = mysqli_real_escape_string($connection, $delete_comment_id);
+
+    if (!commentIdValidation($delete_comment_id_escaped)) {
+        header("Location: admin_comments.php?source=info&operation=error");
+    } else {
+        $query = "SELECT * FROM comments WHERE comment_id = {$delete_comment_id_escaped};";
+        $statusDelComment = mysqli_query($connection, $query);
+        validateQuery($statusDelComment);
+        $delete_comment_post_id = 0;
+        $delete_comment_user_id = 0;
+        if ($row = mysqli_fetch_assoc($statusDelComment)) {
+            $delete_comment_post_id = $row['comment_post_id'];
+            $delete_comment_user_id = $row['comment_user_id'];
+        }
+
+        $query = "DELETE FROM comments WHERE comment_id = $delete_comment_id_escaped;";
+        $deleteComment = mysqli_query($connection, $query);
+        validateQuery($deleteComment);
+
+        commentsCountByPost($delete_comment_post_id);
+        commentsCountByUser($delete_comment_user_id);
+
+        header("Location: admin_comments.php?source=info&operation=delete");
     }
-
-    $query = "DELETE FROM comments WHERE comment_id = $delete_comment_id;";
-    $deleteComment = mysqli_query($connection, $query);
-    validateQuery($deleteComment);
-
-    commentsCountByPost($delete_comment_post_id);
-    commentsCountByUser($delete_comment_user_id);
-
-    header("Location: admin_comments.php?source=info&operation=delete");
 }
 
 /* Change status of the comment if Confirm Comment icon is clicked */
 function clickConfirmCommentIcon() {
     if (isset($_GET['confirm_comment'])) {
-        $confirm_comment_operation = $_GET['confirm_comment'];
+        $confirm_comment['operation'] = $_GET['confirm_comment'];
 
         if (isset($_GET['comment_id'])) {
-            $confirm_comment_id = $_GET['comment_id'];
+            $confirm_comment['comment_id'] = $_GET['comment_id'];
+            $confirm_comment = escapeArray($confirm_comment);
 
-            confirmComments($confirm_comment_id, $confirm_comment_operation);
+            if (!commentIdValidation($confirm_comment['comment_id'])) {
+                header("Location: admin_comments.php?source=info&operation=error");
+            } else {
+                confirmComments($confirm_comment['comment_id'], $confirm_comment['operation']);
+            }
         }
     }
 }
 
 /* Change status of the comment: approved or unapproved */
-function confirmComments($confirm_comment_id, $confirm_option) {
+function confirmComments($comment_id, $confirm_option) {
     global $connection;
 
-    $confirm_comment_status = "";
+    $confirm_comment['comment_id'] = $comment_id;
+    $confirm_comment['status'] = "";
     switch($confirm_option) {
         case "confirm":
-            $confirm_comment_status = "одобрен";
+            $confirm_comment['status'] = "одобрен";
             break;
         case "block":
-            $confirm_comment_status = "заблокирован";
+            $confirm_comment['status'] = "заблокирован";
             break;
     }
+    $confirm_comment = escapeArray($confirm_comment);
 
-    if ($confirm_comment_status != "") {
-        $query = "SELECT * FROM comments WHERE comment_id = {$confirm_comment_id};";
-        $statusConfirmComment = mysqli_query($connection, $query);
-        validateQuery($statusConfirmComment);
-        $confirm_comment_post_id = 0;
-        $confirm_comment_user_id = 0;
-        if ($row = mysqli_fetch_assoc($statusConfirmComment)) {
-            $confirm_comment_post_id = $row['comment_post_id'];
-            $confirm_comment_user_id = $row['comment_user_id'];
+    if (!commentIdValidation($confirm_comment['comment_id'])) {
+        header("Location: admin_comments.php?source=info&operation=error");
+    } else {
+        if (commentStatusValidation($confirm_comment['status'])) {
+            $query = "SELECT * FROM comments WHERE comment_id = {$confirm_comment['comment_id']};";
+            $statusConfirmComment = mysqli_query($connection, $query);
+            validateQuery($statusConfirmComment);
+            $confirm_comment_post_id = 0;
+            $confirm_comment_user_id = 0;
+            if ($row = mysqli_fetch_assoc($statusConfirmComment)) {
+                $confirm_comment_post_id = $row['comment_post_id'];
+                $confirm_comment_user_id = $row['comment_user_id'];
+            }
+
+            $query = "UPDATE comments SET comment_status = '{$confirm_comment['status']}' WHERE comment_id = {$confirm_comment['comment_id']};";
+            $confirmComment = mysqli_query($connection, $query);
+            validateQuery($confirmComment);
+
+            commentsCountByPost($confirm_comment_post_id);
+            commentsCountByUser($confirm_comment_user_id);
+
+            header("Location: admin_comments.php");
         }
-
-        $query = "UPDATE comments SET comment_status = '{$confirm_comment_status}' WHERE comment_id = {$confirm_comment_id};";
-        $confirmComment = mysqli_query($connection, $query);
-        validateQuery($confirmComment);
-
-        commentsCountByPost($confirm_comment_post_id);
-        commentsCountByUser($confirm_comment_user_id);
-
-        header("Location: admin_comments.php");
     }
 }
 
@@ -750,8 +774,11 @@ function confirmComments($confirm_comment_id, $confirm_option) {
 function changeCommentsCount($post_id, $diff) {
     global $connection;
 
-    if (!is_null($post_id)) {
-        $query = "UPDATE posts SET post_comments_count = post_comments_count + {$diff} WHERE post_id = {$post_id};";
+    $post_id_escaped = mysqli_real_escape_string($connection, $post_id);
+    $diff_escaped = mysqli_real_escape_string($connection, $diff);
+
+    if (postIdValidation($post_id_escaped) && is_int($diff_escaped)) {
+        $query = "UPDATE posts SET post_comments_count = post_comments_count + {$diff_escaped} WHERE post_id = {$post_id_escaped};";
         $commentsCount = mysqli_query($connection, $query);
         validateQuery($commentsCount);
     }
@@ -761,9 +788,11 @@ function changeCommentsCount($post_id, $diff) {
 function commentsCountByPost($post_id) {
     global $connection;
 
-    if (!is_null($post_id)) {
+    $post_id_escaped = mysqli_real_escape_string($connection, $post_id);
+
+    if (postIdValidation($post_id_escaped)) {
         $query = "SELECT comment_post_id, COUNT(*) AS comments_count FROM comments ";
-        $query .= "WHERE comment_status = 'одобрен' GROUP BY comment_post_id HAVING comment_post_id = {$post_id};";
+        $query .= "WHERE comment_status = 'одобрен' GROUP BY comment_post_id HAVING comment_post_id = {$post_id_escaped};";
         $commentsCount = mysqli_query($connection, $query);
         validateQuery($commentsCount);
         $post_comments_count = 0;
@@ -771,9 +800,11 @@ function commentsCountByPost($post_id) {
             $post_comments_count = $row['comments_count'];
         }
 
-        $query = "UPDATE posts SET post_comments_count = {$post_comments_count} WHERE post_id = {$post_id};";
-        $updateCommentsCount = mysqli_query($connection, $query);
-        validateQuery($updateCommentsCount);
+        if (my_is_int($post_comments_count)) {
+            $query = "UPDATE posts SET post_comments_count = {$post_comments_count} WHERE post_id = {$post_id_escaped};";
+            $updateCommentsCount = mysqli_query($connection, $query);
+            validateQuery($updateCommentsCount);
+        }
     }
 }
 
@@ -781,9 +812,11 @@ function commentsCountByPost($post_id) {
 function postsCountByCategory($cat_id) {
     global $connection;
 
-    if (!is_null($cat_id)) {
+    $cat_id_escaped = mysqli_real_escape_string($connection, $cat_id);
+
+    if (categoryIdValidation($cat_id_escaped)) {
         $query = "SELECT post_category_id, COUNT(*) AS posts_count FROM posts WHERE post_status = 'опубликовано' ";
-        $query .= "GROUP BY post_category_id HAVING post_category_id = {$cat_id};";
+        $query .= "GROUP BY post_category_id HAVING post_category_id = {$cat_id_escaped};";
         $postsCount = mysqli_query($connection, $query);
         validateQuery($postsCount);
         $cat_posts_count = 0;
@@ -791,9 +824,11 @@ function postsCountByCategory($cat_id) {
             $cat_posts_count = $row['posts_count'];
         }
 
-        $query = "UPDATE categories SET cat_posts_count = {$cat_posts_count} WHERE cat_id = {$cat_id};";
-        $updatePostsCount = mysqli_query($connection, $query);
-        validateQuery($updatePostsCount);
+        if (my_is_int($cat_posts_count)) {
+            $query = "UPDATE categories SET cat_posts_count = {$cat_posts_count} WHERE cat_id = {$cat_id_escaped};";
+            $updatePostsCount = mysqli_query($connection, $query);
+            validateQuery($updatePostsCount);
+        }
     }
 }
 
@@ -801,9 +836,11 @@ function postsCountByCategory($cat_id) {
 function commentsCountByUser($user_id) {
     global $connection;
 
-    if (!is_null($user_id)) {
+    $user_id_escaped = mysqli_real_escape_string($connection, $user_id);
+
+    if (userIdValidation($user_id_escaped)) {
         $query = "SELECT comment_user_id, COUNT(*) AS comments_count FROM comments WHERE comment_status = 'одобрен' ";
-        $query .= "GROUP BY comment_user_id HAVING comment_user_id = {$user_id};";
+        $query .= "GROUP BY comment_user_id HAVING comment_user_id = {$user_id_escaped};";
         $commentsCount = mysqli_query($connection, $query);
         validateQuery($commentsCount);
         $user_comments_count = 0;
@@ -811,9 +848,11 @@ function commentsCountByUser($user_id) {
             $user_comments_count = $row['comments_count'];
         }
 
-        $query = "UPDATE users SET user_comments_cnt = {$user_comments_count} WHERE user_id = {$user_id};";
-        $updateCommentsCount = mysqli_query($connection, $query);
-        validateQuery($updateCommentsCount);
+        if (my_is_int($user_comments_count)) {
+            $query = "UPDATE users SET user_comments_cnt = {$user_comments_count} WHERE user_id = {$user_id_escaped};";
+            $updateCommentsCount = mysqli_query($connection, $query);
+            validateQuery($updateCommentsCount);
+        }
     }
 }
 
@@ -821,9 +860,11 @@ function commentsCountByUser($user_id) {
 function postsCountByUser($user_id) {
     global $connection;
 
-    if (!is_null($user_id)) {
+    $user_id_escaped = mysqli_real_escape_string($connection, $user_id);
+
+    if (userIdValidation($user_id_escaped)) {
         $query = "SELECT post_author_id, COUNT(*) AS posts_count FROM posts WHERE post_status = 'опубликовано' ";
-        $query .= "GROUP BY post_author_id HAVING post_author_id = {$user_id};";
+        $query .= "GROUP BY post_author_id HAVING post_author_id = {$user_id_escaped};";
         $postsCount = mysqli_query($connection, $query);
         validateQuery($postsCount);
         $user_posts_count = 0;
@@ -831,9 +872,11 @@ function postsCountByUser($user_id) {
             $user_posts_count = $row['posts_count'];
         }
 
-        $query = "UPDATE users SET user_posts_cnt = {$user_posts_count} WHERE user_id = {$user_id};";
-        $updatePostsCount = mysqli_query($connection, $query);
-        validateQuery($updatePostsCount);
+        if (my_is_int($user_posts_count)) {
+            $query = "UPDATE users SET user_posts_cnt = {$user_posts_count} WHERE user_id = {$user_id_escaped};";
+            $updatePostsCount = mysqli_query($connection, $query);
+            validateQuery($updatePostsCount);
+        }
     }
 }
 

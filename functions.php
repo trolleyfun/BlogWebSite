@@ -27,6 +27,14 @@ function escapeArray($array) {
     return $escapedArray;
 }
 
+/* Check if $value is unsigneg integer or unsigned integer string */
+function my_is_int($value) {
+    if(is_int($value)) {
+        return $value >= 0;
+    } else
+        return is_numeric($value) && ctype_digit($value);
+}
+
 /* Display all posts from database. $post_per_page is number of posts on one page */
 function showAllPosts($posts_per_page) { 
     global $connection;
@@ -348,7 +356,7 @@ function addComments($add_comment_post_id, $err_status) {
             foreach($err_status as $key=>$value) {
                 $err_status[$key] = false;
             }
-            $err_status['author'] = !userValidation($comment_user_id);
+            $err_status['author'] = !userIdValidation($comment_user_id);
             if (empty($comment_content)) {
                 $err_status['content'] = true;
             }
@@ -545,18 +553,88 @@ function postCategoryValidation($post_category_id) {
     return $num_rows > 0;
 }
 
-/* Check if author of post exists in database. Return true if user exists */
-function userValidation($user_id) {
+/* Check if category with $category_id exists in database. Return true if category exists */
+function categoryIdValidation($category_id) {
     global $connection;
 
-    if (!is_null($user_id)) {
-    $query = "SELECT * FROM users WHERE user_id = {$user_id};";
-    $userValidation = mysqli_query($connection, $query);
-    validateQuery($userValidation);
+    if (my_is_int($category_id)) {
+        $category_id_escaped = mysqli_real_escape_string($connection, $category_id);
+        $query = "SELECT * FROM categories WHERE cat_id = {$category_id_escaped};";
+        $categoryValidation = mysqli_query($connection, $query);
+        validateQuery($categoryValidation);
 
-    $num_rows = mysqli_num_rows($userValidation);
+        $num_rows = mysqli_num_rows($categoryValidation);
 
-    return $num_rows > 0;
+        return $num_rows > 0;
+    } else {
+        return false;
+    }
+}
+
+/* Check if post with $post_id exists in database. Return true if post exists */
+function postIdValidation($post_id) {
+    global $connection;
+
+    if (my_is_int($post_id)) {
+        $post_id_escaped = mysqli_real_escape_string($connection, $post_id);
+        $query = "SELECT * FROM posts WHERE post_id = {$post_id_escaped};";
+        $postValidation = mysqli_query($connection, $query);
+        validateQuery($postValidation);
+
+        $num_rows = mysqli_num_rows($postValidation);
+
+        return $num_rows > 0;
+    } else {
+        return false;
+    }
+}
+
+/* Check if comment with $comment_id exists in database. Return true if comment exists */
+function commentIdValidation($comment_id) {
+    global $connection;
+
+    if (my_is_int($comment_id)) {
+        $comment_id_escaped = mysqli_real_escape_string($connection, $comment_id);
+        $query = "SELECT * FROM comments WHERE comment_id = {$comment_id_escaped};";
+        $commentValidation = mysqli_query($connection, $query);
+        validateQuery($commentValidation);
+
+        $num_rows = mysqli_num_rows($commentValidation);
+
+        return $num_rows > 0;
+    } else {
+        return false;
+    }
+}
+
+/* Check if user with $user_id exists in database. Return true if user exists */
+function userIdValidation($user_id) {
+    global $connection;
+
+    if (my_is_int($user_id)) {
+        $user_id_escaped = mysqli_real_escape_string($connection, $user_id);
+        $query = "SELECT * FROM users WHERE user_id = {$user_id_escaped};";
+        $userValidation = mysqli_query($connection, $query);
+        validateQuery($userValidation);
+
+        $num_rows = mysqli_num_rows($userValidation);
+
+        return $num_rows > 0;
+    } else {
+        return false;
+    }
+}
+
+/* Check if $date is correct date with format Y-m-d */
+function dateValidation($date) {
+    $dateArray = explode('-', $date);
+    if (count($dateArray) == 3) {
+        list($year, $month, $day) = $dateArray;
+        if (my_is_int($year) && my_is_int($month) && my_is_int($day)) {
+            return checkdate($month, $day, $year);
+        } else {
+            return false;
+        }
     } else {
         return false;
     }
@@ -663,9 +741,11 @@ function userSignup() {
 function commentsCountByPost($post_id) {
     global $connection;
 
-    if (!is_null($post_id)) {
-        $query = "SELECT comment_post_id, COUNT(comment_post_id) AS comments_count FROM comments ";
-        $query .= "WHERE comment_status = 'одобрен' GROUP BY comment_post_id HAVING comment_post_id = {$post_id};";
+    $post_id_escaped = mysqli_real_escape_string($connection, $post_id);
+
+    if (postIdValidation($post_id_escaped)) {
+        $query = "SELECT comment_post_id, COUNT(*) AS comments_count FROM comments ";
+        $query .= "WHERE comment_status = 'одобрен' GROUP BY comment_post_id HAVING comment_post_id = {$post_id_escaped};";
         $commentsCount = mysqli_query($connection, $query);
         validateQuery($commentsCount);
         $post_comments_count = 0;
@@ -673,9 +753,35 @@ function commentsCountByPost($post_id) {
             $post_comments_count = $row['comments_count'];
         }
 
-        $query = "UPDATE posts SET post_comments_count = {$post_comments_count} WHERE post_id = {$post_id};";
-        $updateCommentsCount = mysqli_query($connection, $query);
-        validateQuery($updateCommentsCount);
+        if (my_is_int($post_comments_count)) {
+            $query = "UPDATE posts SET post_comments_count = {$post_comments_count} WHERE post_id = {$post_id_escaped};";
+            $updateCommentsCount = mysqli_query($connection, $query);
+            validateQuery($updateCommentsCount);
+        }
+    }
+}
+
+/* Update number of posts to selected category in database */
+function postsCountByCategory($cat_id) {
+    global $connection;
+
+    $cat_id_escaped = mysqli_real_escape_string($connection, $cat_id);
+
+    if (categoryIdValidation($cat_id_escaped)) {
+        $query = "SELECT post_category_id, COUNT(*) AS posts_count FROM posts WHERE post_status = 'опубликовано' ";
+        $query .= "GROUP BY post_category_id HAVING post_category_id = {$cat_id_escaped};";
+        $postsCount = mysqli_query($connection, $query);
+        validateQuery($postsCount);
+        $cat_posts_count = 0;
+        if ($row = mysqli_fetch_assoc($postsCount)) {
+            $cat_posts_count = $row['posts_count'];
+        }
+
+        if (my_is_int($cat_posts_count)) {
+            $query = "UPDATE categories SET cat_posts_count = {$cat_posts_count} WHERE cat_id = {$cat_id_escaped};";
+            $updatePostsCount = mysqli_query($connection, $query);
+            validateQuery($updatePostsCount);
+        }
     }
 }
 
@@ -683,9 +789,11 @@ function commentsCountByPost($post_id) {
 function commentsCountByUser($user_id) {
     global $connection;
 
-    if (!is_null($user_id)) {
+    $user_id_escaped = mysqli_real_escape_string($connection, $user_id);
+
+    if (userIdValidation($user_id_escaped)) {
         $query = "SELECT comment_user_id, COUNT(*) AS comments_count FROM comments WHERE comment_status = 'одобрен' ";
-        $query .= "GROUP BY comment_user_id HAVING comment_user_id = {$user_id};";
+        $query .= "GROUP BY comment_user_id HAVING comment_user_id = {$user_id_escaped};";
         $commentsCount = mysqli_query($connection, $query);
         validateQuery($commentsCount);
         $user_comments_count = 0;
@@ -693,9 +801,35 @@ function commentsCountByUser($user_id) {
             $user_comments_count = $row['comments_count'];
         }
 
-        $query = "UPDATE users SET user_comments_cnt = {$user_comments_count} WHERE user_id = {$user_id};";
-        $updateCommentsCount = mysqli_query($connection, $query);
-        validateQuery($updateCommentsCount);
+        if (my_is_int($user_comments_count)) {
+            $query = "UPDATE users SET user_comments_cnt = {$user_comments_count} WHERE user_id = {$user_id_escaped};";
+            $updateCommentsCount = mysqli_query($connection, $query);
+            validateQuery($updateCommentsCount);
+        }
+    }
+}
+
+/* Update number of posts by selected user in database */
+function postsCountByUser($user_id) {
+    global $connection;
+
+    $user_id_escaped = mysqli_real_escape_string($connection, $user_id);
+
+    if (userIdValidation($user_id_escaped)) {
+        $query = "SELECT post_author_id, COUNT(*) AS posts_count FROM posts WHERE post_status = 'опубликовано' ";
+        $query .= "GROUP BY post_author_id HAVING post_author_id = {$user_id_escaped};";
+        $postsCount = mysqli_query($connection, $query);
+        validateQuery($postsCount);
+        $user_posts_count = 0;
+        if ($row = mysqli_fetch_assoc($postsCount)) {
+            $user_posts_count = $row['posts_count'];
+        }
+
+        if (my_is_int($user_posts_count)) {
+            $query = "UPDATE users SET user_posts_cnt = {$user_posts_count} WHERE user_id = {$user_id_escaped};";
+            $updatePostsCount = mysqli_query($connection, $query);
+            validateQuery($updatePostsCount);
+        }
     }
 }
 
