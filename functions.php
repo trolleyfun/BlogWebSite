@@ -408,13 +408,13 @@ function showCommentsOfPost($comment_post_id) {
 }
 
 /* Get information about authorized user from database. Put login as a parameter and return an array with login, firstname, lastname and privilege of user */
-function getSessionInfo($user_login) {
+function getSessionInfo($user_id) {
     global $connection;
 
-    $query = "SELECT * FROM users WHERE user_login = '{$user_login}';";
+    $query = "SELECT * FROM users WHERE user_id = {$user_id};";
     $sessionInfo = mysqli_query($connection, $query);
     validateQuery($sessionInfo);
-    $session_user = ['login'=>$user_login, 'firstname'=>"", 'lastname'=>"", 'privilege'=>""];
+    $session_user = ['login'=>"Логин", 'firstname'=>"Имя", 'lastname'=>"Фамилия", 'privilege'=>"пользователь"];
     if ($row = mysqli_fetch_assoc($sessionInfo)) {
         $session_user['login'] = $row['user_login'];
         $session_user['firstname'] = $row['user_firstname'];

@@ -1,8 +1,14 @@
 <?php
 session_start();
 
-if (isset($_SESSION['login'])) {
-    $session_user_login = $_SESSION['login'];
-    $session_user = getSessionInfo($session_user_login);
+if (isset($_SESSION['user_id'])) {
+    $session_user_id = $_SESSION['user_id'];
+    $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+    $session_user = ['login'=>"Логин", 'firstname'=>"Имя", 'lastname'=>"Фамилия", 'privilege'=>"пользователь"];
+    if (userIdValidation($session_user_id)) {
+        $session_user = getSessionInfo($session_user_id);
+    } else {
+        header("Location: includes/logout.php");
+    }
 }
 ?>

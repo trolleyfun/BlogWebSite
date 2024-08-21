@@ -42,27 +42,37 @@ function addCategories() {
     $err_add_cat = ['title_empty'=>false, 'title_exists'=>false];
 
     if (isset($_POST['add_cat_btn'])) {
-        $cat_title = $_POST['cat_title'];
-        $cat_title = mysqli_real_escape_string($connection, $cat_title);
-
-        foreach($err_add_cat as $key=>$value) {
-            $err_add_cat[$key] = false;
-        }
-        if (empty($cat_title)) {
-            $err_add_cat['title_empty'] = true;
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: ../index.php");
         } else {
-            $err_add_cat['title_exists'] = ifCategoryTitleExists($cat_title, null);
-        }
-        $err_result = false;
-        foreach($err_add_cat as $err_item) {
-            $err_result = $err_result || $err_item;
-        }
-        if (!$err_result) {
-            $query = "INSERT INTO categories(cat_title) VALUE('{$cat_title}');";
-            $addCategory = mysqli_query($connection, $query);
-            validateQuery($addCategory);
+            $session_user_id = $_SESSION['user_id'];
+            $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+            if (!userIdValidation($session_user_id)) {
+                header("Location: ../includes/logout.php");
+            } else {
+                $cat_title = $_POST['cat_title'];
+                $cat_title = mysqli_real_escape_string($connection, $cat_title);
 
-            header("Location: admin_categories.php?source=info&operation=add");
+                foreach($err_add_cat as $key=>$value) {
+                    $err_add_cat[$key] = false;
+                }
+                if (empty($cat_title)) {
+                    $err_add_cat['title_empty'] = true;
+                } else {
+                    $err_add_cat['title_exists'] = ifCategoryTitleExists($cat_title, null);
+                }
+                $err_result = false;
+                foreach($err_add_cat as $err_item) {
+                    $err_result = $err_result || $err_item;
+                }
+                if (!$err_result) {
+                    $query = "INSERT INTO categories(cat_title) VALUE('{$cat_title}');";
+                    $addCategory = mysqli_query($connection, $query);
+                    validateQuery($addCategory);
+
+                    header("Location: admin_categories.php?source=info&operation=add");
+                }
+            }
         }
     }
 
@@ -74,32 +84,42 @@ function updateCategories($cat_id, $err_status) {
     global $connection;
 
     if (isset($_POST['update_cat_btn'])) {
-        $cat['cat_id'] = $cat_id;
-        $cat['title'] = $_POST['edit_cat_title'];
-        $cat = escapeArray($cat);
-
-        if (!categoryIdValidation($cat['cat_id'])) {
-            header("Location: admin_categories.php?source=info&operation=error");
-        } else {    
-            foreach($err_status as $key=>$value) {
-                $err_status[$key] = false;
-            }
-            if (empty($cat['title'])) {
-                $err_status['title_empty'] = true;
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: ../index.php");
+        } else {
+            $session_user_id = $_SESSION['user_id'];
+            $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+            if (!userIdValidation($session_user_id)) {
+                header("Location: ../includes/logout.php");
             } else {
-                $err_status['title_exists'] = ifCategoryTitleExists($cat['title'], $cat['cat_id']);
-            }
-            $err_result = false;
-            foreach($err_status as $err_item) {
-                $err_result = $err_result || $err_item;
-            }
-            
-            if (!$err_result) {
-                $query = "UPDATE categories SET cat_title = '{$cat['title']}' WHERE cat_id = {$cat['cat_id']};";
-                $updateCategory = mysqli_query($connection, $query);
-                validateQuery($updateCategory);
-        
-                header("Location: admin_categories.php?source=info&operation=update");
+                $cat['cat_id'] = $cat_id;
+                $cat['title'] = $_POST['edit_cat_title'];
+                $cat = escapeArray($cat);
+
+                if (!categoryIdValidation($cat['cat_id'])) {
+                    header("Location: admin_categories.php?source=info&operation=error");
+                } else {    
+                    foreach($err_status as $key=>$value) {
+                        $err_status[$key] = false;
+                    }
+                    if (empty($cat['title'])) {
+                        $err_status['title_empty'] = true;
+                    } else {
+                        $err_status['title_exists'] = ifCategoryTitleExists($cat['title'], $cat['cat_id']);
+                    }
+                    $err_result = false;
+                    foreach($err_status as $err_item) {
+                        $err_result = $err_result || $err_item;
+                    }
+                    
+                    if (!$err_result) {
+                        $query = "UPDATE categories SET cat_title = '{$cat['title']}' WHERE cat_id = {$cat['cat_id']};";
+                        $updateCategory = mysqli_query($connection, $query);
+                        validateQuery($updateCategory);
+                
+                        header("Location: admin_categories.php?source=info&operation=update");
+                    }
+                }
             }
         }
     }
@@ -206,17 +226,10 @@ function showAllCategoriesInList($post_category_id) {
 
 /* Delete category if Delete Icon is clicked */
 function clickDeleteCategoryIcon() {
-    global $connection;
-
     if (isset($_GET['delete_cat_id'])) {
         $delete_cat_id = $_GET['delete_cat_id'];
-        $delete_cat_id = mysqli_real_escape_string($connection, $delete_cat_id);
 
-        if (!categoryIdValidation($delete_cat_id)) {
-            header("Location: admin_categories.php?source=info&operation=error");
-        } else {
-            deleteCategories($delete_cat_id);
-        }
+        deleteCategories($delete_cat_id);
     }
 }
 
@@ -224,17 +237,27 @@ function clickDeleteCategoryIcon() {
 function deleteCategories($delete_cat_id) {
     global $connection;
 
-    $delete_cat_id_escaped = mysqli_real_escape_string($connection, $delete_cat_id);
-
-    if (!categoryIdValidation($delete_cat_id_escaped)) {
-        header("Location: admin_categories.php?source=info&operation=error");
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: ../index.php");
     } else {
-        $query = "DELETE FROM categories WHERE cat_id = {$delete_cat_id_escaped};";
+        $session_user_id = $_SESSION['user_id'];
+        $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+        if (!userIdValidation($session_user_id)) {
+            header("Location: ../includes/logout.php");
+        } else {
+            $delete_cat_id_escaped = mysqli_real_escape_string($connection, $delete_cat_id);
 
-        $deleteCategory = mysqli_query($connection, $query);
-        validateQuery($deleteCategory);
+            if (!categoryIdValidation($delete_cat_id_escaped)) {
+                header("Location: admin_categories.php?source=info&operation=error");
+            } else {
+                $query = "DELETE FROM categories WHERE cat_id = {$delete_cat_id_escaped};";
 
-        header("Location: admin_categories.php?source=info&operation=delete");
+                $deleteCategory = mysqli_query($connection, $query);
+                validateQuery($deleteCategory);
+
+                header("Location: admin_categories.php?source=info&operation=delete");
+            }
+        }
     }
 }
 
@@ -306,71 +329,77 @@ function addPosts() {
     $err_add_post = ['category_id_empty'=>false, 'category_id_exists'=>false, 'title'=>false, 'author'=>false, 'image'=>false, 'content'=>false];
 
     if (isset($_POST['add_post_btn'])) {
-        if (isset($_SESSION['user_id'])) {
-            $post['author_id'] = $_SESSION['user_id'];
-            $post['category_id'] = $_POST['post_category_id'];
-            $post['title'] = $_POST['post_title'];
-            $post['date'] = date('y-m-d');
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: ../index.php");
+        } else {
+            $session_user_id = $_SESSION['user_id'];
+            $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+            if (!userIdValidation($session_user_id)) {
+                header("Location: ../includes/logout.php");
+            } else {        
+                $post['author_id'] = $session_user_id;
+                $post['category_id'] = $_POST['post_category_id'];
+                $post['title'] = $_POST['post_title'];
+                $post['date'] = date('y-m-d');
 
-            $is_new_post_image = true;
-            $default_post_image_name = "post_image_default.png";
-            $post['image_name'] = $_FILES['post_image']['name'];
-            $post['image_tmp'] = $_FILES['post_image']['tmp_name'];
-            $post['image_err'] = $_FILES['post_image']['error'];
-            if ($post['image_name'] == "" || $post['image_tmp'] == "" || $post['image_err'] == UPLOAD_ERR_NO_FILE) {
-                $post['image_name'] = $default_post_image_name;
-                $is_new_post_image = false;
-            }
-
-            $post['content'] = $_POST['post_content'];
-            $post['tags'] = $_POST['post_tags'];
-
-            $post = escapeArray($post);
-
-            foreach($err_add_post as $key=>$value) {
-                $err_add_post[$key] = false;
-            }
-            if (empty($post['category_id'])) {
-                $err_add_post['category_id_empty'] = true;
-            } else {
-                $err_add_post['category_id_exists'] = !categoryIdValidation($post['category_id']);
-            }
-            if (empty($post['title'])) {
-                $err_add_post['title'] = true;
-            }
-            $err_add_post['author'] = !userIdValidation($post['author_id']);
-            if (empty($post['image_name'])) {
-                $err_add_post['image'] = true;
-            }
-            if (empty($post['content'])) {
-                $err_add_post['content'] = true;
-            }
-            $err_result = false;
-            foreach($err_add_post as $err_item) {
-                $err_result = $err_result || $err_item;
-            }
-
-            if (!$err_result) {
-                if ($is_new_post_image) {
-                    if(!move_uploaded_file($post['image_tmp'], "../img/{$post['image_name']}")) {
-                        $post['image_name'] = $default_post_image_name;
-                    }
+                $is_new_post_image = true;
+                $default_post_image_name = "post_image_default.png";
+                $post['image_name'] = $_FILES['post_image']['name'];
+                $post['image_tmp'] = $_FILES['post_image']['tmp_name'];
+                $post['image_err'] = $_FILES['post_image']['error'];
+                if ($post['image_name'] == "" || $post['image_tmp'] == "" || $post['image_err'] == UPLOAD_ERR_NO_FILE) {
+                    $post['image_name'] = $default_post_image_name;
+                    $is_new_post_image = false;
                 }
 
-                $query = "INSERT INTO posts(post_category_id, post_title, post_author_id, post_date, post_image, post_content, post_tags) ";
-                $query .= "VALUES({$post['category_id']}, '{$post['title']}', {$post['author_id']}, '{$post['date']}', '{$post['image_name']}', '{$post['content']}', '{$post['tags']}');";
+                $post['content'] = $_POST['post_content'];
+                $post['tags'] = $_POST['post_tags'];
 
-                $addPost = mysqli_query($connection, $query);
-                validateQuery($addPost);
+                $post = escapeArray($post);
 
-                postsCountByCategory($post['category_id']);
-                postsCountByUser($post['author_id']);
+                foreach($err_add_post as $key=>$value) {
+                    $err_add_post[$key] = false;
+                }
+                if (empty($post['category_id'])) {
+                    $err_add_post['category_id_empty'] = true;
+                } else {
+                    $err_add_post['category_id_exists'] = !categoryIdValidation($post['category_id']);
+                }
+                if (empty($post['title'])) {
+                    $err_add_post['title'] = true;
+                }
+                $err_add_post['author'] = !userIdValidation($post['author_id']);
+                if (empty($post['image_name'])) {
+                    $err_add_post['image'] = true;
+                }
+                if (empty($post['content'])) {
+                    $err_add_post['content'] = true;
+                }
+                $err_result = false;
+                foreach($err_add_post as $err_item) {
+                    $err_result = $err_result || $err_item;
+                }
 
-                header("Location: admin_posts.php?source=info&operation=add");
+                if (!$err_result) {
+                    if ($is_new_post_image) {
+                        if(!move_uploaded_file($post['image_tmp'], "../img/{$post['image_name']}")) {
+                            $post['image_name'] = $default_post_image_name;
+                        }
+                    }
+
+                    $query = "INSERT INTO posts(post_category_id, post_title, post_author_id, post_date, post_image, post_content, post_tags) ";
+                    $query .= "VALUES({$post['category_id']}, '{$post['title']}', {$post['author_id']}, '{$post['date']}', '{$post['image_name']}', '{$post['content']}', '{$post['tags']}');";
+
+                    $addPost = mysqli_query($connection, $query);
+                    validateQuery($addPost);
+
+                    postsCountByCategory($post['category_id']);
+                    postsCountByUser($post['author_id']);
+
+                    header("Location: admin_posts.php?source=info&operation=add");
+                }
             }
-        } else {
-            header("Location: ../index.php");
-        }
+        } 
     }
 
     include "includes/add_posts.php";
@@ -380,56 +409,59 @@ function addPosts() {
 function confirmPosts($post_id, $confirm_option) {
     global $connection;
 
-    $confirm_post['post_id'] = $post_id;    
-    $confirm_post['status'] = "";
-    switch($confirm_option) {
-        case "confirm":
-            $confirm_post['status'] = "опубликовано";
-            break;
-        case "block":
-            $confirm_post['status'] = "заблокировано";
-            break;
-    }
-    $confirm_post = escapeArray($confirm_post);
-
-    if (!postIdValidation($confirm_post['post_id'])) {
-        header("Location: admin_posts.php?source=info&operation=error");
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: ../index.php");
     } else {
-        if (postStatusValidation($confirm_post['status'])) {
-            $query = "SELECT * FROM posts WHERE post_id = {$confirm_post['post_id']};";
-            $postInfo = mysqli_query($connection, $query);
-            validateQuery($postInfo);
-
-            $confirm_post_category_id = 0;
-            $confirm_post_author_id = 0;
-            if ($row = mysqli_fetch_assoc($postInfo)) {
-                $confirm_post_category_id = $row['post_category_id'];
-                $confirm_post_author_id = $row['post_author_id'];
+        $session_user_id = $_SESSION['user_id'];
+        $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+        if (!userIdValidation($session_user_id)) {
+            header("Location: ../includes/logout.php");
+        } else {
+            $confirm_post['post_id'] = $post_id;    
+            $confirm_post['status'] = "";
+            switch($confirm_option) {
+                case "confirm":
+                    $confirm_post['status'] = "опубликовано";
+                    break;
+                case "block":
+                    $confirm_post['status'] = "заблокировано";
+                    break;
             }
+            $confirm_post = escapeArray($confirm_post);
 
-            $query = "UPDATE posts SET post_status = '{$confirm_post['status']}' WHERE post_id = {$confirm_post['post_id']};";
-            $confirmPost = mysqli_query($connection, $query);
-            validateQuery($confirmPost);
+            if (!postIdValidation($confirm_post['post_id'])) {
+                header("Location: admin_posts.php?source=info&operation=error");
+            } else {
+                if (postStatusValidation($confirm_post['status'])) {
+                    $query = "SELECT * FROM posts WHERE post_id = {$confirm_post['post_id']};";
+                    $postInfo = mysqli_query($connection, $query);
+                    validateQuery($postInfo);
 
-            postsCountByCategory($confirm_post_category_id);
-            postsCountByUser($confirm_post_author_id);
+                    $confirm_post_category_id = 0;
+                    $confirm_post_author_id = 0;
+                    if ($row = mysqli_fetch_assoc($postInfo)) {
+                        $confirm_post_category_id = $row['post_category_id'];
+                        $confirm_post_author_id = $row['post_author_id'];
+                    }
+
+                    $query = "UPDATE posts SET post_status = '{$confirm_post['status']}' WHERE post_id = {$confirm_post['post_id']};";
+                    $confirmPost = mysqli_query($connection, $query);
+                    validateQuery($confirmPost);
+
+                    postsCountByCategory($confirm_post_category_id);
+                    postsCountByUser($confirm_post_author_id);
+                }
+            }
         }
     }
 }
 
 /* Delete selected post from the database if delete icon is clicked */
 function clickDeletePostIcon() {
-    global $connection;
-
     if (isset($_GET['delete_post_id'])) {
         $delete_post_id = $_GET['delete_post_id'];
-        $delete_post_id = mysqli_real_escape_string($connection, $delete_post_id);
 
-        if (!postIdValidation($delete_post_id)) {
-            header("Location: admin_posts.php?source=info&operation=error");
-        } else {
-            deletePosts($delete_post_id);
-        }
+        deletePosts($delete_post_id);
     }
 }
 
@@ -437,30 +469,40 @@ function clickDeletePostIcon() {
 function deletePosts($delete_post_id) {
     global $connection;
 
-    $delete_post_id_escaped = mysqli_real_escape_string($connection, $delete_post_id);
-
-    if (!postIdValidation($delete_post_id_escaped)) {
-        header("Location: admin_posts.php?source=info&operation=error");
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: ../index.php");
     } else {
-        $query = "SELECT * FROM posts WHERE post_id = {$delete_post_id_escaped};";
-        $postInfo = mysqli_query($connection, $query);
-        validateQuery($postInfo);
+        $session_user_id = $_SESSION['user_id'];
+        $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+        if (!userIdValidation($session_user_id)) {
+            header("Location: ../includes/logout.php");
+        } else {
+            $delete_post_id_escaped = mysqli_real_escape_string($connection, $delete_post_id);
 
-        $delete_post_category_id = 0;
-        $delete_post_author_id = 0;
-        if ($row = mysqli_fetch_assoc($postInfo)) {
-            $delete_post_category_id = $row['post_category_id'];
-            $delete_post_author_id = $row['post_author_id'];
+            if (!postIdValidation($delete_post_id_escaped)) {
+                header("Location: admin_posts.php?source=info&operation=error");
+            } else {
+                $query = "SELECT * FROM posts WHERE post_id = {$delete_post_id_escaped};";
+                $postInfo = mysqli_query($connection, $query);
+                validateQuery($postInfo);
+
+                $delete_post_category_id = 0;
+                $delete_post_author_id = 0;
+                if ($row = mysqli_fetch_assoc($postInfo)) {
+                    $delete_post_category_id = $row['post_category_id'];
+                    $delete_post_author_id = $row['post_author_id'];
+                }
+
+                $query = "DELETE FROM posts WHERE post_id={$delete_post_id_escaped};";
+                $deletePost = mysqli_query($connection, $query);
+                validateQuery($deletePost);
+
+                postsCountByCategory($delete_post_category_id);
+                postsCountByUser($delete_post_author_id);
+
+                header("Location: admin_posts.php?source=info&operation=delete");
+            }
         }
-
-        $query = "DELETE FROM posts WHERE post_id={$delete_post_id_escaped};";
-        $deletePost = mysqli_query($connection, $query);
-        validateQuery($deletePost);
-
-        postsCountByCategory($delete_post_category_id);
-        postsCountByUser($delete_post_author_id);
-
-        header("Location: admin_posts.php?source=info&operation=delete");
     }
 }
 
@@ -506,103 +548,112 @@ function updatePosts($post_id, $current_image, $err_status) {
     global $connection;
 
     if (isset($_POST['update_post_btn'])) {
-        $post['post_id'] = $post_id;
-        $post['category_id'] = $_POST['edit_post_category_id'];
-        $post['title'] = $_POST['edit_post_title'];
-        $post['date'] = $_POST['edit_post_date'];
-
-        $is_new_post_image = true;
-        $default_post_image_name = "post_image_default.png";
-        $post['image_name'] = $_FILES['edit_post_image']['name'];
-        $post['image_tmp'] = $_FILES['edit_post_image']['tmp_name'];
-        $post['image_err'] = $_FILES['edit_post_image']['error'];
-        if ($post['image_name'] == "" || $post['image_tmp'] == "" || $post['image_err'] == UPLOAD_ERR_NO_FILE) {
-            $post['image_name'] = $current_image;
-            $is_new_post_image = false;
-        }
-
-        $post['content'] = $_POST['edit_post_content'];
-        $post['tags'] = $_POST['edit_post_tags'];
-        $post['status'] = $_POST['edit_post_status'];
-
-        $post = escapeArray($post);
-
-        if (!postIdValidation($post['post_id'])) {
-            header("Location: admin_posts.php?source=info&operation=error");
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: ../index.php");
         } else {
-            foreach($err_status as $key=>$value) {
-                $err_status[$key] = false;
-            }
-            if (empty($post['category_id'])) {
-                $err_status['category_id_empty'] = true;
+            $session_user_id = $_SESSION['user_id'];
+            $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+            if (!userIdValidation($session_user_id)) {
+                header("Location: ../includes/logout.php");
             } else {
-                $err_status['category_id_exists'] = !categoryIdValidation($post['category_id']);
-            }
-            if (empty($post['title'])) {
-                $err_status['title'] = true;
-            }
-            if (empty($post['date'])) {
-                $err_status['date_empty'] = true;
-            } else {
-                $err_status['date_correct'] = !dateValidation($post['date']);
-            }
-            if (empty($post['image_name'])) {
-                $err_status['image'] = true;
-            }
-            if (empty($post['content'])) {
-                $err_status['content'] = true;
-            }
-            if (empty($post['status'])) {
-                $err_status['status_empty'] = true;
-            } else {
-                $err_status['status_correct'] = !postStatusValidation($post['status']);
-            }
-            $err_result = false;
-            foreach($err_status as $err_item) {
-                $err_result = $err_result || $err_item;
-            }
+                $post['post_id'] = $post_id;
+                $post['category_id'] = $_POST['edit_post_category_id'];
+                $post['title'] = $_POST['edit_post_title'];
+                $post['date'] = $_POST['edit_post_date'];
 
-            if (!$err_result) {
-                if ($is_new_post_image) {
-                    if(!move_uploaded_file($post['image_tmp'], "../img/{$post['image_name']}")) {
-                        $post['image_name'] = $default_post_image_name;
+                $is_new_post_image = true;
+                $default_post_image_name = "post_image_default.png";
+                $post['image_name'] = $_FILES['edit_post_image']['name'];
+                $post['image_tmp'] = $_FILES['edit_post_image']['tmp_name'];
+                $post['image_err'] = $_FILES['edit_post_image']['error'];
+                if ($post['image_name'] == "" || $post['image_tmp'] == "" || $post['image_err'] == UPLOAD_ERR_NO_FILE) {
+                    $post['image_name'] = $current_image;
+                    $is_new_post_image = false;
+                }
+
+                $post['content'] = $_POST['edit_post_content'];
+                $post['tags'] = $_POST['edit_post_tags'];
+                $post['status'] = $_POST['edit_post_status'];
+
+                $post = escapeArray($post);
+
+                if (!postIdValidation($post['post_id'])) {
+                    header("Location: admin_posts.php?source=info&operation=error");
+                } else {
+                    foreach($err_status as $key=>$value) {
+                        $err_status[$key] = false;
+                    }
+                    if (empty($post['category_id'])) {
+                        $err_status['category_id_empty'] = true;
+                    } else {
+                        $err_status['category_id_exists'] = !categoryIdValidation($post['category_id']);
+                    }
+                    if (empty($post['title'])) {
+                        $err_status['title'] = true;
+                    }
+                    if (empty($post['date'])) {
+                        $err_status['date_empty'] = true;
+                    } else {
+                        $err_status['date_correct'] = !dateValidation($post['date']);
+                    }
+                    if (empty($post['image_name'])) {
+                        $err_status['image'] = true;
+                    }
+                    if (empty($post['content'])) {
+                        $err_status['content'] = true;
+                    }
+                    if (empty($post['status'])) {
+                        $err_status['status_empty'] = true;
+                    } else {
+                        $err_status['status_correct'] = !postStatusValidation($post['status']);
+                    }
+                    $err_result = false;
+                    foreach($err_status as $err_item) {
+                        $err_result = $err_result || $err_item;
+                    }
+
+                    if (!$err_result) {
+                        if ($is_new_post_image) {
+                            if(!move_uploaded_file($post['image_tmp'], "../img/{$post['image_name']}")) {
+                                $post['image_name'] = $default_post_image_name;
+                            }
+                        }
+
+                        $query = "SELECT * FROM posts WHERE post_id = {$post['post_id']};";
+                        $postInfo = mysqli_query($connection, $query);
+                        validateQuery($postInfo);
+
+                        $current_post_category_id = 0;
+                        $post_author_id = 0;
+                        if ($row = mysqli_fetch_assoc($postInfo)) {
+                            $current_post_category_id = $row['post_category_id'];
+                            $post_author_id = $row['post_author_id'];
+                        }
+
+                        $query = "UPDATE posts SET post_category_id = {$post['category_id']}, ";
+                        $query .= "post_title = '{$post['title']}', ";
+                        $query .= "post_date = '{$post['date']}', ";
+                        $query .= "post_image = '{$post['image_name']}', ";
+                        $query .= "post_content = '{$post['content']}', ";
+                        $query .= "post_tags = '{$post['tags']}', ";
+                        $query .= "post_status = '{$post['status']}' ";
+                        $query .= "WHERE post_id = {$post['post_id']};";
+
+                        $updatePost = mysqli_query($connection, $query);
+                        validateQuery($updatePost);
+
+                        postsCountByCategory($post['category_id']);
+                        postsCountByUser($post_author_id);
+                        if ($post['category_id'] !== $current_post_category_id) {
+                            postsCountByCategory($current_post_category_id);
+                        }
+
+                        header("Location: admin_posts.php?source=info&operation=update");
                     }
                 }
-
-                $query = "SELECT * FROM posts WHERE post_id = {$post['post_id']};";
-                $postInfo = mysqli_query($connection, $query);
-                validateQuery($postInfo);
-
-                $current_post_category_id = 0;
-                $post_author_id = 0;
-                if ($row = mysqli_fetch_assoc($postInfo)) {
-                    $current_post_category_id = $row['post_category_id'];
-                    $post_author_id = $row['post_author_id'];
-                }
-
-                $query = "UPDATE posts SET post_category_id = {$post['category_id']}, ";
-                $query .= "post_title = '{$post['title']}', ";
-                $query .= "post_date = '{$post['date']}', ";
-                $query .= "post_image = '{$post['image_name']}', ";
-                $query .= "post_content = '{$post['content']}', ";
-                $query .= "post_tags = '{$post['tags']}', ";
-                $query .= "post_status = '{$post['status']}' ";
-                $query .= "WHERE post_id = {$post['post_id']};";
-
-                $updatePost = mysqli_query($connection, $query);
-                validateQuery($updatePost);
-
-                postsCountByCategory($post['category_id']);
-                postsCountByUser($post_author_id);
-                if ($post['category_id'] !== $current_post_category_id) {
-                    postsCountByCategory($current_post_category_id);
-                }
-
-                header("Location: admin_posts.php?source=info&operation=update");
             }
         }
     }
-
     return $err_status;
 }
 
@@ -666,17 +717,10 @@ function showAllComments($rows_per_page) {
 
 /* Delete selected comment when Delete Comment icon is clicked */
 function clickDeleteCommentIcon() {
-    global $connection;
-
     if (isset($_GET['delete_comment_id'])) {
         $comment_id = $_GET['delete_comment_id'];
-        $comment_id = mysqli_real_escape_string($connection, $comment_id);
 
-        if (!commentIdValidation($comment_id)) {
-            header("Location: admin_comments.php?source=info&operation=error");
-        } else {
-            deleteComments($comment_id);
-        }
+        deleteComments($comment_id);
     }
 }
 
@@ -684,46 +728,51 @@ function clickDeleteCommentIcon() {
 function deleteComments($delete_comment_id) {
     global $connection;
 
-    $delete_comment_id_escaped = mysqli_real_escape_string($connection, $delete_comment_id);
-
-    if (!commentIdValidation($delete_comment_id_escaped)) {
-        header("Location: admin_comments.php?source=info&operation=error");
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: ../index.php");
     } else {
-        $query = "SELECT * FROM comments WHERE comment_id = {$delete_comment_id_escaped};";
-        $statusDelComment = mysqli_query($connection, $query);
-        validateQuery($statusDelComment);
-        $delete_comment_post_id = 0;
-        $delete_comment_user_id = 0;
-        if ($row = mysqli_fetch_assoc($statusDelComment)) {
-            $delete_comment_post_id = $row['comment_post_id'];
-            $delete_comment_user_id = $row['comment_user_id'];
+        $session_user_id = $_SESSION['user_id'];
+        $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+        if (!userIdValidation($session_user_id)) {
+            header("Location: ../includes/logout.php");
+        } else {
+            $delete_comment_id_escaped = mysqli_real_escape_string($connection, $delete_comment_id);
+
+            if (!commentIdValidation($delete_comment_id_escaped)) {
+                header("Location: admin_comments.php?source=info&operation=error");
+            } else {
+                $query = "SELECT * FROM comments WHERE comment_id = {$delete_comment_id_escaped};";
+                $statusDelComment = mysqli_query($connection, $query);
+                validateQuery($statusDelComment);
+                $delete_comment_post_id = 0;
+                $delete_comment_user_id = 0;
+                if ($row = mysqli_fetch_assoc($statusDelComment)) {
+                    $delete_comment_post_id = $row['comment_post_id'];
+                    $delete_comment_user_id = $row['comment_user_id'];
+                }
+
+                $query = "DELETE FROM comments WHERE comment_id = $delete_comment_id_escaped;";
+                $deleteComment = mysqli_query($connection, $query);
+                validateQuery($deleteComment);
+
+                commentsCountByPost($delete_comment_post_id);
+                commentsCountByUser($delete_comment_user_id);
+
+                header("Location: admin_comments.php?source=info&operation=delete");
+            }
         }
-
-        $query = "DELETE FROM comments WHERE comment_id = $delete_comment_id_escaped;";
-        $deleteComment = mysqli_query($connection, $query);
-        validateQuery($deleteComment);
-
-        commentsCountByPost($delete_comment_post_id);
-        commentsCountByUser($delete_comment_user_id);
-
-        header("Location: admin_comments.php?source=info&operation=delete");
     }
 }
 
 /* Change status of the comment if Confirm Comment icon is clicked */
 function clickConfirmCommentIcon() {
     if (isset($_GET['confirm_comment'])) {
-        $confirm_comment['operation'] = $_GET['confirm_comment'];
+        $confirm_comment_operation = $_GET['confirm_comment'];
 
         if (isset($_GET['comment_id'])) {
-            $confirm_comment['comment_id'] = $_GET['comment_id'];
-            $confirm_comment = escapeArray($confirm_comment);
+            $confirm_comment_id = $_GET['comment_id'];
 
-            if (!commentIdValidation($confirm_comment['comment_id'])) {
-                header("Location: admin_comments.php?source=info&operation=error");
-            } else {
-                confirmComments($confirm_comment['comment_id'], $confirm_comment['operation']);
-            }
+            confirmComments($confirm_comment_id, $confirm_comment_operation);
         }
     }
 }
@@ -732,40 +781,50 @@ function clickConfirmCommentIcon() {
 function confirmComments($comment_id, $confirm_option) {
     global $connection;
 
-    $confirm_comment['comment_id'] = $comment_id;
-    $confirm_comment['status'] = "";
-    switch($confirm_option) {
-        case "confirm":
-            $confirm_comment['status'] = "одобрен";
-            break;
-        case "block":
-            $confirm_comment['status'] = "заблокирован";
-            break;
-    }
-    $confirm_comment = escapeArray($confirm_comment);
-
-    if (!commentIdValidation($confirm_comment['comment_id'])) {
-        header("Location: admin_comments.php?source=info&operation=error");
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: ../index.php");
     } else {
-        if (commentStatusValidation($confirm_comment['status'])) {
-            $query = "SELECT * FROM comments WHERE comment_id = {$confirm_comment['comment_id']};";
-            $statusConfirmComment = mysqli_query($connection, $query);
-            validateQuery($statusConfirmComment);
-            $confirm_comment_post_id = 0;
-            $confirm_comment_user_id = 0;
-            if ($row = mysqli_fetch_assoc($statusConfirmComment)) {
-                $confirm_comment_post_id = $row['comment_post_id'];
-                $confirm_comment_user_id = $row['comment_user_id'];
+        $session_user_id = $_SESSION['user_id'];
+        $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+        if (!userIdValidation($session_user_id)) {
+            header("Location: ../includes/logout.php");
+        } else {
+            $confirm_comment['comment_id'] = $comment_id;
+            $confirm_comment['status'] = "";
+            switch($confirm_option) {
+                case "confirm":
+                    $confirm_comment['status'] = "одобрен";
+                    break;
+                case "block":
+                    $confirm_comment['status'] = "заблокирован";
+                    break;
             }
+            $confirm_comment = escapeArray($confirm_comment);
 
-            $query = "UPDATE comments SET comment_status = '{$confirm_comment['status']}' WHERE comment_id = {$confirm_comment['comment_id']};";
-            $confirmComment = mysqli_query($connection, $query);
-            validateQuery($confirmComment);
+            if (!commentIdValidation($confirm_comment['comment_id'])) {
+                header("Location: admin_comments.php?source=info&operation=error");
+            } else {
+                if (commentStatusValidation($confirm_comment['status'])) {
+                    $query = "SELECT * FROM comments WHERE comment_id = {$confirm_comment['comment_id']};";
+                    $statusConfirmComment = mysqli_query($connection, $query);
+                    validateQuery($statusConfirmComment);
+                    $confirm_comment_post_id = 0;
+                    $confirm_comment_user_id = 0;
+                    if ($row = mysqli_fetch_assoc($statusConfirmComment)) {
+                        $confirm_comment_post_id = $row['comment_post_id'];
+                        $confirm_comment_user_id = $row['comment_user_id'];
+                    }
 
-            commentsCountByPost($confirm_comment_post_id);
-            commentsCountByUser($confirm_comment_user_id);
+                    $query = "UPDATE comments SET comment_status = '{$confirm_comment['status']}' WHERE comment_id = {$confirm_comment['comment_id']};";
+                    $confirmComment = mysqli_query($connection, $query);
+                    validateQuery($confirmComment);
 
-            header("Location: admin_comments.php");
+                    commentsCountByPost($confirm_comment_post_id);
+                    commentsCountByUser($confirm_comment_user_id);
+
+                    header("Location: admin_comments.php");
+                }
+            }
         }
     }
 }
@@ -946,76 +1005,86 @@ function addUsers() {
     $err_add_user = ['login_empty'=>false, 'login_exists'=>false, 'password_empty'=>false, 'password_correct'=>false, 'firstname'=>false, 'lastname'=>false, 'email_empty'=>false, 'email_exists'=>false, 'email_correct'=>false, 'image'=>false, 'privilege_empty'=>false, 'privilege_correct'=>false];
 
     if (isset($_POST['add_user_btn'])) {
-        $user['login'] = $_POST['user_login'];
-        $user['password'] = $_POST['user_password'];
-        $user['firstname'] = $_POST['user_firstname'];
-        $user['lastname'] = $_POST['user_lastname'];
-        $user['email'] = $_POST['user_email'];
-
-        $is_new_user_image = true;
-        $default_user_image_name = "user_icon_default.png";
-        $user['image_name'] = $_FILES['user_image']['name'];
-        $user['image_tmp'] = $_FILES['user_image']['tmp_name'];
-        $user['image_error'] = $_FILES['user_image']['error'];
-        if ($user['image_name'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
-            $user['image_name'] = $default_user_image_name;
-            $is_new_user_image = false;
-        }
-
-        $user['privilege'] = $_POST['user_privilege'];
-
-        $user = escapeArray($user);
-
-        foreach($err_add_user as $key=>$value) {
-            $err_add_user[$key] = false;
-        }
-        if (empty($user['login'])) {
-            $err_add_user['login_empty'] = true;
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: ../index.php");
         } else {
-            $err_add_user['login_exists'] = ifLoginExists($user['login'], null);
-        }
-        if (empty($user['password'])) {
-            $err_add_user['password_empty'] = true;
-        } else {
-            $err_add_user['password_correct'] = !passwordValidation($user['password']);
-        }
-        if (empty($user['firstname'])) {
-            $err_add_user['firstname'] = true;
-        }
-        if (empty($user['lastname'])) {
-            $err_add_user['lastname'] = true;
-        }
-        if (empty($user['email'])) {
-            $err_add_user['email_empty'] = true;
-        } else {
-            $err_add_user['email_correct'] = !emailValidation($user['email']);
-            $err_add_user['email_exists'] = ifEmailExists($user['email'], null);
-        }
-        if (empty($user['image_name'])) {
-            $err_add_user['image'] = true;
-        }
-        if (empty($user['privilege'])) {
-            $err_add_user['privilege_empty'] = true;
-        } else {
-            $err_add_user['privilege_correct'] = !userPrivilegeValidation($user['privilege']);
-        }
-        $err_result = false;
-        foreach($err_add_user as $err_item) {
-            $err_result = $err_result || $err_item;
-        }
+            $session_user_id = $_SESSION['user_id'];
+            $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+            if (!userIdValidation($session_user_id)) {
+                header("Location: ../includes/logout.php");
+            } else {
+                $user['login'] = $_POST['user_login'];
+                $user['password'] = $_POST['user_password'];
+                $user['firstname'] = $_POST['user_firstname'];
+                $user['lastname'] = $_POST['user_lastname'];
+                $user['email'] = $_POST['user_email'];
 
-        if (!$err_result) {
-            if ($is_new_user_image) {
-                move_uploaded_file($user['image_tmp'], "../img/{$user['image_name']}");
+                $is_new_user_image = true;
+                $default_user_image_name = "user_icon_default.png";
+                $user['image_name'] = $_FILES['user_image']['name'];
+                $user['image_tmp'] = $_FILES['user_image']['tmp_name'];
+                $user['image_error'] = $_FILES['user_image']['error'];
+                if ($user['image_name'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
+                    $user['image_name'] = $default_user_image_name;
+                    $is_new_user_image = false;
+                }
+
+                $user['privilege'] = $_POST['user_privilege'];
+
+                $user = escapeArray($user);
+
+                foreach($err_add_user as $key=>$value) {
+                    $err_add_user[$key] = false;
+                }
+                if (empty($user['login'])) {
+                    $err_add_user['login_empty'] = true;
+                } else {
+                    $err_add_user['login_exists'] = ifLoginExists($user['login'], null);
+                }
+                if (empty($user['password'])) {
+                    $err_add_user['password_empty'] = true;
+                } else {
+                    $err_add_user['password_correct'] = !passwordValidation($user['password']);
+                }
+                if (empty($user['firstname'])) {
+                    $err_add_user['firstname'] = true;
+                }
+                if (empty($user['lastname'])) {
+                    $err_add_user['lastname'] = true;
+                }
+                if (empty($user['email'])) {
+                    $err_add_user['email_empty'] = true;
+                } else {
+                    $err_add_user['email_correct'] = !emailValidation($user['email']);
+                    $err_add_user['email_exists'] = ifEmailExists($user['email'], null);
+                }
+                if (empty($user['image_name'])) {
+                    $err_add_user['image'] = true;
+                }
+                if (empty($user['privilege'])) {
+                    $err_add_user['privilege_empty'] = true;
+                } else {
+                    $err_add_user['privilege_correct'] = !userPrivilegeValidation($user['privilege']);
+                }
+                $err_result = false;
+                foreach($err_add_user as $err_item) {
+                    $err_result = $err_result || $err_item;
+                }
+
+                if (!$err_result) {
+                    if ($is_new_user_image) {
+                        move_uploaded_file($user['image_tmp'], "../img/{$user['image_name']}");
+                    }
+
+                    $user['password'] = password_hash($user['password'], PASSWORD_BCRYPT);
+
+                    $query = "INSERT INTO users(user_login, user_password, user_firstname, user_lastname, user_email, user_image, user_privilege) VALUES('{$user['login']}', '{$user['password']}', '{$user['firstname']}', '{$user['lastname']}', '{$user['email']}', '{$user['image_name']}', '{$user['privilege']}');";
+                    $addUser = mysqli_query($connection, $query);
+                    validateQuery($addUser);
+
+                    header("Location: admin_users.php?source=info&operation=add");
+                }
             }
-
-            $user['password'] = password_hash($user['password'], PASSWORD_BCRYPT);
-
-            $query = "INSERT INTO users(user_login, user_password, user_firstname, user_lastname, user_email, user_image, user_privilege) VALUES('{$user['login']}', '{$user['password']}', '{$user['firstname']}', '{$user['lastname']}', '{$user['email']}', '{$user['image_name']}', '{$user['privilege']}');";
-            $addUser = mysqli_query($connection, $query);
-            validateQuery($addUser);
-
-            header("Location: admin_users.php?source=info&operation=add");
         }
     }
 
@@ -1035,36 +1104,56 @@ function clickDeleteUserIcon() {
 function deleteUsers($delete_user_id) {
     global $connection;
 
-    $query = "DELETE FROM users WHERE user_id = {$delete_user_id};";
-    $delUser = mysqli_query($connection, $query);
-    validateQuery($delUser);
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: ../index.php");
+    } else {
+        $session_user_id = $_SESSION['user_id'];
+        $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+        if (!userIdValidation($session_user_id)) {
+            header("Location: ../includes/logout.php");
+        } else {
+            $query = "DELETE FROM users WHERE user_id = {$delete_user_id};";
+            $delUser = mysqli_query($connection, $query);
+            validateQuery($delUser);
 
-    header("Location: admin_users.php?source=info&operation=delete");
+            header("Location: admin_users.php?source=info&operation=delete");
+        }
+    }
 }
 
 /* Change privileges of user with $user_id. $privilege might take the following values: user, moderator, admin */
 function changeUserPrivilege($user_id, $privilege) {
     global $connection;
 
-    switch ($privilege) {
-        case "user":
-            $new_user_privilege = "пользователь";
-            break;
-        case "moderator":
-            $new_user_privilege = "модератор";
-            break;
-        case "admin":
-            $new_user_privilege = "администратор";
-            break;
-        default:
-            $new_user_privilege = "";
-            break;
-    }
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: ../index.php");
+    } else {
+        $session_user_id = $_SESSION['user_id'];
+        $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+        if (!userIdValidation($session_user_id)) {
+            header("Location: ../includes/logout.php");
+        } else {
+            switch ($privilege) {
+                case "user":
+                    $new_user_privilege = "пользователь";
+                    break;
+                case "moderator":
+                    $new_user_privilege = "модератор";
+                    break;
+                case "admin":
+                    $new_user_privilege = "администратор";
+                    break;
+                default:
+                    $new_user_privilege = "";
+                    break;
+            }
 
-    if ($new_user_privilege != "") {
-        $query = "UPDATE users SET user_privilege = '{$new_user_privilege}' WHERE user_id = {$user_id};";
-        $changeUserPrivilege = mysqli_query($connection, $query);
-        validateQuery($changeUserPrivilege);
+            if ($new_user_privilege != "") {
+                $query = "UPDATE users SET user_privilege = '{$new_user_privilege}' WHERE user_id = {$user_id};";
+                $changeUserPrivilege = mysqli_query($connection, $query);
+                validateQuery($changeUserPrivilege);
+            }
+        }
     }
 }
 
@@ -1104,83 +1193,92 @@ function updateUsers($user_id, $err_status) {
     global $connection;
 
     if (isset($_POST['update_user_btn'])) {
-        $user['firstname'] = $_POST['edit_user_firstname'];
-        $user['lastname'] = $_POST['edit_user_lastname'];
-        $user['email'] = $_POST['edit_user_email'];
-        $user['privilege'] = $_POST['edit_user_privilege'];
-        
-        $current_user_image = $_POST['current_user_image'];
-        $user['image_name'] = $_FILES['edit_user_image']['name'];
-        $user['image_tmp'] = $_FILES['edit_user_image']['tmp_name'];
-        $user['image_error'] = $_FILES['edit_user_image']['error'];
-
-        $is_new_image = true;
-        if ($user['image_name'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
-            $user['image_name'] = $current_user_image;
-            $is_new_image = false;
-        }
-
-        $user = escapeArray($user);
-
-        foreach($err_status as $key=>$value) {
-            $err_status[$key] = false;
-        }
-        if (empty($user['firstname'])) {
-            $err_status['firstname'] = true;
-        }
-        if (empty($user['lastname'])) {
-            $err_status['lastname'] = true;
-        }
-        if (empty($user['email'])) {
-            $err_status['email_empty'] = true;
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: ../index.php");
         } else {
-            $err_status['email_correct'] = !emailValidation($user['email']);
-            $err_status['email_exists'] = ifEmailExists($user['email'], $user_id);
-        }
-        if (empty($user['image_name'])) {
-            $err_status['image'] = true;
-        }
-        if (empty($user['privilege'])) {
-            $err_status['privilege_empty'] = true;
-        } else {
-            $err_status['privilege_correct'] = !userPrivilegeValidation($user['privilege']);
-        }
-        $err_result = false;
-        foreach($err_status as $err_item) {
-            $err_result = $err_result || $err_item;
-        }
+            $session_user_id = $_SESSION['user_id'];
+            $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+            if (!userIdValidation($session_user_id)) {
+                header("Location: ../includes/logout.php");
+            } else {
+                $user['firstname'] = $_POST['edit_user_firstname'];
+                $user['lastname'] = $_POST['edit_user_lastname'];
+                $user['email'] = $_POST['edit_user_email'];
+                $user['privilege'] = $_POST['edit_user_privilege'];
+                
+                $current_user_image = $_POST['current_user_image'];
+                $user['image_name'] = $_FILES['edit_user_image']['name'];
+                $user['image_tmp'] = $_FILES['edit_user_image']['tmp_name'];
+                $user['image_error'] = $_FILES['edit_user_image']['error'];
 
-        if (!$err_result) {
-            if ($is_new_image) {
-                move_uploaded_file($user['image_tmp'], "../img/{$user['image_name']}");
+                $is_new_image = true;
+                if ($user['image_name'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
+                    $user['image_name'] = $current_user_image;
+                    $is_new_image = false;
+                }
+
+                $user = escapeArray($user);
+
+                foreach($err_status as $key=>$value) {
+                    $err_status[$key] = false;
+                }
+                if (empty($user['firstname'])) {
+                    $err_status['firstname'] = true;
+                }
+                if (empty($user['lastname'])) {
+                    $err_status['lastname'] = true;
+                }
+                if (empty($user['email'])) {
+                    $err_status['email_empty'] = true;
+                } else {
+                    $err_status['email_correct'] = !emailValidation($user['email']);
+                    $err_status['email_exists'] = ifEmailExists($user['email'], $user_id);
+                }
+                if (empty($user['image_name'])) {
+                    $err_status['image'] = true;
+                }
+                if (empty($user['privilege'])) {
+                    $err_status['privilege_empty'] = true;
+                } else {
+                    $err_status['privilege_correct'] = !userPrivilegeValidation($user['privilege']);
+                }
+                $err_result = false;
+                foreach($err_status as $err_item) {
+                    $err_result = $err_result || $err_item;
+                }
+
+                if (!$err_result) {
+                    if ($is_new_image) {
+                        move_uploaded_file($user['image_tmp'], "../img/{$user['image_name']}");
+                    }
+
+                    $query = "UPDATE users SET ";
+                    $query .= "user_firstname = '{$user['firstname']}', ";
+                    $query .= "user_lastname = '{$user['lastname']}', ";
+                    $query .= "user_email = '{$user['email']}', ";
+                    $query .= "user_image = '{$user['image_name']}', ";
+                    $query .= "user_privilege = '{$user['privilege']}' ";
+                    $query .= "WHERE user_id = {$user_id};";
+
+                    $updateUser = mysqli_query($connection, $query);
+                    validateQuery($updateUser);
+
+                    header("Location: admin_users.php?source=info&operation=update");
+                }
             }
-
-            $query = "UPDATE users SET ";
-            $query .= "user_firstname = '{$user['firstname']}', ";
-            $query .= "user_lastname = '{$user['lastname']}', ";
-            $query .= "user_email = '{$user['email']}', ";
-            $query .= "user_image = '{$user['image_name']}', ";
-            $query .= "user_privilege = '{$user['privilege']}' ";
-            $query .= "WHERE user_id = {$user_id};";
-
-            $updateUser = mysqli_query($connection, $query);
-            validateQuery($updateUser);
-
-            header("Location: admin_users.php?source=info&operation=update");
         }
-
     }
     return $err_status;
 }
 
 /* Get information about authorized user from database. Put login as a parameter and return an array with login, firstname, lastname and privilege of user */
-function getSessionInfo($user_login) {
+function getSessionInfo($user_id) {
     global $connection;
 
-    $query = "SELECT * FROM users WHERE user_login = '{$user_login}';";
+    $query = "SELECT * FROM users WHERE user_id = {$user_id};";
     $sessionInfo = mysqli_query($connection, $query);
     validateQuery($sessionInfo);
-    $session_user = ['login'=>$user_login, 'firstname'=>"", 'lastname'=>"", 'privilege'=>""];
+    $session_user = ['login'=>"Логин", 'firstname'=>"Имя", 'lastname'=>"Фамилия", 'privilege'=>"пользователь"];
     if ($row = mysqli_fetch_assoc($sessionInfo)) {
         $session_user['login'] = $row['user_login'];
         $session_user['firstname'] = $row['user_firstname'];
@@ -1223,71 +1321,80 @@ function updateProfile($user_id, $err_status) {
     global $connection;
 
     if (isset($_POST['update_profile_btn'])) {
-        $user['firstname'] = $_POST['profile_firstname'];
-        $user['lastname'] = $_POST['profile_lastname'];
-        $user['email'] = $_POST['profile_email'];
-        $user['privilege'] = $_POST['profile_privilege'];
-        
-        $current_user_image = $_POST['current_profile_image'];
-        $user['image_name'] = $_FILES['profile_image']['name'];
-        $user['image_tmp'] = $_FILES['profile_image']['tmp_name'];
-        $user['image_error'] = $_FILES['profile_image']['error'];
-
-        $is_new_image = true;
-        if ($user['image_name'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
-            $user['image_name'] = $current_user_image;
-            $is_new_image = false;
-        }
-
-        $user = escapeArray($user);
-
-        foreach($err_status as $key=>$value) {
-            $err_status[$key] = false;
-        }
-        if (empty($user['firstname'])) {
-            $err_status['firstname'] = true;
-        }
-        if (empty($user['lastname'])) {
-            $err_status['lastname'] = true;
-        }
-        if (empty($user['email'])) {
-            $err_status['email_empty'] = true;
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: ../index.php");
         } else {
-            $err_status['email_correct'] = !emailValidation($user['email']);
-            $err_status['email_exists'] = ifEmailExists($user['email'], $user_id);
-        }
-        if (empty($user['image_name'])) {
-            $err_status['image'] = true;
-        }
-        if (empty($user['privilege'])) {
-            $err_status['privilege_empty'] = true;
-        } else {
-            $err_status['privilege_correct'] = !userPrivilegeValidation($user['privilege']);
-        }
-        $err_result = false;
-        foreach($err_status as $err_item) {
-            $err_result = $err_result || $err_item;
-        }
+            $session_user_id = $_SESSION['user_id'];
+            $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+            if (!userIdValidation($session_user_id)) {
+                header("Location: ../includes/logout.php");
+            } else {
+                $user['firstname'] = $_POST['profile_firstname'];
+                $user['lastname'] = $_POST['profile_lastname'];
+                $user['email'] = $_POST['profile_email'];
+                $user['privilege'] = $_POST['profile_privilege'];
+                
+                $current_user_image = $_POST['current_profile_image'];
+                $user['image_name'] = $_FILES['profile_image']['name'];
+                $user['image_tmp'] = $_FILES['profile_image']['tmp_name'];
+                $user['image_error'] = $_FILES['profile_image']['error'];
 
-        if (!$err_result) {
-            if ($is_new_image) {
-                move_uploaded_file($user['image_tmp'], "../img/{$user['image_name']}");
+                $is_new_image = true;
+                if ($user['image_name'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
+                    $user['image_name'] = $current_user_image;
+                    $is_new_image = false;
+                }
+
+                $user = escapeArray($user);
+
+                foreach($err_status as $key=>$value) {
+                    $err_status[$key] = false;
+                }
+                if (empty($user['firstname'])) {
+                    $err_status['firstname'] = true;
+                }
+                if (empty($user['lastname'])) {
+                    $err_status['lastname'] = true;
+                }
+                if (empty($user['email'])) {
+                    $err_status['email_empty'] = true;
+                } else {
+                    $err_status['email_correct'] = !emailValidation($user['email']);
+                    $err_status['email_exists'] = ifEmailExists($user['email'], $user_id);
+                }
+                if (empty($user['image_name'])) {
+                    $err_status['image'] = true;
+                }
+                if (empty($user['privilege'])) {
+                    $err_status['privilege_empty'] = true;
+                } else {
+                    $err_status['privilege_correct'] = !userPrivilegeValidation($user['privilege']);
+                }
+                $err_result = false;
+                foreach($err_status as $err_item) {
+                    $err_result = $err_result || $err_item;
+                }
+
+                if (!$err_result) {
+                    if ($is_new_image) {
+                        move_uploaded_file($user['image_tmp'], "../img/{$user['image_name']}");
+                    }
+
+                    $query = "UPDATE users SET ";
+                    $query .= "user_firstname = '{$user['firstname']}', ";
+                    $query .= "user_lastname = '{$user['lastname']}', ";
+                    $query .= "user_email = '{$user['email']}', ";
+                    $query .= "user_image = '{$user['image_name']}', ";
+                    $query .= "user_privilege = '{$user['privilege']}' ";
+                    $query .= "WHERE user_id = {$user_id};";
+
+                    $updateUser = mysqli_query($connection, $query);
+                    validateQuery($updateUser);
+
+                    header("Location: admin_profile.php?source=info&operation=update");
+                }
             }
-
-            $query = "UPDATE users SET ";
-            $query .= "user_firstname = '{$user['firstname']}', ";
-            $query .= "user_lastname = '{$user['lastname']}', ";
-            $query .= "user_email = '{$user['email']}', ";
-            $query .= "user_image = '{$user['image_name']}', ";
-            $query .= "user_privilege = '{$user['privilege']}' ";
-            $query .= "WHERE user_id = {$user_id};";
-
-            $updateUser = mysqli_query($connection, $query);
-            validateQuery($updateUser);
-
-            header("Location: admin_profile.php?source=info&operation=update");
         }
-
     }
     return $err_status;
 }
@@ -1297,30 +1404,40 @@ function resetUserPassword($user_id, $err_status) {
     global $connection;
 
     if (isset($_POST['reset_password_btn'])) {
-        $user_password = $_POST['reset_user_password'];
-        $user_password = mysqli_real_escape_string($connection, $user_password);
-
-        foreach($err_status as $key=>$value) {
-            $err_status[$key] = false;
-        }
-        if (empty($user_password)) {
-            $err_status['password_empty'] = true;
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: ../index.php");
         } else {
-            $err_status['password_correct'] = !passwordValidation($user_password);
-        }
-        $err_result = false;
-        foreach($err_status as $err_item) {
-            $err_result = $err_result || $err_item;
-        }
+            $session_user_id = $_SESSION['user_id'];
+            $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+            if (!userIdValidation($session_user_id)) {
+                header("Location: ../includes/logout.php");
+            } else {
+                $user_password = $_POST['reset_user_password'];
+                $user_password = mysqli_real_escape_string($connection, $user_password);
 
-        if (!$err_result) {
-            $user_password = password_hash($user_password, PASSWORD_BCRYPT);
+                foreach($err_status as $key=>$value) {
+                    $err_status[$key] = false;
+                }
+                if (empty($user_password)) {
+                    $err_status['password_empty'] = true;
+                } else {
+                    $err_status['password_correct'] = !passwordValidation($user_password);
+                }
+                $err_result = false;
+                foreach($err_status as $err_item) {
+                    $err_result = $err_result || $err_item;
+                }
 
-            $query = "UPDATE users SET user_password = '{$user_password}' WHERE user_id = {$user_id};";
-            $resetPassword = mysqli_query($connection, $query);
-            validateQuery($resetPassword);
+                if (!$err_result) {
+                    $user_password = password_hash($user_password, PASSWORD_BCRYPT);
 
-            header("Location: admin_users.php?source=info&operation=password");
+                    $query = "UPDATE users SET user_password = '{$user_password}' WHERE user_id = {$user_id};";
+                    $resetPassword = mysqli_query($connection, $query);
+                    validateQuery($resetPassword);
+
+                    header("Location: admin_users.php?source=info&operation=password");
+                }
+            }
         }
     }
     return $err_status;
@@ -1331,37 +1448,47 @@ function changeUserPassword($user_id, $db_user_password, $err_status) {
     global $connection;
 
     if (isset($_POST['change_password_btn'])) {
-        $current_user_password = $_POST['current_user_password'];
-        $new_user_password = $_POST['new_user_password'];
-        $current_user_password = mysqli_real_escape_string($connection, $current_user_password);
-        $new_user_password = mysqli_real_escape_string($connection, $new_user_password);
-
-        foreach($err_status as $key=>$value) {
-            $err_status[$key] = false;
-        }
-        if (empty($current_user_password)) {
-            $err_status['current_password_empty'] = true;
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: ../index.php");
         } else {
-            $err_status['current_password_valid'] = !password_verify($current_user_password, $db_user_password);
-        }
-        if (empty($new_user_password)) {
-            $err_status['new_password_empty'] = true;
-        } else {
-            $err_status['new_password_correct'] = !passwordValidation($new_user_password);
-        }
-        $err_result = false;
-        foreach($err_status as $err_item) {
-            $err_result = $err_result || $err_item;
-        }
+            $session_user_id = $_SESSION['user_id'];
+            $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+            if (!userIdValidation($session_user_id)) {
+                header("Location: ../includes/logout.php");
+            } else {
+                $current_user_password = $_POST['current_user_password'];
+                $new_user_password = $_POST['new_user_password'];
+                $current_user_password = mysqli_real_escape_string($connection, $current_user_password);
+                $new_user_password = mysqli_real_escape_string($connection, $new_user_password);
 
-        if (!$err_result) {
-            $new_user_password = password_hash($new_user_password, PASSWORD_BCRYPT);
+                foreach($err_status as $key=>$value) {
+                    $err_status[$key] = false;
+                }
+                if (empty($current_user_password)) {
+                    $err_status['current_password_empty'] = true;
+                } else {
+                    $err_status['current_password_valid'] = !password_verify($current_user_password, $db_user_password);
+                }
+                if (empty($new_user_password)) {
+                    $err_status['new_password_empty'] = true;
+                } else {
+                    $err_status['new_password_correct'] = !passwordValidation($new_user_password);
+                }
+                $err_result = false;
+                foreach($err_status as $err_item) {
+                    $err_result = $err_result || $err_item;
+                }
 
-            $query = "UPDATE users SET user_password = '{$new_user_password}' WHERE user_id = {$user_id};";
-            $changePassword = mysqli_query($connection, $query);
-            validateQuery($changePassword);
+                if (!$err_result) {
+                    $new_user_password = password_hash($new_user_password, PASSWORD_BCRYPT);
 
-            header("Location: admin_profile.php?source=info&operation=password");
+                    $query = "UPDATE users SET user_password = '{$new_user_password}' WHERE user_id = {$user_id};";
+                    $changePassword = mysqli_query($connection, $query);
+                    validateQuery($changePassword);
+
+                    header("Location: admin_profile.php?source=info&operation=password");
+                }
+            }
         }
     }
     return $err_status;
