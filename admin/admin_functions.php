@@ -1024,7 +1024,7 @@ function addUsers() {
                 $user['image_name'] = $_FILES['user_image']['name'];
                 $user['image_tmp'] = $_FILES['user_image']['tmp_name'];
                 $user['image_error'] = $_FILES['user_image']['error'];
-                if ($user['image_name'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
+                if ($user['image_name'] == "" || $user['image_tmp'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
                     $user['image_name'] = $default_user_image_name;
                     $is_new_user_image = false;
                 }
@@ -1073,7 +1073,9 @@ function addUsers() {
 
                 if (!$err_result) {
                     if ($is_new_user_image) {
-                        move_uploaded_file($user['image_tmp'], "../img/{$user['image_name']}");
+                        if (!move_uploaded_file($user['image_tmp'], "../img/{$user['image_name']}")) {
+                            $user['image_name'] = $default_user_image_name;
+                        }
                     }
 
                     $user['password'] = password_hash($user['password'], PASSWORD_BCRYPT);
@@ -1112,11 +1114,16 @@ function deleteUsers($delete_user_id) {
         if (!userIdValidation($session_user_id)) {
             header("Location: ../includes/logout.php");
         } else {
-            $query = "DELETE FROM users WHERE user_id = {$delete_user_id};";
-            $delUser = mysqli_query($connection, $query);
-            validateQuery($delUser);
+            $delete_user_id_escaped = mysqli_real_escape_string($connection, $delete_user_id);
+            if (!userIdValidation($delete_user_id_escaped)) {
+                header("Location: admin_users.php?source=info&operation=error");
+            } else {
+                $query = "DELETE FROM users WHERE user_id = {$delete_user_id_escaped};";
+                $delUser = mysqli_query($connection, $query);
+                validateQuery($delUser);
 
-            header("Location: admin_users.php?source=info&operation=delete");
+                header("Location: admin_users.php?source=info&operation=delete");
+            }
         }
     }
 }
@@ -1133,25 +1140,32 @@ function changeUserPrivilege($user_id, $privilege) {
         if (!userIdValidation($session_user_id)) {
             header("Location: ../includes/logout.php");
         } else {
+            $user['user_id'] = $user_id;
+            $user['privilege'] = "";
             switch ($privilege) {
                 case "user":
-                    $new_user_privilege = "пользователь";
+                    $user['privilege'] = "пользователь";
                     break;
                 case "moderator":
-                    $new_user_privilege = "модератор";
+                    $user['privilege'] = "модератор";
                     break;
                 case "admin":
-                    $new_user_privilege = "администратор";
+                    $user['privilege'] = "администратор";
                     break;
                 default:
-                    $new_user_privilege = "";
+                    $user['privilege'] = "";
                     break;
             }
+            $user = escapeArray($user);
 
-            if ($new_user_privilege != "") {
-                $query = "UPDATE users SET user_privilege = '{$new_user_privilege}' WHERE user_id = {$user_id};";
-                $changeUserPrivilege = mysqli_query($connection, $query);
-                validateQuery($changeUserPrivilege);
+            if (!userIdValidation($user['user_id'])) {
+                header("Location: admin_users.php?source=info&operation=error");
+            } else {
+                if (userPrivilegeValidation($user['privilege'])) {
+                    $query = "UPDATE users SET user_privilege = '{$user['privilege']}' WHERE user_id = {$user['user_id']};";
+                    $changeUserPrivilege = mysqli_query($connection, $query);
+                    validateQuery($changeUserPrivilege);
+                }
             }
         }
     }
@@ -1163,33 +1177,38 @@ function editUsers() {
 
     if (isset($_GET['edit_user_id'])) {
         $edit_user_id = $_GET['edit_user_id'];
+        $edit_user_id = mysqli_real_escape_string($connection, $edit_user_id);
 
-        $query = "SELECT * FROM users WHERE user_id = {$edit_user_id};";
-        $editUser = mysqli_query($connection, $query);
-        validateQuery($editUser);
-        if ($row = mysqli_fetch_assoc($editUser)) {
-            $user_id = $row['user_id'];
-            $user_login = $row['user_login'];
-            $user_password = $row['user_password'];
-            $user_firstname = $row['user_firstname'];
-            $user_lastname = $row['user_lastname'];
-            $user_email = $row['user_email'];
-            $user_image_name = $row['user_image'];
-            $user_privilege = $row['user_privilege'];
+        if (!userIdValidation($edit_user_id)) {
+            header("Location: admin_users.php?source=info&operation=error");
+        } else {
+            $query = "SELECT * FROM users WHERE user_id = {$edit_user_id};";
+            $editUser = mysqli_query($connection, $query);
+            validateQuery($editUser);
+            if ($row = mysqli_fetch_assoc($editUser)) {
+                $user_id = $row['user_id'];
+                $user_login = $row['user_login'];
+                $user_password = $row['user_password'];
+                $user_firstname = $row['user_firstname'];
+                $user_lastname = $row['user_lastname'];
+                $user_email = $row['user_email'];
+                $user_image_name = $row['user_image'];
+                $user_privilege = $row['user_privilege'];
 
-            $err_edit_user = ['firstname'=>false, 'lastname'=>false, 'email_empty'=>false, 'email_exists'=>false, 'email_correct'=>false, 'image'=>false, 'privilege_empty'=>false, 'privilege_correct'=>false];
-            $err_reset_password = ['password_empty'=>false, 'password_correct'=>false];
+                $err_edit_user = ['firstname'=>false, 'lastname'=>false, 'email_empty'=>false, 'email_exists'=>false, 'email_correct'=>false, 'image'=>false, 'privilege_empty'=>false, 'privilege_correct'=>false];
+                $err_reset_password = ['password_empty'=>false, 'password_correct'=>false];
 
-            $err_edit_user = updateUsers($user_id, $err_edit_user);
-            $err_reset_password = resetUserPassword($user_id, $err_reset_password);
-            include "includes/edit_users.php";
-            include "includes/reset_password.php";
+                $err_edit_user = updateUsers($user_id, $user_image_name, $err_edit_user);
+                $err_reset_password = resetUserPassword($user_id, $err_reset_password);
+                include "includes/edit_users.php";
+                include "includes/reset_password.php";
+            }
         }
     }
 }
 
 /* Update User Info in database */
-function updateUsers($user_id, $err_status) {
+function updateUsers($user_id, $current_image, $err_status) {
     global $connection;
 
     if (isset($_POST['update_user_btn'])) {
@@ -1201,69 +1220,76 @@ function updateUsers($user_id, $err_status) {
             if (!userIdValidation($session_user_id)) {
                 header("Location: ../includes/logout.php");
             } else {
+                $user['user_id'] = $user_id;
                 $user['firstname'] = $_POST['edit_user_firstname'];
                 $user['lastname'] = $_POST['edit_user_lastname'];
                 $user['email'] = $_POST['edit_user_email'];
                 $user['privilege'] = $_POST['edit_user_privilege'];
                 
-                $current_user_image = $_POST['current_user_image'];
+                $default_user_image_name = "user_icon_default.png";
                 $user['image_name'] = $_FILES['edit_user_image']['name'];
                 $user['image_tmp'] = $_FILES['edit_user_image']['tmp_name'];
                 $user['image_error'] = $_FILES['edit_user_image']['error'];
 
                 $is_new_image = true;
-                if ($user['image_name'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
-                    $user['image_name'] = $current_user_image;
+                if ($user['image_name'] == "" || $user['image_tmp'] == "" || $user['image_error'] == UPLOAD_ERR_NO_FILE) {
+                    $user['image_name'] = $current_image;
                     $is_new_image = false;
                 }
 
                 $user = escapeArray($user);
 
-                foreach($err_status as $key=>$value) {
-                    $err_status[$key] = false;
-                }
-                if (empty($user['firstname'])) {
-                    $err_status['firstname'] = true;
-                }
-                if (empty($user['lastname'])) {
-                    $err_status['lastname'] = true;
-                }
-                if (empty($user['email'])) {
-                    $err_status['email_empty'] = true;
+                if (!userIdValidation($user['user_id'])) {
+                    header("Location: admin_users.php?source=info&operation=error");
                 } else {
-                    $err_status['email_correct'] = !emailValidation($user['email']);
-                    $err_status['email_exists'] = ifEmailExists($user['email'], $user_id);
-                }
-                if (empty($user['image_name'])) {
-                    $err_status['image'] = true;
-                }
-                if (empty($user['privilege'])) {
-                    $err_status['privilege_empty'] = true;
-                } else {
-                    $err_status['privilege_correct'] = !userPrivilegeValidation($user['privilege']);
-                }
-                $err_result = false;
-                foreach($err_status as $err_item) {
-                    $err_result = $err_result || $err_item;
-                }
-
-                if (!$err_result) {
-                    if ($is_new_image) {
-                        move_uploaded_file($user['image_tmp'], "../img/{$user['image_name']}");
+                    foreach($err_status as $key=>$value) {
+                        $err_status[$key] = false;
+                    }
+                    if (empty($user['firstname'])) {
+                        $err_status['firstname'] = true;
+                    }
+                    if (empty($user['lastname'])) {
+                        $err_status['lastname'] = true;
+                    }
+                    if (empty($user['email'])) {
+                        $err_status['email_empty'] = true;
+                    } else {
+                        $err_status['email_correct'] = !emailValidation($user['email']);
+                        $err_status['email_exists'] = ifEmailExists($user['email'], $user_id);
+                    }
+                    if (empty($user['image_name'])) {
+                        $err_status['image'] = true;
+                    }
+                    if (empty($user['privilege'])) {
+                        $err_status['privilege_empty'] = true;
+                    } else {
+                        $err_status['privilege_correct'] = !userPrivilegeValidation($user['privilege']);
+                    }
+                    $err_result = false;
+                    foreach($err_status as $err_item) {
+                        $err_result = $err_result || $err_item;
                     }
 
-                    $query = "UPDATE users SET ";
-                    $query .= "user_firstname = '{$user['firstname']}', ";
-                    $query .= "user_lastname = '{$user['lastname']}', ";
-                    $query .= "user_email = '{$user['email']}', ";
-                    $query .= "user_image = '{$user['image_name']}', ";
-                    $query .= "user_privilege = '{$user['privilege']}' ";
-                    $query .= "WHERE user_id = {$user_id};";
+                    if (!$err_result) {
+                        if ($is_new_image) {
+                            if (!move_uploaded_file($user['image_tmp'], "../img/{$user['image_name']}")) {
+                                $user['image_name'] = $default_user_image_name;
+                            }
+                        }
 
-                    $updateUser = mysqli_query($connection, $query);
-                    validateQuery($updateUser);
+                        $query = "UPDATE users SET ";
+                        $query .= "user_firstname = '{$user['firstname']}', ";
+                        $query .= "user_lastname = '{$user['lastname']}', ";
+                        $query .= "user_email = '{$user['email']}', ";
+                        $query .= "user_image = '{$user['image_name']}', ";
+                        $query .= "user_privilege = '{$user['privilege']}' ";
+                        $query .= "WHERE user_id = {$user['user_id']};";
 
-                    header("Location: admin_users.php?source=info&operation=update");
+                        $updateUser = mysqli_query($connection, $query);
+                        validateQuery($updateUser);
+
+                        header("Location: admin_users.php?source=info&operation=update");
+                    }
                 }
             }
         }
