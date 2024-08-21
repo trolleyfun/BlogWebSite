@@ -74,28 +74,33 @@ function updateCategories($cat_id, $err_status) {
     global $connection;
 
     if (isset($_POST['update_cat_btn'])) {
-        $cat_title = $_POST['edit_cat_title'];
-        $cat_title = mysqli_real_escape_string($connection, $cat_title);
-    
-        foreach($err_status as $key=>$value) {
-            $err_status[$key] = false;
-        }
-        if (empty($cat_title)) {
-            $err_status['title_empty'] = true;
-        } else {
-            $err_status['title_exists'] = ifCategoryTitleExists($cat_title, $cat_id);
-        }
-        $err_result = false;
-        foreach($err_status as $err_item) {
-            $err_result = $err_result || $err_item;
-        }
+        $cat['cat_id'] = $cat_id;
+        $cat['title'] = $_POST['edit_cat_title'];
+        $cat = escapeArray($cat);
+
+        if (!categoryIdValidation($cat['cat_id'])) {
+            header("Location: admin_categories.php?source=info&operation=error");
+        } else {    
+            foreach($err_status as $key=>$value) {
+                $err_status[$key] = false;
+            }
+            if (empty($cat['title'])) {
+                $err_status['title_empty'] = true;
+            } else {
+                $err_status['title_exists'] = ifCategoryTitleExists($cat['title'], $cat['cat_id']);
+            }
+            $err_result = false;
+            foreach($err_status as $err_item) {
+                $err_result = $err_result || $err_item;
+            }
+            
+            if (!$err_result) {
+                $query = "UPDATE categories SET cat_title = '{$cat['title']}' WHERE cat_id = {$cat['cat_id']};";
+                $updateCategory = mysqli_query($connection, $query);
+                validateQuery($updateCategory);
         
-        if (!$err_result) {
-            $query = "UPDATE categories SET cat_title = '{$cat_title}' WHERE cat_id = {$cat_id};";
-            $updateCategory = mysqli_query($connection, $query);
-            validateQuery($updateCategory);
-    
-            header("Location: admin_categories.php?source=info&operation=update");
+                header("Location: admin_categories.php?source=info&operation=update");
+            }
         }
     }
 
@@ -108,18 +113,24 @@ function editCategories() {
 
     if (isset($_GET['edit_cat_id'])) {
         $edit_cat_id = $_GET['edit_cat_id'];
-        $query = "SELECT * FROM categories WHERE cat_id = {$edit_cat_id};";
-        $editCategory = mysqli_query($connection, $query);
-        validateQuery($editCategory);
+        $edit_cat_id = mysqli_real_escape_string($connection, $edit_cat_id);
 
-        if ($row = mysqli_fetch_assoc($editCategory)) {
-            $cat_id = $row['cat_id'];
-            $cat_title = $row['cat_title'];
+        if (!categoryIdValidation($edit_cat_id)) {
+            header("Location: admin_categories.php?source=info&operation=error");
+        } else {
+            $query = "SELECT * FROM categories WHERE cat_id = {$edit_cat_id};";
+            $editCategory = mysqli_query($connection, $query);
+            validateQuery($editCategory);
 
-            $err_edit_cat = ['title_empty'=>false, 'title_exists'=>false];
+            if ($row = mysqli_fetch_assoc($editCategory)) {
+                $cat_id = $row['cat_id'];
+                $cat_title = $row['cat_title'];
 
-            $err_edit_cat = updateCategories($cat_id, $err_edit_cat);
-            include "includes/edit_categories.php";
+                $err_edit_cat = ['title_empty'=>false, 'title_exists'=>false];
+
+                $err_edit_cat = updateCategories($cat_id, $err_edit_cat);
+                include "includes/edit_categories.php";
+            }
         }
     }
 }
@@ -195,12 +206,19 @@ function showAllCategoriesInList($post_category_id) {
 
 /* Delete category if Delete Icon is clicked */
 function clickDeleteCategoryIcon() {
+    global $connection;
+
     if (isset($_GET['delete_cat_id'])) {
         $delete_cat_id = $_GET['delete_cat_id'];
-        
-        deleteCategories($delete_cat_id);
+        $delete_cat_id = mysqli_real_escape_string($connection, $delete_cat_id);
 
-        header("Location: admin_categories.php?source=info&operation=delete");
+        if (!categoryIdValidation($delete_cat_id)) {
+            header("Location: admin_categories.php?source=info&operation=error");
+        } else {
+            deleteCategories($delete_cat_id);
+
+            header("Location: admin_categories.php?source=info&operation=delete");
+        }
     }
 }
 
@@ -208,12 +226,18 @@ function clickDeleteCategoryIcon() {
 function deleteCategories($delete_cat_id) {
     global $connection;
 
-    $query = "DELETE FROM categories WHERE cat_id = {$delete_cat_id};";
+    $delete_cat_id_escaped = mysqli_real_escape_string($connection, $delete_cat_id);
 
-    $deleteCategory = mysqli_query($connection, $query);
-    validateQuery($deleteCategory);
+    if (!categoryIdValidation($delete_cat_id_escaped)) {
+        header("Location: admin_categories.php?source=info&operation=error");
+    } else {
+        $query = "DELETE FROM categories WHERE cat_id = {$delete_cat_id_escaped};";
 
-    header("Location: admin_categories.php?source=info&operation=delete");
+        $deleteCategory = mysqli_query($connection, $query);
+        validateQuery($deleteCategory);
+
+        header("Location: admin_categories.php?source=info&operation=delete");
+    }
 }
 
 /* Read all posts from database and display them in Posts Section in admin */
