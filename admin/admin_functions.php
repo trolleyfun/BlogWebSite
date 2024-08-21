@@ -27,6 +27,14 @@ function escapeArray($array) {
     return $escapedArray;
 }
 
+/* Check if $value is unsigneg integer or unsigned integer string */
+function my_is_int($value) {
+    if(is_int($value)) {
+        return $value >= 0;
+    } else
+        return is_numeric($value) && ctype_digit($value);
+}
+
 /* Add category from input field of Add Form to database */
 function addCategories() {
     global $connection;
@@ -1317,35 +1325,88 @@ function passwordValidation($password) {
     return strlen($password) >= $min_length;
 }
 
-/* Check if category of post exists in database. Return true if category exists */
-function postCategoryValidation($post_category_id) {
+/* Check if category with $category_id exists in database. Return true if category exists */
+function categoryIdValidation($category_id) {
     global $connection;
 
-    if (!is_null($post_category_id)) {
-    $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id};";
-    $postCategory = mysqli_query($connection, $query);
-    validateQuery($postCategory);
+    if (!my_is_int($category_id)) {
+        $category_id_escaped = mysqli_real_escape_string($connection, $category_id);
+        $query = "SELECT * FROM categories WHERE cat_id = {$category_id_escaped};";
+        $categoryValidation = mysqli_query($connection, $query);
+        validateQuery($categoryValidation);
 
-    $num_rows = mysqli_num_rows($postCategory);
+        $num_rows = mysqli_num_rows($categoryValidation);
 
-    return $num_rows > 0;
+        return $num_rows > 0;
     } else {
         return false;
     }
 }
 
-/* Check if author of post exists in database. Return true if user exists */
-function userValidation($user_id) {
+/* Check if post with $post_id exists in database. Return true if post exists */
+function postIdValidation($post_id) {
     global $connection;
 
-    if (!is_null($user_id)) {
-    $query = "SELECT * FROM users WHERE user_id = {$user_id};";
-    $userValidation = mysqli_query($connection, $query);
-    validateQuery($userValidation);
+    if (!my_is_int($post_id)) {
+        $post_id_escaped = mysqli_real_escape_string($connection, $post_id);
+        $query = "SELECT * FROM posts WHERE post_id = {$post_id_escaped};";
+        $postValidation = mysqli_query($connection, $query);
+        validateQuery($postValidation);
 
-    $num_rows = mysqli_num_rows($userValidation);
+        $num_rows = mysqli_num_rows($postValidation);
 
-    return $num_rows > 0;
+        return $num_rows > 0;
+    } else {
+        return false;
+    }
+}
+
+/* Check if comment with $comment_id exists in database. Return true if comment exists */
+function commentIdValidation($comment_id) {
+    global $connection;
+
+    if (!my_is_int($comment_id)) {
+        $comment_id_escaped = mysqli_real_escape_string($connection, $comment_id);
+        $query = "SELECT * FROM comments WHERE comment_id = {$comment_id_escaped};";
+        $commentValidation = mysqli_query($connection, $query);
+        validateQuery($commentValidation);
+
+        $num_rows = mysqli_num_rows($commentValidation);
+
+        return $num_rows > 0;
+    } else {
+        return false;
+    }
+}
+
+/* Check if user with $user_id exists in database. Return true if user exists */
+function userIdValidation($user_id) {
+    global $connection;
+
+    if (!my_is_int($user_id)) {
+        $user_id_escaped = mysqli_real_escape_string($connection, $user_id);
+        $query = "SELECT * FROM users WHERE user_id = {$user_id_escaped};";
+        $userValidation = mysqli_query($connection, $query);
+        validateQuery($userValidation);
+
+        $num_rows = mysqli_num_rows($userValidation);
+
+        return $num_rows > 0;
+    } else {
+        return false;
+    }
+}
+
+/* Check if $date is correct date with format Y-m-d */
+function dateValidation($date) {
+    $dateArray = explode('-', $date);
+    if (count($dateArray) == 3) {
+        list($year, $month, $day) = $dateArray;
+        if (my_is_int($year) && my_is_int($month) && my_is_int($day)) {
+            return checkdate($month, $day, $year);
+        } else {
+            return false;
+        }
     } else {
         return false;
     }
