@@ -23,8 +23,7 @@
                 <!-- Widgets -->
                 <div class="row">
                     <!-- Posts Statistics -->
-                    <?php 
-                    showPostsStatisticsWidget("primary", "admin_posts.php"); ?>
+                    <?php showPostsStatisticsWidget("primary", "admin_posts.php"); ?>
                     <!-- Comments Statistics -->
                     <?php showCommentsStatisticsWidget("green", "admin_comments.php"); ?>
                     <!-- Categories Statistics -->

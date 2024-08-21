@@ -216,8 +216,6 @@ function clickDeleteCategoryIcon() {
             header("Location: admin_categories.php?source=info&operation=error");
         } else {
             deleteCategories($delete_cat_id);
-
-            header("Location: admin_categories.php?source=info&operation=delete");
         }
     }
 }
@@ -312,14 +310,14 @@ function addPosts() {
             $post['author_id'] = $_SESSION['user_id'];
             $post['category_id'] = $_POST['post_category_id'];
             $post['title'] = $_POST['post_title'];
-            $post['date'] = date('Y-m-d');
+            $post['date'] = date('y-m-d');
 
             $is_new_post_image = true;
             $default_post_image_name = "post_image_default.png";
             $post['image_name'] = $_FILES['post_image']['name'];
-            $post['image_temp'] = $_FILES['post_image']['tmp_name'];
+            $post['image_tmp'] = $_FILES['post_image']['tmp_name'];
             $post['image_err'] = $_FILES['post_image']['error'];
-            if ($post['image_name'] == "" || $post['image_err'] == UPLOAD_ERR_NO_FILE) {
+            if ($post['image_name'] == "" || $post['image_tmp'] == "" || $post['image_err'] == UPLOAD_ERR_NO_FILE) {
                 $post['image_name'] = $default_post_image_name;
                 $is_new_post_image = false;
             }
@@ -335,12 +333,12 @@ function addPosts() {
             if (empty($post['category_id'])) {
                 $err_add_post['category_id_empty'] = true;
             } else {
-                $err_add_post['category_id_exists'] = !postCategoryValidation($post['category_id']);
+                $err_add_post['category_id_exists'] = !categoryIdValidation($post['category_id']);
             }
             if (empty($post['title'])) {
                 $err_add_post['title'] = true;
             }
-            $err_add_post['author'] = !userValidation($post['author_id']);
+            $err_add_post['author'] = !userIdValidation($post['author_id']);
             if (empty($post['image_name'])) {
                 $err_add_post['image'] = true;
             }
@@ -354,7 +352,9 @@ function addPosts() {
 
             if (!$err_result) {
                 if ($is_new_post_image) {
-                    move_uploaded_file($post['image_temp'], "../img/{$post['image_name']}");
+                    if(!move_uploaded_file($post['image_tmp'], "../img/{$post['image_name']}")) {
+                        $post['image_name'] = $default_post_image_name;
+                    }
                 }
 
                 $query = "INSERT INTO posts(post_category_id, post_title, post_author_id, post_date, post_image, post_content, post_tags) ";
@@ -379,44 +379,57 @@ function addPosts() {
 /* Change Post Status with post_id = $post_id. If $confirm_option is "confirm" the change $post_status to "опубликовано", if $confirm_option is "block" then change $post_status to "заблокировано", for other values nothing occurs */
 function confirmPosts($post_id, $confirm_option) {
     global $connection;
-    
-    $confirm_post_status = "";
+
+    $confirm_post['post_id'] = $post_id;    
+    $confirm_post['status'] = "";
     switch($confirm_option) {
         case "confirm":
-            $confirm_post_status = "опубликовано";
+            $confirm_post['status'] = "опубликовано";
             break;
         case "block":
-            $confirm_post_status = "заблокировано";
+            $confirm_post['status'] = "заблокировано";
             break;
     }
+    $confirm_post = escapeArray($confirm_post);
 
-    if ($confirm_post_status != "") {
-        $query = "SELECT * FROM posts WHERE post_id = {$post_id};";
-        $postInfo = mysqli_query($connection, $query);
-        validateQuery($postInfo);
+    if (!postIdValidation($confirm_post['post_id'])) {
+        header("Location: admin_posts.php?source=info&operation=error");
+    } else {
+        if (postStatusValidation($confirm_post['status'])) {
+            $query = "SELECT * FROM posts WHERE post_id = {$confirm_post['post_id']};";
+            $postInfo = mysqli_query($connection, $query);
+            validateQuery($postInfo);
 
-        $confirm_post_category_id = 0;
-        $confirm_post_author_id = 0;
-        if ($row = mysqli_fetch_assoc($postInfo)) {
-            $confirm_post_category_id = $row['post_category_id'];
-            $confirm_post_author_id = $row['post_author_id'];
+            $confirm_post_category_id = 0;
+            $confirm_post_author_id = 0;
+            if ($row = mysqli_fetch_assoc($postInfo)) {
+                $confirm_post_category_id = $row['post_category_id'];
+                $confirm_post_author_id = $row['post_author_id'];
+            }
+
+            $query = "UPDATE posts SET post_status = '{$confirm_post['status']}' WHERE post_id = {$confirm_post['post_id']};";
+            $confirmPost = mysqli_query($connection, $query);
+            validateQuery($confirmPost);
+
+            postsCountByCategory($confirm_post_category_id);
+            postsCountByUser($confirm_post_author_id);
         }
-
-        $query = "UPDATE posts SET post_status = '{$confirm_post_status}' WHERE post_id = {$post_id};";
-        $confirmPost = mysqli_query($connection, $query);
-        validateQuery($confirmPost);
-
-        postsCountByCategory($confirm_post_category_id);
-        postsCountByUser($confirm_post_author_id);
     }
 }
 
 /* Delete selected post from the database if delete icon is clicked */
 function clickDeletePostIcon() {
+    global $connection;
+
     if (isset($_GET['delete_post_id'])) {
         $delete_post_id = $_GET['delete_post_id'];
+        $delete_post_id = mysqli_real_escape_string($connection, $delete_post_id);
 
-        deletePosts($delete_post_id);
+        if (!postIdValidation($delete_post_id)) {
+            header("Location: admin_posts.php?source=info&operation=error");
+        } else {
+            deletePosts($delete_post_id);
+        }
     }
 }
 
@@ -424,25 +437,31 @@ function clickDeletePostIcon() {
 function deletePosts($delete_post_id) {
     global $connection;
 
-    $query = "SELECT * FROM posts WHERE post_id = {$delete_post_id};";
-    $postInfo = mysqli_query($connection, $query);
-    validateQuery($postInfo);
+    $delete_post_id_escaped = mysqli_real_escape_string($connection, $delete_post_id);
 
-    $delete_post_category_id = 0;
-    $delete_post_author_id = 0;
-    if ($row = mysqli_fetch_assoc($postInfo)) {
-        $delete_post_category_id = $row['post_category_id'];
-        $delete_post_author_id = $row['post_author_id'];
+    if (!postIdValidation($delete_post_id_escaped)) {
+        header("Location: admin_posts.php?source=info&operation=error");
+    } else {
+        $query = "SELECT * FROM posts WHERE post_id = {$delete_post_id_escaped};";
+        $postInfo = mysqli_query($connection, $query);
+        validateQuery($postInfo);
+
+        $delete_post_category_id = 0;
+        $delete_post_author_id = 0;
+        if ($row = mysqli_fetch_assoc($postInfo)) {
+            $delete_post_category_id = $row['post_category_id'];
+            $delete_post_author_id = $row['post_author_id'];
+        }
+
+        $query = "DELETE FROM posts WHERE post_id={$delete_post_id_escaped};";
+        $deletePost = mysqli_query($connection, $query);
+        validateQuery($deletePost);
+
+        postsCountByCategory($delete_post_category_id);
+        postsCountByUser($delete_post_author_id);
+
+        header("Location: admin_posts.php?source=info&operation=delete");
     }
-
-    $query = "DELETE FROM posts WHERE post_id={$delete_post_id};";
-    $deletePost = mysqli_query($connection, $query);
-    validateQuery($deletePost);
-
-    postsCountByCategory($delete_post_category_id);
-    postsCountByUser($delete_post_author_id);
-
-    header("Location: admin_posts.php?source=info&operation=delete");
 }
 
 /* Create Edit Post Form and put selected post's values from database into the form */
@@ -451,48 +470,54 @@ function editPosts() {
     
     if (isset($_GET['edit_post_id'])) {
         $edit_post_id = $_GET['edit_post_id'];
+        $edit_post_id = mysqli_real_escape_string($connection, $edit_post_id);
 
-        $query = "SELECT * FROM posts WHERE post_id = {$edit_post_id};";
-        $editPost = mysqli_query($connection, $query);
-        validateQuery($editPost);
+        if (!postIdValidation($edit_post_id)) {
+            header("Location: admin_posts.php?source=info&operation=error");
+        } else {
+            $query = "SELECT * FROM posts WHERE post_id = {$edit_post_id};";
+            $editPost = mysqli_query($connection, $query);
+            validateQuery($editPost);
 
-        if ($row = mysqli_fetch_assoc($editPost)) {
-            $post_id = $row['post_id'];
-            $post_category_id = $row['post_category_id'];
-            $post_title = $row['post_title'];
-            $post_author_id = $row['post_author_id'];
-            $post_date = $row['post_date'];
-            $post_image = $row['post_image'];
-            $post_content = $row['post_content'];
-            $post_tags = $row['post_tags'];
-            $post_comments_count = $row['post_comments_count'];
-            $post_status = $row['post_status'];
+            if ($row = mysqli_fetch_assoc($editPost)) {
+                $post_id = $row['post_id'];
+                $post_category_id = $row['post_category_id'];
+                $post_title = $row['post_title'];
+                $post_author_id = $row['post_author_id'];
+                $post_date = $row['post_date'];
+                $post_image = $row['post_image'];
+                $post_content = $row['post_content'];
+                $post_tags = $row['post_tags'];
+                $post_comments_count = $row['post_comments_count'];
+                $post_status = $row['post_status'];
 
-            $err_edit_post = ['category_id_empty'=>false, 'category_id_exists'=>false, 'title'=>false, 'date'=>false, 'image'=>false, 'content'=>false, 'status_empty'=>false, 'status_correct'=>false];
+                $err_edit_post = ['category_id_empty'=>false, 'category_id_exists'=>false, 'title'=>false, 'date_empty'=>false, 'date_correct'=>false, 'image'=>false, 'content'=>false, 'status_empty'=>false, 'status_correct'=>false];
 
-            $err_edit_post = updatePosts($edit_post_id, $err_edit_post);
+                $err_edit_post = updatePosts($edit_post_id, $post_image, $err_edit_post);
 
-            include "includes/edit_posts.php";
+                include "includes/edit_posts.php";
+            }
         }
     }
 }
 
 /* Put data from Edit Post Form to database */
-function updatePosts($post_id, $err_status) {
+function updatePosts($post_id, $current_image, $err_status) {
     global $connection;
 
     if (isset($_POST['update_post_btn'])) {
+        $post['post_id'] = $post_id;
         $post['category_id'] = $_POST['edit_post_category_id'];
         $post['title'] = $_POST['edit_post_title'];
         $post['date'] = $_POST['edit_post_date'];
 
         $is_new_post_image = true;
-        $current_post_image_name = $_POST['current_post_image'];
+        $default_post_image_name = "post_image_default.png";
         $post['image_name'] = $_FILES['edit_post_image']['name'];
-        $post['image_temp'] = $_FILES['edit_post_image']['tmp_name'];
+        $post['image_tmp'] = $_FILES['edit_post_image']['tmp_name'];
         $post['image_err'] = $_FILES['edit_post_image']['error'];
-        if ($post['image_name'] == "" || $post['image_err'] == UPLOAD_ERR_NO_FILE) {
-            $post['image_name'] = $current_post_image_name;
+        if ($post['image_name'] == "" || $post['image_tmp'] == "" || $post['image_err'] == UPLOAD_ERR_NO_FILE) {
+            $post['image_name'] = $current_image;
             $is_new_post_image = false;
         }
 
@@ -502,71 +527,79 @@ function updatePosts($post_id, $err_status) {
 
         $post = escapeArray($post);
 
-        foreach($err_status as $key=>$value) {
-            $err_status[$key] = false;
-        }
-        if (empty($post['category_id'])) {
-            $err_status['category_id_empty'] = true;
+        if (!postIdValidation($post['post_id'])) {
+            header("Location: admin_posts.php?source=info&operation=error");
         } else {
-            $err_status['category_id_exists'] = !postCategoryValidation($post['category_id']);
-        }
-        if (empty($post['title'])) {
-            $err_status['title'] = true;
-        }
-        if (empty($post['date'])) {
-            $err_status['date'] = true;
-        }
-        if (empty($post['image_name'])) {
-            $err_status['image'] = true;
-        }
-        if (empty($post['content'])) {
-            $err_status['content'] = true;
-        }
-        if (empty($post['status'])) {
-            $err_status['status_empty'] = true;
-        } else {
-            $err_status['status_correct'] = !postStatusValidation($post['status']);
-        }
-        $err_result = false;
-        foreach($err_status as $err_item) {
-            $err_result = $err_result || $err_item;
-        }
-
-        if (!$err_result) {
-            if ($is_new_post_image) {
-                move_uploaded_file($post['image_temp'], "../img/{$post['image_name']}");
+            foreach($err_status as $key=>$value) {
+                $err_status[$key] = false;
+            }
+            if (empty($post['category_id'])) {
+                $err_status['category_id_empty'] = true;
+            } else {
+                $err_status['category_id_exists'] = !categoryIdValidation($post['category_id']);
+            }
+            if (empty($post['title'])) {
+                $err_status['title'] = true;
+            }
+            if (empty($post['date'])) {
+                $err_status['date_empty'] = true;
+            } else {
+                $err_status['date_correct'] = !dateValidation($post['date']);
+            }
+            if (empty($post['image_name'])) {
+                $err_status['image'] = true;
+            }
+            if (empty($post['content'])) {
+                $err_status['content'] = true;
+            }
+            if (empty($post['status'])) {
+                $err_status['status_empty'] = true;
+            } else {
+                $err_status['status_correct'] = !postStatusValidation($post['status']);
+            }
+            $err_result = false;
+            foreach($err_status as $err_item) {
+                $err_result = $err_result || $err_item;
             }
 
-            $query = "SELECT * FROM posts WHERE post_id = {$post_id};";
-            $postInfo = mysqli_query($connection, $query);
-            validateQuery($postInfo);
+            if (!$err_result) {
+                if ($is_new_post_image) {
+                    if(!move_uploaded_file($post['image_tmp'], "../img/{$post['image_name']}")) {
+                        $post['image_name'] = $default_post_image_name;
+                    }
+                }
 
-            $current_post_category_id = 0;
-            $post_author_id = 0;
-            if ($row = mysqli_fetch_assoc($postInfo)) {
-                $current_post_category_id = $row['post_category_id'];
-                $post_author_id = $row['post_author_id'];
+                $query = "SELECT * FROM posts WHERE post_id = {$post['post_id']};";
+                $postInfo = mysqli_query($connection, $query);
+                validateQuery($postInfo);
+
+                $current_post_category_id = 0;
+                $post_author_id = 0;
+                if ($row = mysqli_fetch_assoc($postInfo)) {
+                    $current_post_category_id = $row['post_category_id'];
+                    $post_author_id = $row['post_author_id'];
+                }
+
+                $query = "UPDATE posts SET post_category_id = {$post['category_id']}, ";
+                $query .= "post_title = '{$post['title']}', ";
+                $query .= "post_date = '{$post['date']}', ";
+                $query .= "post_image = '{$post['image_name']}', ";
+                $query .= "post_content = '{$post['content']}', ";
+                $query .= "post_tags = '{$post['tags']}', ";
+                $query .= "post_status = '{$post['status']}' ";
+                $query .= "WHERE post_id = {$post['post_id']};";
+
+                $updatePost = mysqli_query($connection, $query);
+                validateQuery($updatePost);
+
+                postsCountByCategory($post['category_id']);
+                postsCountByUser($post_author_id);
+                if ($post['category_id'] !== $current_post_category_id) {
+                    postsCountByCategory($current_post_category_id);
+                }
+
+                header("Location: admin_posts.php?source=info&operation=update");
             }
-
-            $query = "UPDATE posts SET post_category_id = {$post['category_id']}, ";
-            $query .= "post_title = '{$post['title']}', ";
-            $query .= "post_date = '{$post['date']}', ";
-            $query .= "post_image = '{$post['image_name']}', ";
-            $query .= "post_content = '{$post['content']}', ";
-            $query .= "post_tags = '{$post['tags']}', ";
-            $query .= "post_status = '{$post['status']}' ";
-            $query .= "WHERE post_id = {$post_id};";
-
-            $updatePost = mysqli_query($connection, $query);
-            validateQuery($updatePost);
-
-            postsCountByCategory($post['category_id']);
-            postsCountByUser($post_author_id);
-            if ($post['category_id'] !== $current_post_category_id) {
-                postsCountByCategory($current_post_category_id);
-            }
-
-            header("Location: admin_posts.php?source=info&operation=update");
         }
     }
 
@@ -1353,7 +1386,7 @@ function passwordValidation($password) {
 function categoryIdValidation($category_id) {
     global $connection;
 
-    if (!my_is_int($category_id)) {
+    if (my_is_int($category_id)) {
         $category_id_escaped = mysqli_real_escape_string($connection, $category_id);
         $query = "SELECT * FROM categories WHERE cat_id = {$category_id_escaped};";
         $categoryValidation = mysqli_query($connection, $query);
@@ -1371,7 +1404,7 @@ function categoryIdValidation($category_id) {
 function postIdValidation($post_id) {
     global $connection;
 
-    if (!my_is_int($post_id)) {
+    if (my_is_int($post_id)) {
         $post_id_escaped = mysqli_real_escape_string($connection, $post_id);
         $query = "SELECT * FROM posts WHERE post_id = {$post_id_escaped};";
         $postValidation = mysqli_query($connection, $query);
@@ -1389,7 +1422,7 @@ function postIdValidation($post_id) {
 function commentIdValidation($comment_id) {
     global $connection;
 
-    if (!my_is_int($comment_id)) {
+    if (my_is_int($comment_id)) {
         $comment_id_escaped = mysqli_real_escape_string($connection, $comment_id);
         $query = "SELECT * FROM comments WHERE comment_id = {$comment_id_escaped};";
         $commentValidation = mysqli_query($connection, $query);
@@ -1407,7 +1440,7 @@ function commentIdValidation($comment_id) {
 function userIdValidation($user_id) {
     global $connection;
 
-    if (!my_is_int($user_id)) {
+    if (my_is_int($user_id)) {
         $user_id_escaped = mysqli_real_escape_string($connection, $user_id);
         $query = "SELECT * FROM users WHERE user_id = {$user_id_escaped};";
         $userValidation = mysqli_query($connection, $query);
