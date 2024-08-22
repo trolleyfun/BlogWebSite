@@ -24,7 +24,7 @@ clickDeletePostIcon();
     <!-- /.col-lg-4.col-md-6 -->
 
     <!-- List of posts -->
-    <div class="col-xs-12 form-group">
+    <div class="col-lg-12 form-group table-responsive">
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
@@ -49,7 +49,7 @@ clickDeletePostIcon();
             </tbody>
         </table>
     </div>
-    <!-- /.col-xs-12 -->
+    <!-- /.col-lg-12 -->
 
     <!-- Post Options Buttons Bottom -->
     <div class="col-lg-4 col-md-6 form-group">

@@ -24,7 +24,7 @@ selectUserOptions();
     </div>
     <!-- /.col-lg-4.col-md-6 -->
 
-    <div class="col-xs-12 form-group">
+    <div class="col-lg-12 form-group table-responsive">
         <!-- List of users -->
         <table class="table table-bordered table-hover">
             <thead>
@@ -50,7 +50,7 @@ selectUserOptions();
             </tbody>
         </table>
     </div>
-    <!-- /.col-xs-12.form-group -->
+    <!-- /.col-lg-12.form-group -->
 
     <!-- User Options Buttons Bottom -->
     <div class="col-lg-4 col-md-6 form-group">

@@ -21,7 +21,7 @@ selectCommentOptions();
     <!-- /.col-lg-4.col-md-6 -->
 
     <!-- List of comments -->
-    <div class="col-xs-12 form-group">
+    <div class="col-lg-12 form-group table-responsive">
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
@@ -43,7 +43,7 @@ selectCommentOptions();
             </tbody>
         </table>
     </div>
-    <!-- /.col-xs-12.form-group -->
+    <!-- /.col-lg-12.form-group -->
 
     <!-- Comment Options Buttons Bottom -->
     <div class="col-lg-4 col-md-6 form-group">
