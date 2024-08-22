@@ -1837,68 +1837,76 @@ function showUsersStatisticsWidget($widget_color, $link_name) {
     include "includes/statistics_widget_form.php";
 }
 
-/* Get the number of published posts for all categories from database and put this data to the chart. Categories are sorted by number of posts from top to down. $chart_color is color of the chart, $categories_num is number of categories that is displayed on the chart */
-function showPostsByCategoryChart($chart_color, $categories_num) {
+/* Get the number of published posts for all categories from database and put this data to the chart. Categories are sorted by number of posts from top to down. $chart_color is color of the chart, $cat_num is number of categories that is displayed on the chart */
+function showPostsByCategoryChart($chart_color, $cat_num) {
     global $connection;
 
-    $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC LIMIT {$categories_num};";
+    $cat_num_escaped = mysqli_real_escape_string($connection, $cat_num);
 
-    $postsByCategoryChart = mysqli_query($connection, $query);
-    validateQuery($postsByCategoryChart);
+    if (my_is_int($cat_num_escaped)) {
+        $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC LIMIT {$cat_num_escaped};";
 
-    $names_str = "";
-    $values_str = "";
-    while($row = mysqli_fetch_assoc($postsByCategoryChart)) {
-        $cat_title = $row['cat_title'];
-        $posts_cnt = $row['cat_posts_count'];
-        /* '#' is divider between elements of array */
-        if ($names_str != "") {
-            $names_str .= "#";
+        $postsByCategoryChart = mysqli_query($connection, $query);
+        validateQuery($postsByCategoryChart);
+
+        $names_str = "";
+        $values_str = "";
+        while($row = mysqli_fetch_assoc($postsByCategoryChart)) {
+            $cat_title = $row['cat_title'];
+            $posts_cnt = $row['cat_posts_count'];
+            /* '#' is divider between elements of array */
+            if ($names_str != "") {
+                $names_str .= "#";
+            }
+            if ($values_str != "") {
+                $values_str .= "#";
+            }
+            $names_str .= $cat_title;
+            $values_str .= $posts_cnt;
         }
-        if ($values_str != "") {
-            $values_str .= "#";
-        }
-        $names_str .= $cat_title;
-        $values_str .= $posts_cnt;
+
+        $axis_x_title = "";
+        $axis_y_title = "количество\nпубликаций";
+        $chart_title = "Популярные регионы";
+
+        include "includes/statistics_chart_form.php";
     }
-
-    $axis_x_title = "";
-    $axis_y_title = "количество\nпубликаций";
-    $chart_title = "Популярные регионы";
-
-    include "includes/statistics_chart_form.php";
 }
 
 /* Get the number of approved comments for all posts from database and put this data to the chart. Posts are sorted by number of comments from top to down. $chart_color is color of the chart, $posts_num is number of posts that is displayed on the chart */
 function showCommentsByPostChart($chart_color, $posts_num) {
     global $connection;
 
-    $query = "SELECT * FROM posts WHERE post_status = 'опубликовано' ORDER BY post_comments_count DESC LIMIT {$posts_num};";
+    $posts_num_escaped = mysqli_real_escape_string($connection, $posts_num);
 
-    $commentsByPostChart = mysqli_query($connection, $query);
-    validateQuery($commentsByPostChart);
+    if (my_is_int($posts_num_escaped)) {
+        $query = "SELECT * FROM posts WHERE post_status = 'опубликовано' ORDER BY post_comments_count DESC LIMIT {$posts_num_escaped};";
 
-    $names_str = "";
-    $values_str = "";
-    while($row = mysqli_fetch_assoc($commentsByPostChart)) {
-        $cat_title = $row['post_title'];
-        $posts_cnt = $row['post_comments_count'];
-        /* '#' is divider between elements of array */
-        if ($names_str != "") {
-            $names_str .= "#";
+        $commentsByPostChart = mysqli_query($connection, $query);
+        validateQuery($commentsByPostChart);
+
+        $names_str = "";
+        $values_str = "";
+        while($row = mysqli_fetch_assoc($commentsByPostChart)) {
+            $cat_title = $row['post_title'];
+            $posts_cnt = $row['post_comments_count'];
+            /* '#' is divider between elements of array */
+            if ($names_str != "") {
+                $names_str .= "#";
+            }
+            if ($values_str != "") {
+                $values_str .= "#";
+            }
+            $names_str .= $cat_title;
+            $values_str .= $posts_cnt;
         }
-        if ($values_str != "") {
-            $values_str .= "#";
-        }
-        $names_str .= $cat_title;
-        $values_str .= $posts_cnt;
+
+        $axis_x_title = "";
+        $axis_y_title = "количество\nкомментариев";
+        $chart_title = "Самые читаемые публикации";
+
+        include "includes/statistics_chart_form.php";
     }
-
-    $axis_x_title = "";
-    $axis_y_title = "количество\nкомментариев";
-    $chart_title = "Самые читаемые публикации";
-
-    include "includes/statistics_chart_form.php";
 }
 
 /* Show info message if post operation (add, delete or edit) was successful */
