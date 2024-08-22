@@ -872,42 +872,114 @@ function postsCountByUser($user_id) {
 /* Display Pager under the Posts on the Home Page of website. $pages_count is number of pages with posts, $current_page is number of current page */
 function showPagesAllPosts($pages_count, $current_page) {
     for($i = 1; $i <= $pages_count; $i++) {
-        $page_link = "index.php?page={$i}";
-        $page_num = $i;
-        if ($page_num == $current_page) {
-            $item_class = "active-page";
-        } else {
-            $item_class = "";
+        switch(true) {
+            case $i == $current_page:
+                $page_link = "index.php?page={$i}";
+                $page_num = $i;
+                $item_class = "active-page";
+                include "includes/pager_item.php";
+                break;
+            case $i == 1:
+                $page_link = "index.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/pager_item.php";
+                break;
+            case $i == $current_page - 2:
+                include "includes/pager_between.php";
+                break;
+            case $i == $current_page - 1 || $i == $current_page + 1:
+                $page_link = "index.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/pager_item.php";
+                break;
+            case $i == $pages_count:
+                $page_link = "index.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/pager_item.php";
+                break;
+            case $i == $current_page + 2:
+                include "includes/pager_between.php";
+                break;
         }
-        include "includes/pager_item.php";
     }
 }
 
 /* Display Pager under the Posts on the Category Page of website with $cat_id. $pages_count is number of pages with posts, $current_page is number of current page */
 function showPagesPostsOfCategory($pages_count, $current_page, $cat_id) {
     for($i = 1; $i <= $pages_count; $i++) {
-        $page_link = "category.php?cat_id={$cat_id}&page={$i}";
-        $page_num = $i;
-        if ($page_num == $current_page) {
-            $item_class = "active-page";
-        } else {
-            $item_class = "";
+        switch(true) {
+            case $i == $current_page:
+                $page_link = "category.php?cat_id={$cat_id}&page={$i}";
+                $page_num = $i;
+                $item_class = "active-page";
+                include "includes/pager_item.php";
+                break;
+            case $i == 1:
+                $page_link = "category.php?cat_id={$cat_id}&page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/pager_item.php";
+                break;
+            case $i == $current_page - 2:
+                include "includes/pager_between.php";
+                break;
+            case $i == $current_page - 1 || $i == $current_page + 1:
+                $page_link = "category.php?cat_id={$cat_id}&page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/pager_item.php";
+                break;
+            case $i == $pages_count:
+                $page_link = "category.php?cat_id={$cat_id}&page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/pager_item.php";
+                break;
+            case $i == $current_page + 2:
+                include "includes/pager_between.php";
+                break;
         }
-        include "includes/pager_item.php";
     }
 }
 
 /* Display Pager under the Posts on the Search Page of website with search query $search. $pages_count is number of pages with posts, $current_page is number of current page */
 function showPagesSearchPosts($pages_count, $current_page, $search) {
     for($i = 1; $i <= $pages_count; $i++) {
-        $page_link = "search.php?search_data={$search}&page={$i}";
-        $page_num = $i;
-        if ($page_num == $current_page) {
-            $item_class = "active-page";
-        } else {
-            $item_class = "";
+        switch(true) {
+            case $i == $current_page:
+                $page_link = "search.php?search_data={$search}&page={$i}";
+                $page_num = $i;
+                $item_class = "active-page";
+                include "includes/pager_item.php";
+                break;
+            case $i == 1:
+                $page_link = "search.php?search_data={$search}&page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/pager_item.php";
+                break;
+            case $i == $current_page - 2:
+                include "includes/pager_between.php";
+                break;
+            case $i == $current_page - 1 || $i == $current_page + 1:
+                $page_link = "search.php?search_data={$search}&page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/pager_item.php";
+                break;
+            case $i == $pages_count:
+                $page_link = "search.php?search_data={$search}&page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/pager_item.php";
+                break;
+            case $i == $current_page + 2:
+                include "includes/pager_between.php";
+                break;
         }
-        include "includes/pager_item.php";
     }
 }
 ?>

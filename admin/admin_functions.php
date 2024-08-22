@@ -2152,56 +2152,152 @@ function deleteSelectedCategories() {
 /* Display Pager on Posts Page in admin. $pages_count is number of pages, $current_page is number of current page */
 function showPagesAdminPosts($pages_count, $current_page) {
     for($i = 1; $i <= $pages_count; $i++) {
-        $page_link = "admin_posts.php?page={$i}";
-        $page_num = $i;
-        if ($page_num == $current_page) {
-            $item_class = "active-page";
-        } else {
-            $item_class = "";
+        switch(true) {
+            case $i == $current_page:
+                $page_link = "admin_posts.php?page={$i}";
+                $page_num = $i;
+                $item_class = "active-page";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == 1:
+                $page_link = "admin_posts.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == $current_page - 2:
+                include "includes/admin_pager_between.php";
+                break;
+            case $i == $current_page - 1 || $i == $current_page + 1:
+                $page_link = "admin_posts.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == $pages_count:
+                $page_link = "admin_posts.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == $current_page + 2:
+                include "includes/admin_pager_between.php";
+                break;
         }
-        include "includes/admin_pager_item.php";
     }
 }
 
 /* Display Pager on Comments Page in admin. $pages_count is number of pages, $current_page is number of current page */
 function showPagesAdminComments($pages_count, $current_page) {
     for($i = 1; $i <= $pages_count; $i++) {
-        $page_link = "admin_comments.php?page={$i}";
-        $page_num = $i;
-        if ($page_num == $current_page) {
-            $item_class = "active-page";
-        } else {
-            $item_class = "";
+        switch(true) {
+            case $i == $current_page:
+                $page_link = "admin_comments.php?page={$i}";
+                $page_num = $i;
+                $item_class = "active-page";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == 1:
+                $page_link = "admin_comments.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == $current_page - 2:
+                include "includes/admin_pager_between.php";
+                break;
+            case $i == $current_page - 1 || $i == $current_page + 1:
+                $page_link = "admin_comments.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == $pages_count:
+                $page_link = "admin_comments.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == $current_page + 2:
+                include "includes/admin_pager_between.php";
+                break;
         }
-        include "includes/admin_pager_item.php";
     }
 }
 
 /* Display Pager on Users Page in admin. $pages_count is number of pages, $current_page is number of current page */
 function showPagesAdminUsers($pages_count, $current_page) {
     for($i = 1; $i <= $pages_count; $i++) {
-        $page_link = "admin_users.php?page={$i}";
-        $page_num = $i;
-        if ($page_num == $current_page) {
-            $item_class = "active-page";
-        } else {
-            $item_class = "";
+        switch(true) {
+            case $i == $current_page:
+                $page_link = "admin_users.php?page={$i}";
+                $page_num = $i;
+                $item_class = "active-page";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == 1:
+                $page_link = "admin_users.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == $current_page - 2:
+                include "includes/admin_pager_between.php";
+                break;
+            case $i == $current_page - 1 || $i == $current_page + 1:
+                $page_link = "admin_users.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == $pages_count:
+                $page_link = "admin_users.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == $current_page + 2:
+                include "includes/admin_pager_between.php";
+                break;
         }
-        include "includes/admin_pager_item.php";
     }
 }
 
 /* Display Pager on Categories Page in admin. $pages_count is number of pages, $current_page is number of current page */
 function showPagesAdminCategories($pages_count, $current_page) {
     for($i = 1; $i <= $pages_count; $i++) {
-        $page_link = "admin_categories.php?page={$i}";
-        $page_num = $i;
-        if ($page_num == $current_page) {
-            $item_class = "active-page";
-        } else {
-            $item_class = "";
+        switch(true) {
+            case $i == $current_page:
+                $page_link = "admin_categories.php?page={$i}";
+                $page_num = $i;
+                $item_class = "active-page";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == 1:
+                $page_link = "admin_categories.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == $current_page - 2:
+                include "includes/admin_pager_between.php";
+                break;
+            case $i == $current_page - 1 || $i == $current_page + 1:
+                $page_link = "admin_categories.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == $pages_count:
+                $page_link = "admin_categories.php?page={$i}";
+                $page_num = $i;
+                $item_class = "";
+                include "includes/admin_pager_item.php";
+                break;
+            case $i == $current_page + 2:
+                include "includes/admin_pager_between.php";
+                break;
         }
-        include "includes/admin_pager_item.php";
     }
 }
 ?>
