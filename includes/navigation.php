@@ -20,7 +20,7 @@
                 </ul>
                 <?php
                 /* Display Profile Navigation Menu for authorized users */
-                if (isset($_SESSION['login'])) {
+                if (isset($_SESSION['user_id'])) {
                     include "includes/profile_nav_authorized.php";
                 } else {
                     include "includes/profile_nav_not_authorized.php";

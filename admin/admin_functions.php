@@ -503,7 +503,9 @@ function deletePosts($delete_post_id) {
 function editPosts() {
     global $connection;
     
-    if (isset($_GET['edit_post_id'])) {
+    if (!isset($_GET['edit_post_id'])) {
+        header("Location: admin_posts.php");
+    } else {
         $edit_post_id = $_GET['edit_post_id'];
         $edit_post_id = mysqli_real_escape_string($connection, $edit_post_id);
 
@@ -1162,7 +1164,9 @@ function changeUserPrivilege($user_id, $privilege) {
 function editUsers() {
     global $connection;
 
-    if (isset($_GET['edit_user_id'])) {
+    if (!isset($_GET['edit_user_id'])) {
+        header("Location: admin_users.php");
+    } else {
         $edit_user_id = $_GET['edit_user_id'];
         $edit_user_id = mysqli_real_escape_string($connection, $edit_user_id);
 
@@ -1913,125 +1917,135 @@ function showCommentsByPostChart($chart_color, $posts_num) {
 function showPostOperationInfo() {
     if (isset($_GET['operation'])) {
         $post_operation = $_GET['operation'];
-
-        $post_operation_message = "";
-        switch($post_operation) {
-            case "add":
-                $post_operation_message = "Ваша публикация успешно добавлена. Дождитесь проверки модератором";
-                break;
-            case "delete":
-                $post_operation_message = "Выбранные публикации удалены";
-                break;
-            case "update":
-                $post_operation_message = "Изменения успешно сохранены";
-                break;
-            default:
-                $post_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
-                break;
-        }
-
-        include "includes/post_operation_info.php";
+    } else {
+        $post_operation = "";
     }
+
+    $post_operation_message = "";
+    switch($post_operation) {
+        case "add":
+            $post_operation_message = "Ваша публикация успешно добавлена. Дождитесь проверки модератором";
+            break;
+        case "delete":
+            $post_operation_message = "Выбранные публикации удалены";
+            break;
+        case "update":
+            $post_operation_message = "Изменения успешно сохранены";
+            break;
+        default:
+            $post_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
+            break;
+    }
+
+    include "includes/post_operation_info.php";
 }
 
 /* Show info message if comment operation (add, delete or edit) was successful */
 function showCommentOperationInfo() {
     if (isset($_GET['operation'])) {
         $comment_operation = $_GET['operation'];
-
-        $comment_operation_message = "";
-        switch($comment_operation) {
-            case "add":
-                $comment_operation_message = "Ваш комментарий успешно отправлен. Дождитесь проверки модератором";
-                break;
-            case "delete":
-                $comment_operation_message = "Выбранные комментарии удалены";
-                break;
-            case "update":
-                $comment_operation_message = "Изменения успешно сохранены";
-                break;
-            default:
-                $comment_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
-                break;
-        }
-
-        include "includes/comment_operation_info.php";
+    } else {
+        $comment_operation = "";
     }
+
+    $comment_operation_message = "";
+    switch($comment_operation) {
+        case "add":
+            $comment_operation_message = "Ваш комментарий успешно отправлен. Дождитесь проверки модератором";
+            break;
+        case "delete":
+            $comment_operation_message = "Выбранные комментарии удалены";
+            break;
+        case "update":
+            $comment_operation_message = "Изменения успешно сохранены";
+            break;
+        default:
+            $comment_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
+            break;
+    }
+
+    include "includes/comment_operation_info.php";
 }
 
 /* Show info message if category operation (add, delete or edit) was successful */
 function showCategoryOperationInfo() {
     if (isset($_GET['operation'])) {
         $category_operation = $_GET['operation'];
-
-        $category_operation_message = "";
-        switch($category_operation) {
-            case "add":
-                $category_operation_message = "Регион успешно добавлен";
-                break;
-            case "delete":
-                $category_operation_message = "Выбранные регионы удалены";
-                break;
-            case "update":
-                $category_operation_message = "Изменения успешно сохранены";
-                break;
-            default:
-                $category_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
-                break;
-        }
-
-        include "includes/category_operation_info.php";
+    } else {
+        $category_operation = "";
     }
+
+    $category_operation_message = "";
+    switch($category_operation) {
+        case "add":
+            $category_operation_message = "Регион успешно добавлен";
+            break;
+        case "delete":
+            $category_operation_message = "Выбранные регионы удалены";
+            break;
+        case "update":
+            $category_operation_message = "Изменения успешно сохранены";
+            break;
+        default:
+            $category_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
+            break;
+    }
+
+    include "includes/category_operation_info.php";
 }
 
 /* Show info message if user operation (add, delete or edit) was successful */
 function showUserOperationInfo() {
     if (isset($_GET['operation'])) {
         $user_operation = $_GET['operation'];
-
-        $user_operation_message = "";
-        switch($user_operation) {
-            case "add":
-                $user_operation_message = "Пользователь успешно создан";
-                break;
-            case "delete":
-                $user_operation_message = "Выбранные пользователи удалены";
-                break;
-            case "update":
-                $user_operation_message = "Изменения успешно сохранены";
-                break;
-            case "password":
-                $user_operation_message = "Пароль успешно изменен";
-                break;
-            default:
-                $user_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
-                break;
-        }
-
-        include "includes/user_operation_info.php";
+    } else {
+        $user_operation = "";
     }
+
+    $user_operation_message = "";
+    switch($user_operation) {
+        case "add":
+            $user_operation_message = "Пользователь успешно создан";
+            break;
+        case "delete":
+            $user_operation_message = "Выбранные пользователи удалены";
+            break;
+        case "update":
+            $user_operation_message = "Изменения успешно сохранены";
+            break;
+        case "password":
+            $user_operation_message = "Пароль успешно изменен";
+            break;
+        default:
+            $user_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
+            break;
+    }
+
+    include "includes/user_operation_info.php";
 }
 
 /* Show info message if profile operation (add, delete or edit) was successful */
 function showProfileOperationInfo() {
     if (isset($_GET['operation'])) {
         $profile_operation = $_GET['operation'];
-
-        $profile_operation_message = "";
-        switch($profile_operation) {
-            case "update":
-                $profile_operation_message = "Изменения успешно сохранены";
-                break;
-            case "password":
-                $profile_operation_message = "Пароль успешно изменен";
-                break;
-            default:
-                $profile_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
-                break;
-        }
-
-        include "includes/profile_operation_info.php";
+    } else {
+        $profile_operation = "";
     }
+
+    $profile_operation_message = "";
+    switch($profile_operation) {
+        case "update":
+            $profile_operation_message = "Изменения успешно сохранены";
+            break;
+        case "password":
+            $profile_operation_message = "Пароль успешно изменен";
+            break;
+        default:
+            $profile_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
+            break;
+    }
+
+    include "includes/profile_operation_info.php";
 }
 
 /* Apply selected options on the Posts Page */

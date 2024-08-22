@@ -102,53 +102,60 @@ function showAllPosts($posts_per_page) {
 function showPostById() { 
     global $connection;
 
-    if (isset($_GET['post_id'])) {
-        $selected_post_id = $_GET['post_id'];
-    
-        $query = "SELECT * FROM posts AS p LEFT JOIN users AS u ON p.post_author_id = u.user_id WHERE post_id = {$selected_post_id};";
-        $postById = mysqli_query($connection, $query);
-        validateQuery($postById);
-
-        if ($row = mysqli_fetch_assoc($postById)) {
-            $post_id = $row['post_id'];
-            $post_title = $row['post_title'];
-            $post_author_id = $row['user_id'];
-            $post_author_login = $row['user_login'];
-            $post_date = $row['post_date'];
-            $post_image = $row['post_image'];
-            $post_content = $row['post_content'];
-
-            $err_add_comment = ['author'=>false, 'content'=>false, 'if_sent'=>false]; 
-            $err_add_comment = addComments($post_id, $err_add_comment);
-
-            include "includes/post_form_full.php";
-            if (isset($_SESSION['login'])) {
-                include "includes/post_edit_button.php";
-                include "includes/add_comment_form.php";
-            }
-            showCommentsOfPost($post_id);
-        } else {
-            header("Location: index.php");
-        }
-    } else {
+    if (!isset($_GET['post_id'])) {
         header("Location: index.php");
-    }
+    } else {
+        $selected_post_id = $_GET['post_id'];
+        $selected_post_id = mysqli_real_escape_string($connection, $selected_post_id);
+
+        if (!postIdValidation($selected_post_id)) {
+            header("Location: index.php");
+        } else {
+            $query = "SELECT * FROM posts AS p LEFT JOIN users AS u ON p.post_author_id = u.user_id WHERE post_id = {$selected_post_id};";
+            $postById = mysqli_query($connection, $query);
+            validateQuery($postById);
+
+            if ($row = mysqli_fetch_assoc($postById)) {
+                $post_id = $row['post_id'];
+                $post_title = $row['post_title'];
+                $post_author_id = $row['user_id'];
+                $post_author_login = $row['user_login'];
+                $post_date = $row['post_date'];
+                $post_image = $row['post_image'];
+                $post_content = $row['post_content'];
+
+                $err_add_comment = ['content'=>false]; 
+                $err_add_comment = addComments($post_id, $err_add_comment);
+
+                include "includes/post_form_full.php";
+                if (isset($_SESSION['user_id'])) {
+                    include "includes/post_edit_button.php";
+                    include "includes/add_comment_form.php";
+                }
+                showCommentsOfPost($post_id);
+            } 
+        }
+    } 
 }
 
 /* Display posts on selected category */
 function showPostByCategory($posts_per_page) { 
     global $connection;
 
-    if (isset($_GET['cat_id'])) {
+    if (!isset($_GET['cat_id'])) {
+        header("Location: index.php");
+    } else {
         $cat_id = $_GET['cat_id'];
+        $cat_id = mysqli_real_escape_string($connection, $cat_id);
         $cat_title = "";
 
-        $query = "SELECT * FROM categories WHERE cat_id = {$cat_id};";
-        $categoryById = mysqli_query($connection, $query);
-        validateQuery($categoryById);
+        if (!categoryIdValidation($cat_id)) {
+            header("Location: index.php");
+        } else {
+            $query = "SELECT * FROM categories WHERE cat_id = {$cat_id};";
+            $categoryById = mysqli_query($connection, $query);
+            validateQuery($categoryById);
 
-        $number_categories = mysqli_num_rows($categoryById);
-        if ($number_categories > 0) {
             if ($row = mysqli_fetch_assoc($categoryById)) {
                 $cat_id = $row['cat_id'];
                 $cat_title = $row['cat_title'];
@@ -227,11 +234,7 @@ function showPostByCategory($posts_per_page) {
             }
 
             include "includes/pager_form.php";
-        } else {
-            header("Location: index.php");
         }
-    } else {
-        header("Location: index.php");
     }
 }
 
@@ -239,16 +242,21 @@ function showPostByCategory($posts_per_page) {
 function showAllCategories($items_amount) {
     global $connection;
 
-    $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC, cat_title LIMIT $items_amount;";
+    $items_amount_escaped = mysqli_real_escape_string($connection, $items_amount);
 
-    $allCategories = mysqli_query($connection, $query);
-    validateQuery($allCategories);
+    if (my_is_int($items_amount_escaped)) {
 
-    while($row = mysqli_fetch_assoc($allCategories)) {
-        $cat_id = $row['cat_id'];
-        $cat_title = $row['cat_title'];
-        
-        include "includes/category_list.php";
+        $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC, cat_title LIMIT {$items_amount_escaped};";
+
+        $allCategories = mysqli_query($connection, $query);
+        validateQuery($allCategories);
+
+        while($row = mysqli_fetch_assoc($allCategories)) {
+            $cat_id = $row['cat_id'];
+            $cat_title = $row['cat_title'];
+            
+            include "includes/category_list.php";
+        }
     }
 }
 
@@ -256,12 +264,16 @@ function showAllCategories($items_amount) {
 function searchPosts($posts_per_page) {
     global $connection;
 
-    if (isset($_GET['search_data'])) {
+    if (!isset($_GET['search_data'])) {
+        header("Location: index.php");
+    } else {
         $search_data = $_GET['search_data'];
         $search_data = mysqli_real_escape_string($connection, $search_data);
 
-        if ($search_data != "") {
-            $query = "SELECT * FROM posts AS p LEFT JOIN users AS u ON p.post_author_id = u.user_id WHERE post_tags LIKE '%$search_data%' AND post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
+        if ($search_data == "") {
+            header("Location: index.php");
+        } else {
+            $query = "SELECT * FROM posts AS p LEFT JOIN users AS u ON p.post_author_id = u.user_id WHERE post_tags LIKE '%{$search_data}%' AND post_status = 'опубликовано' ORDER BY post_date DESC, post_id DESC;";
             $search_result = mysqli_query($connection, $query);
             validateQuery($search_result);
 
@@ -334,11 +346,7 @@ function searchPosts($posts_per_page) {
             }
 
             include "includes/pager_form.php";
-        } else {
-            header("Location: index.php");
         }
-    } else {
-        header("Location: index.php");
     }
 }
 
@@ -347,38 +355,45 @@ function addComments($add_comment_post_id, $err_status) {
     global $connection;
 
     if (isset($_POST['add_comment_btn'])) {
-        if (isset($_SESSION['user_id'])) {
-            $comment_user_id = $_SESSION['user_id'];
-            $comment_date = date('Y-m-d');
-            $comment_content = $_POST['comment_content'];
-            $comment_content = mysqli_real_escape_string($connection, $comment_content);
-            
-            foreach($err_status as $key=>$value) {
-                $err_status[$key] = false;
-            }
-            $err_status['author'] = !userIdValidation($comment_user_id);
-            if (empty($comment_content)) {
-                $err_status['content'] = true;
-            }
-            $err_result = false;
-            foreach($err_status as $err_item) {
-                $err_result = $err_result || $err_item;
-            }
-
-            if (!$err_result) {
-                $query = "INSERT INTO comments(comment_post_id, comment_user_id, comment_date, comment_content) VALUES({$add_comment_post_id}, {$comment_user_id}, '{$comment_date}', '{$comment_content}');";
-
-                $addComment = mysqli_query($connection, $query);
-                validateQuery($addComment);
-                $err_status['if_sent'] = true;
-
-                commentsCountByPost($add_comment_post_id);
-                commentsCountByUser($comment_user_id);
-
-                header("Location: post.php?post_id={$add_comment_post_id}#add_comment_form");
-            }
-        } else {
+        if (!isset($_SESSION['user_id'])) {
             header("Location: index.php");
+        } else {
+            $comment['post_id'] = $add_comment_post_id;
+            $comment['user_id'] = $_SESSION['user_id'];
+            $comment['date'] = date('y-m-d');
+            $comment['content'] = $_POST['comment_content'];
+            $comment = escapeArray($comment);
+
+            if (!userIdValidation($comment['user_id'])) {
+                header("Location: includes/logout.php");
+            } else {  
+                if (!postIdValidation($comment['post_id'])) {
+                    header("Location: index.php");
+                } else {
+                    foreach($err_status as $key=>$value) {
+                        $err_status[$key] = false;
+                    }
+                    if (empty($comment['content'])) {
+                        $err_status['content'] = true;
+                    }
+                    $err_result = false;
+                    foreach($err_status as $err_item) {
+                        $err_result = $err_result || $err_item;
+                    }
+                    
+                    if (!$err_result) {
+                        $query = "INSERT INTO comments(comment_post_id, comment_user_id, comment_date, comment_content) VALUES({$comment['post_id']}, {$comment['user_id']}, '{$comment['date']}', '{$comment['content']}');";
+
+                        $addComment = mysqli_query($connection, $query);
+                        validateQuery($addComment);
+
+                        commentsCountByPost($comment['post_id']);
+                        commentsCountByUser($comment['user_id']);
+
+                        header("Location: post.php?post_id={$comment['post_id']}#add_comment_form");
+                    }
+                }
+            }
         }
     }
 
@@ -389,21 +404,27 @@ function addComments($add_comment_post_id, $err_status) {
 function showCommentsOfPost($comment_post_id) {
     global $connection;
 
-    $query = "SELECT * FROM comments AS c LEFT JOIN users AS u ON c.comment_user_id = u.user_id WHERE comment_post_id = $comment_post_id AND comment_status = 'одобрен' ORDER BY comment_date DESC, comment_id DESC;";
-    $commentsOfPost = mysqli_query($connection, $query);
-    validateQuery($commentsOfPost);
+    $comment_post_id_escaped = mysqli_real_escape_string($connection, $comment_post_id);
 
-    while($row = mysqli_fetch_assoc($commentsOfPost)) {
-        $comment_user_id = $row['user_id'];
-        $comment_user_login = $row['user_login'];
-        $comment_user_image = $row['user_image'];
-        $comment_date = $row['comment_date'];
-        $comment_content = $row['comment_content'];
+    if (!postIdValidation($comment_post_id_escaped)) {
+        header("Location: index.php");
+    } else {
+        $query = "SELECT * FROM comments AS c LEFT JOIN users AS u ON c.comment_user_id = u.user_id WHERE comment_post_id = $comment_post_id_escaped AND comment_status = 'одобрен' ORDER BY comment_date DESC, comment_id DESC;";
+        $commentsOfPost = mysqli_query($connection, $query);
+        validateQuery($commentsOfPost);
 
-        if (is_null($comment_user_id)) {
-            $comment_user_image = "user_icon_default.png";
+        while($row = mysqli_fetch_assoc($commentsOfPost)) {
+            $comment_user_id = $row['user_id'];
+            $comment_user_login = $row['user_login'];
+            $comment_user_image = $row['user_image'];
+            $comment_date = $row['comment_date'];
+            $comment_content = $row['comment_content'];
+
+            if (is_null($comment_user_id)) {
+                $comment_user_image = "user_icon_default.png";
+            }
+            include "includes/comment_form.php";
         }
-        include "includes/comment_form.php";
     }
 }
 
