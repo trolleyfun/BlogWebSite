@@ -2,8 +2,16 @@
 <tr>
     <td><input type="checkbox" class="checkBoxes" name="checkBoxArray[]" value="<?=$post_id;?>"></td>
     <td><a href="../post.php?post_id=<?=$post_id;?>"><?=$post_title;?></a></td>
-    <td><a href="../category.php?cat_id=<?=$post_category_id;?>"><?=$post_category_title;?></a></td>
-    <td><?=$post_author;?></td>
+    <td>
+        <?php if ((!is_null($post_category_id))) { ?>
+        <a href="../category.php?cat_id=<?=$post_category_id;?>"><?=$post_category_title;?></a>
+        <?php } ?>
+    </td>
+    <td>
+        <?php if ((!is_null($post_author_id))) { ?>
+        <?=$post_author_login;?>
+        <?php } ?>
+    </td>
     <td><?=$post_date;?></td>
     <td><a href="../post.php?post_id=<?=$post_id;?>"><img src="../img/<?=$post_image;?>" alt="<?=$post_title;?>" style="max-width: 100px;"></a></td>
     <td><?=$post_tags;?></td>

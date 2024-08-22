@@ -19,25 +19,20 @@
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['title'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
-            <label for="edit_post_author">Автор<span style='color: #a94442;'> *</span></label>
-            <input type="text" name="edit_post_author" id="edit_post_author" class="form-control" value="<?=$post_author;?>" required>
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['author'], "Это поле не может быть пустым"); ?></span>
-        </div>
-        <div class="form-group">
             <label for="edit_post_date">Дата публикации<span style='color: #a94442;'> *</span></label>
             <input type="date" name="edit_post_date" id="edit_post_date" class="form-control" value="<?=$post_date;?>" required>
-            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['date'], "Это поле не может быть пустым"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['date_empty'], "Это поле не может быть пустым"); ?></span>
+            <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['date_correct'], "Неверный формат даты"); ?></span>
         </div>
         <div class="form-group">
             <label for="edit_post_image">Изображение</label>
             <img class="img-responsive" src="../img/<?=$post_image;?>" alt="<?=$post_title;?>" style="max-width: 100px;"><br>
             <input type="file" name="edit_post_image" id="edit_post_image" class="form-control">
-            <input type="hidden" name="current_post_image" class="form-control" value="<?=$post_image;?>" readonly>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['image'], "Загрузите изображение"); ?></span>
         </div>
         <div class="form-group">
             <label for="edit_post_content">Текст<span style='color: #a94442;'> *</span></label>
-            <textarea name="edit_post_content" id="edit_post_content" class="form-control summernote-post" rows="10" required><?=$post_content;?></textarea>
+            <textarea name="edit_post_content" id="edit_post_content" class="form-control summernote-post" rows="10"><?=$post_content;?></textarea>
             <span style='color: #a94442;'><?php displayErrorMessage($err_edit_post['content'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">

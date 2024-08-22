@@ -30,7 +30,6 @@ selectCommentOptions();
                     <th>Пользователь</th>
                     <th>Дата комментария</th>
                     <th>Комментарий</th>
-                    <th>E-mail</th>
                     <th>Статус</th>
                     <th></th>
                     <th></th>
@@ -39,7 +38,7 @@ selectCommentOptions();
             <tbody>
                 <?php 
                 /* Put All Comments from database */
-                $pager_values = showAllComments(3);
+                $pager_values = showAllComments(10);
                 ?>
             </tbody>
         </table>

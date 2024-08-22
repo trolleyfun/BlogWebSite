@@ -17,22 +17,19 @@
 
                         <!-- Profile Section -->
                         <?php 
-                        if (isset($_SESSION['login'])) {
-                            if (isset($_GET['source'])) {
-                                $source = $_GET['source'];
-                            } else {
-                                $source = "";
-                            }
+                        if (isset($_GET['source'])) {
+                            $source = $_GET['source'];
+                        } else {
+                            $source = "";
+                        }
 
-                            switch($source) {
-                                case "info":
-                                    showProfileOperationInfo();
-                                    break;
-                                default:
-                                    $user_profile_login = $_SESSION['login'];
-                                    editProfile($user_profile_login);
-                                    break;
-                            }
+                        switch($source) {
+                            case "info":
+                                showProfileOperationInfo();
+                                break;
+                            default:
+                                editProfile($session_user_id);
+                                break;
                         }
                         ?>
                     </div>

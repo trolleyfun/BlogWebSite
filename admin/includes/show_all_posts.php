@@ -44,7 +44,7 @@ clickDeletePostIcon();
             <tbody>
                 <?php 
                 /* Put All Posts from database */
-                $pager_values = showAllPosts(3);
+                $pager_values = showAllPosts(10);
                 ?>
             </tbody>
         </table>

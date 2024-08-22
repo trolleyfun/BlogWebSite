@@ -36,6 +36,8 @@ selectUserOptions();
                     <th>E-mail</th>
                     <th>Изображение</th>
                     <th>Права доступа</th>
+                    <th>Количество<br>публикаций</th>
+                    <th>Количество<br>комментариев</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -43,7 +45,7 @@ selectUserOptions();
             <tbody>
                 <?php 
                 /* Put All Users from database */
-                $pager_values = showAllUsers(3);
+                $pager_values = showAllUsers(10);
                 ?>
             </tbody>
         </table>
