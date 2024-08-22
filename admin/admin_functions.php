@@ -1283,7 +1283,7 @@ function updateUsers($user_id, $current_image, $err_status) {
     return $err_status;
 }
 
-/* Get information about authorized user from database. Put login as a parameter and return an array with login, firstname, lastname and privilege of user */
+/* Get information about authorized user from database. Put user id as a parameter and return an array with login, firstname, lastname and privilege of user */
 function getSessionInfo($user_id) {
     global $connection;
 
@@ -1305,7 +1305,7 @@ function getSessionInfo($user_id) {
     return $session_user;
 }
 
-/* Display Edit Form for authorized user with login $edit_user_login. Put data for this user from the database */
+/* Display Edit Form for authorized user with id $user_id. Put data for this user from the database */
 function editProfile($user_id) {
     global $connection;
 
@@ -1314,7 +1314,7 @@ function editProfile($user_id) {
     if (!userIdValidation($user_id_escaped)) {
         header("Location: admin_profile.php?source=info&operation=error");
     } else {
-        $query = "SELECT * FROM users WHERE user_login = {$user_id_escaped};";
+        $query = "SELECT * FROM users WHERE user_id = {$user_id_escaped};";
         $editProfile = mysqli_query($connection, $query);
         validateQuery($editProfile);
         if ($row = mysqli_fetch_assoc($editProfile)) {
@@ -1533,47 +1533,65 @@ function changeUserPassword($user_id, $db_user_password, $err_status) {
 function ifLoginExists($login, $user_id) {
     global $connection;
 
-    if (is_null($user_id)) {
-        $user_id_int = 0;
-    } else {
-        $user_id_int = $user_id;
+    $user['user_id'] = $user_id;
+    $user['login'] = $login;
+    if (is_null($user['user_id'])) {
+        $user['user_id'] = 0;
     }
-    $query = "SELECT * FROM users WHERE user_login = '{$login}' AND user_id != {$user_id_int};";
-    $loginExists = mysqli_query($connection, $query);
-    validateQuery($loginExists);
-    $num_rows = mysqli_num_rows($loginExists);
-    return $num_rows > 0;
+    $user = escapeArray($user);
+
+    if (my_is_int($user['user_id'])) {
+        $query = "SELECT * FROM users WHERE user_login = '{$user['login']}' AND user_id != {$user['user_id']};";
+        $loginExists = mysqli_query($connection, $query);
+        validateQuery($loginExists);
+        $num_rows = mysqli_num_rows($loginExists);
+        return $num_rows > 0;
+    } else {
+        return false;
+    }
 }
 
 /* Check if e-mail is already used by another user. $user_id is ID of user who wants to set e-mail $email, put this parameter equal to null if that's a new user. Return true if e-mail is used and return false if e-mail isn't used */
 function ifEmailExists($email, $user_id) {
     global $connection;
 
-    if (is_null($user_id)) {
-        $user_id_int = 0;
-    } else {
-        $user_id_int = $user_id;
+    $user['user_id'] = $user_id;
+    $user['email'] = $email;
+    if (is_null($user['user_id'])) {
+        $user['user_id'] = 0;
     }
-    $query = "SELECT * FROM users WHERE user_email = '{$email}' AND user_id != {$user_id_int};";
-    $emailExists = mysqli_query($connection, $query);
-    validateQuery($emailExists);
-    $num_rows = mysqli_num_rows($emailExists);
-    return $num_rows > 0;
+    $user = escapeArray($user);
+
+    if (my_is_int($user['user_id'])) {
+        $query = "SELECT * FROM users WHERE user_email = '{$user['email']}' AND user_id != {$user['user_id']};";
+        $emailExists = mysqli_query($connection, $query);
+        validateQuery($emailExists);
+        $num_rows = mysqli_num_rows($emailExists);
+        return $num_rows > 0;
+    } else {
+        return false;
+    }
 }
 /* Check if category already exists. $cat_id is ID of category which is edited, put this parameter equal to null if that's a new category. Return true if category exists and return false if category doesn't exists */
 function ifCategoryTitleExists($title, $cat_id) {
     global $connection;
 
-    if (is_null($cat_id)) {
-        $cat_id_int = 0;
-    } else {
-        $cat_id_int = $cat_id;
+    $cat['cat_id'] = $cat_id;
+    $cat['title'] = $title;
+    if (is_null($cat['cat_id'])) {
+        $cat['cat_id'] = 0;
     }
-    $query = "SELECT * FROM categories WHERE cat_title = '{$title}' AND cat_id != {$cat_id_int};";
-    $categoryTitleExists = mysqli_query($connection, $query);
-    validateQuery($categoryTitleExists);
-    $num_rows = mysqli_num_rows($categoryTitleExists);
-    return $num_rows > 0;
+    $cat = escapeArray($cat);
+
+    if (my_is_int($cat['cat_id'])) {
+        $query = "SELECT * FROM categories WHERE cat_title = '{$cat['title']}' AND cat_id != {$cat['cat_id']};";
+        $categoryTitleExists = mysqli_query($connection, $query);
+        validateQuery($categoryTitleExists);
+        $num_rows = mysqli_num_rows($categoryTitleExists);
+        return $num_rows > 0;
+    } else {
+        return false;
+    }
 }
 
 /* Check if e-mail is valid. Return true if e-mail is valid */
@@ -1591,8 +1609,9 @@ function passwordValidation($password) {
 function categoryIdValidation($category_id) {
     global $connection;
 
-    if (my_is_int($category_id)) {
-        $category_id_escaped = mysqli_real_escape_string($connection, $category_id);
+    $category_id_escaped = mysqli_real_escape_string($connection, $category_id);
+
+    if (my_is_int($category_id_escaped)) {
         $query = "SELECT * FROM categories WHERE cat_id = {$category_id_escaped};";
         $categoryValidation = mysqli_query($connection, $query);
         validateQuery($categoryValidation);
@@ -1609,8 +1628,9 @@ function categoryIdValidation($category_id) {
 function postIdValidation($post_id) {
     global $connection;
 
-    if (my_is_int($post_id)) {
-        $post_id_escaped = mysqli_real_escape_string($connection, $post_id);
+    $post_id_escaped = mysqli_real_escape_string($connection, $post_id);
+
+    if (my_is_int($post_id_escaped)) {
         $query = "SELECT * FROM posts WHERE post_id = {$post_id_escaped};";
         $postValidation = mysqli_query($connection, $query);
         validateQuery($postValidation);
@@ -1627,8 +1647,9 @@ function postIdValidation($post_id) {
 function commentIdValidation($comment_id) {
     global $connection;
 
-    if (my_is_int($comment_id)) {
-        $comment_id_escaped = mysqli_real_escape_string($connection, $comment_id);
+    $comment_id_escaped = mysqli_real_escape_string($connection, $comment_id);
+
+    if (my_is_int($comment_id_escaped)) {
         $query = "SELECT * FROM comments WHERE comment_id = {$comment_id_escaped};";
         $commentValidation = mysqli_query($connection, $query);
         validateQuery($commentValidation);
@@ -1645,8 +1666,9 @@ function commentIdValidation($comment_id) {
 function userIdValidation($user_id) {
     global $connection;
 
-    if (my_is_int($user_id)) {
-        $user_id_escaped = mysqli_real_escape_string($connection, $user_id);
+    $user_id_escaped = mysqli_real_escape_string($connection, $user_id);
+
+    if (my_is_int($user_id_escaped)) {
         $query = "SELECT * FROM users WHERE user_id = {$user_id_escaped};";
         $userValidation = mysqli_query($connection, $query);
         validateQuery($userValidation);
