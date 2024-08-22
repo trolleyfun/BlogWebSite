@@ -2,7 +2,6 @@
 
 <!-- Add Post Form -->
  <div class="col-md-6 col-xs-12">
-    <span style='color: #a94442;'><?php displayErrorMessage($err_add_post['author'], "Ошибка авторизации"); ?></span>
     <h3>Добавить новую публикацию</h3>
     <form action="" method="post" enctype="multipart/form-data">
         <div class="form-group">
