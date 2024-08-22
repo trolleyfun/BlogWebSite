@@ -12,7 +12,7 @@
             <div class="col-md-8">
                 <?php 
                 /* Search posts on tags in database and display them */
-                searchPosts(2);
+                searchPosts(5);
                 ?>
             </div>
 

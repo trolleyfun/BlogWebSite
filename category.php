@@ -13,7 +13,7 @@
                 <!-- Blog Posts -->
                 <?php 
                 /* Put Blog Posts from database */
-                showPostByCategory(2);
+                showPostByCategory(5);
                 ?>
             </div>
 

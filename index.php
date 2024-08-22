@@ -19,7 +19,7 @@
                 <!-- Blog Posts -->
                 <?php 
                 /* Put Blog Posts from database */
-                showAllPosts(3);
+                showAllPosts(5);
                 ?>
             </div>
 
