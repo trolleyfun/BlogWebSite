@@ -49,53 +49,61 @@ function showAllPosts($posts_per_page) {
         echo "<hr>";
     }
 
-    $pages_cnt = ceil($num_rows / $posts_per_page);
-    if ($pages_cnt == 0) {
-        $pages_cnt = 1;
-    }
-
-    $page_num = 1;
-    if (isset($_GET['page'])) {
-        $page_num = $_GET['page'];
-    }
-    if ($page_num < 1 || $page_num > $pages_cnt) {
-        $page_num = 1;
-    }
-
-    $previous_page_num = $page_num - 1;
-    if ($previous_page_num < 1) {
-        $previous_page_num = 1;
-    }
-    $previous_page_link = "index.php?page={$previous_page_num}";
-
-    $next_page_num = $page_num + 1;
-    if ($next_page_num > $pages_cnt) {
-        $next_page_num = $pages_cnt;
-    }
-    $next_page_link = "index.php?page={$next_page_num}";
-
-    $post_offset = $posts_per_page * ($page_num - 1);
-    if ($post_offset < 0 || $post_offset >= $num_rows) {
-        $post_offset = 0;
-    }
-
-    $page_name = "posts";
-
-    for($i = 1; $row = mysqli_fetch_assoc($allPosts); $i++) {
-        if ($i > $post_offset && $i <= $post_offset + $posts_per_page) {
-            $post_id = $row['post_id'];
-            $post_title = $row['post_title'];
-            $post_author_id = $row['user_id'];
-            $post_author_login = $row['user_login'];
-            $post_date = $row['post_date'];
-            $post_image = $row['post_image'];
-            $post_content = $row['post_content'];
-
-            include "includes/post_form_short.php";
+    if (!my_is_int($posts_per_page)) {
+        $pages_cnt = $num_rows;
+    } else {
+        $pages_cnt = ceil($num_rows / $posts_per_page);
+        if ($pages_cnt == 0) {
+            $pages_cnt = 1;
         }
     }
 
-    include "includes/pager_form.php";
+    if (!isset($_GET['page'])) {
+        $page_num = 1;
+    } else {
+        $page_num = $_GET['page'];
+    }
+
+    if (!my_is_int($page_num) || $page_num < 1) {
+        header("Location: index.php?page=1");
+    } elseif ($page_num > $pages_cnt) {
+        header("Location: index.php?page={$pages_cnt}");
+    } else {
+        $previous_page_num = $page_num - 1;
+        if ($previous_page_num < 1) {
+            $previous_page_num = 1;
+        }
+        $previous_page_link = "index.php?page={$previous_page_num}";
+
+        $next_page_num = $page_num + 1;
+        if ($next_page_num > $pages_cnt) {
+            $next_page_num = $pages_cnt;
+        }
+        $next_page_link = "index.php?page={$next_page_num}";
+
+        $post_offset = $posts_per_page * ($page_num - 1);
+        if ($post_offset < 0 || $post_offset >= $num_rows) {
+            $post_offset = 0;
+        }
+
+        $page_name = "posts";
+
+        for($i = 1; $row = mysqli_fetch_assoc($allPosts); $i++) {
+            if ($i > $post_offset && $i <= $post_offset + $posts_per_page) {
+                $post_id = $row['post_id'];
+                $post_title = $row['post_title'];
+                $post_author_id = $row['user_id'];
+                $post_author_login = $row['user_login'];
+                $post_date = $row['post_date'];
+                $post_image = $row['post_image'];
+                $post_content = $row['post_content'];
+
+                include "includes/post_form_short.php";
+            }
+        }
+
+        include "includes/pager_form.php";
+    }
 }
 
 /* Display selected post on the separate page */
@@ -187,53 +195,61 @@ function showPostByCategory($posts_per_page) {
             
             include "includes/category_header.php";
 
-            $pages_cnt = ceil($number_rows / $posts_per_page);
-            if ($pages_cnt == 0) {
-                $pages_cnt = 1;
-            }
-
-            $page_num = 1;
-            if (isset($_GET['page'])) {
-                $page_num = $_GET['page'];
-            }
-            if ($page_num < 1 || $page_num > $pages_cnt) {
-                $page_num = 1;
-            }
-
-            $previous_page_num = $page_num - 1;
-            if ($previous_page_num < 1) {
-                $previous_page_num = 1;
-            }
-            $previous_page_link = "category.php?cat_id={$cat_id}&page={$previous_page_num}";
-
-            $next_page_num = $page_num + 1;
-            if ($next_page_num > $pages_cnt) {
-                $next_page_num = $pages_cnt;
-            }
-            $next_page_link = "category.php?cat_id={$cat_id}&page={$next_page_num}";
-
-            $post_offset = $posts_per_page * ($page_num - 1);
-            if ($post_offset < 0 || $post_offset >= $number_rows) {
-                $post_offset = 0;
-            }
-
-            $page_name = "category";
-
-            for($i = 1; $row = mysqli_fetch_assoc($postByCategory); $i++) {
-                if ($i > $post_offset && $i <= $post_offset + $posts_per_page) {
-                    $post_id = $row['post_id'];
-                    $post_title = $row['post_title'];
-                    $post_author_id = $row['user_id'];
-                    $post_author_login = $row['user_login'];
-                    $post_date = $row['post_date'];
-                    $post_image = $row['post_image'];
-                    $post_content = $row['post_content'];
-
-                    include "includes/post_form_short.php";
+            if (!my_is_int($posts_per_page)) {
+                $pages_cnt = $number_rows;
+            } else {
+                $pages_cnt = ceil($number_rows / $posts_per_page);
+                if ($pages_cnt == 0) {
+                    $pages_cnt = 1;
                 }
             }
+        
+            if (!isset($_GET['page'])) {
+                $page_num = 1;
+            } else {
+                $page_num = $_GET['page'];
+            }
 
-            include "includes/pager_form.php";
+            if (!my_is_int($page_num) || $page_num < 1) {
+                header("Location: category.php?cat_id={$cat_id}&page=1");
+            } elseif ($page_num > $pages_cnt) {
+                header("Location: category.php?cat_id={$cat_id}&page={$pages_cnt}");
+            } else {
+                $previous_page_num = $page_num - 1;
+                if ($previous_page_num < 1) {
+                    $previous_page_num = 1;
+                }
+                $previous_page_link = "category.php?cat_id={$cat_id}&page={$previous_page_num}";
+
+                $next_page_num = $page_num + 1;
+                if ($next_page_num > $pages_cnt) {
+                    $next_page_num = $pages_cnt;
+                }
+                $next_page_link = "category.php?cat_id={$cat_id}&page={$next_page_num}";
+
+                $post_offset = $posts_per_page * ($page_num - 1);
+                if ($post_offset < 0 || $post_offset >= $number_rows) {
+                    $post_offset = 0;
+                }
+
+                $page_name = "category";
+
+                for($i = 1; $row = mysqli_fetch_assoc($postByCategory); $i++) {
+                    if ($i > $post_offset && $i <= $post_offset + $posts_per_page) {
+                        $post_id = $row['post_id'];
+                        $post_title = $row['post_title'];
+                        $post_author_id = $row['user_id'];
+                        $post_author_login = $row['user_login'];
+                        $post_date = $row['post_date'];
+                        $post_image = $row['post_image'];
+                        $post_content = $row['post_content'];
+
+                        include "includes/post_form_short.php";
+                    }
+                }
+
+                include "includes/pager_form.php";
+            }
         }
     }
 }
@@ -299,19 +315,26 @@ function searchPosts($posts_per_page) {
             
             include "includes/search_header.php";
 
-            $pages_cnt = ceil($number_rows / $posts_per_page);
+            if (!my_is_int($posts_per_page)) {
+                $pages_cnt = $number_rows;
+            } else {
+                $pages_cnt = ceil($number_rows / $posts_per_page);
                 if ($pages_cnt == 0) {
                     $pages_cnt = 1;
                 }
-
+            }
+        
+            if (!isset($_GET['page'])) {
                 $page_num = 1;
-                if (isset($_GET['page'])) {
-                    $page_num = $_GET['page'];
-                }
-                if ($page_num < 1 || $page_num > $pages_cnt) {
-                    $page_num = 1;
-                }
+            } else {
+                $page_num = $_GET['page'];
+            }
 
+            if (!my_is_int($page_num) || $page_num < 1) {
+                header("Location: search.php?search_data={$search_data}&page=1");
+            } elseif ($page_num > $pages_cnt) {
+                header("Location: search.php?search_data={$search_data}&page={$pages_cnt}");
+            } else {
                 $previous_page_num = $page_num - 1;
                 if ($previous_page_num < 1) {
                     $previous_page_num = 1;
@@ -331,21 +354,22 @@ function searchPosts($posts_per_page) {
 
                 $page_name = "search";
 
-            for($i = 1; $row = mysqli_fetch_assoc($search_result); $i++) {
-                if ($i > $post_offset && $i <= $post_offset + $posts_per_page) {
-                    $post_id = $row['post_id'];
-                    $post_title = $row['post_title'];
-                    $post_author_id = $row['user_id'];
-                    $post_author_login = $row['user_login'];
-                    $post_date = $row['post_date'];
-                    $post_image = $row['post_image'];
-                    $post_content = $row['post_content'];
+                for($i = 1; $row = mysqli_fetch_assoc($search_result); $i++) {
+                    if ($i > $post_offset && $i <= $post_offset + $posts_per_page) {
+                        $post_id = $row['post_id'];
+                        $post_title = $row['post_title'];
+                        $post_author_id = $row['user_id'];
+                        $post_author_login = $row['user_login'];
+                        $post_date = $row['post_date'];
+                        $post_image = $row['post_image'];
+                        $post_content = $row['post_content'];
 
-                    include "includes/post_form_short.php";
+                        include "includes/post_form_short.php";
+                    }
                 }
-            }
 
-            include "includes/pager_form.php";
+                include "includes/pager_form.php";
+            }
         }
     }
 }

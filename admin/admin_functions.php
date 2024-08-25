@@ -162,43 +162,51 @@ function showAllCategoriesInTable($rows_per_page) {
     validateQuery($adminCategories);
     $num_rows = mysqli_num_rows($adminCategories);
 
-    $pager['pages_cnt'] = ceil($num_rows / $rows_per_page);
-    if ($pager['pages_cnt'] == 0) {
-        $pager['pages_cnt'] = 1;
+    if (!my_is_int($rows_per_page)) {
+        $pager['pages_cnt'] = $num_rows;
+    } else {
+        $pager['pages_cnt'] = ceil($num_rows / $rows_per_page);
+        if ($pager['pages_cnt'] == 0) {
+            $pager['pages_cnt'] = 1;
+        }
     }
 
-    $pager['page_num'] = 1;
-    if (isset($_GET['page'])) {
+    if (!isset($_GET['page'])) {
+        $pager['page_num'] = 1;
+    } else {
         $pager['page_num'] = $_GET['page'];
     }
-    if ($pager['page_num'] < 1 || $pager['page_num'] > $pager['pages_cnt']) {
-        $pager['page_num'] = 1;
-    }
 
-    $previous_page_num = $pager['page_num'] - 1;
-    if ($previous_page_num < 1) {
-        $previous_page_num = 1;
-    }
-    $pager['previous_page_link'] = "admin_categories.php?page={$previous_page_num}";
+    if (!my_is_int($pager['page_num']) || $pager['page_num'] < 1) {
+        header("Location: admin_categories.php?page=1");
+    } elseif ($pager['page_num'] > $pager['pages_cnt']) {
+        header("Location: admin_categories.php?page={$pager['pages_cnt']}");
+    } else {
+        $previous_page_num = $pager['page_num'] - 1;
+        if ($previous_page_num < 1) {
+            $previous_page_num = 1;
+        }
+        $pager['previous_page_link'] = "admin_categories.php?page={$previous_page_num}";
 
-    $next_page_num = $pager['page_num'] + 1;
-    if ($next_page_num > $pager['pages_cnt']) {
-        $next_page_num = $pager['pages_cnt'];
-    }
-    $pager['next_page_link'] = "admin_categories.php?page={$next_page_num}";
+        $next_page_num = $pager['page_num'] + 1;
+        if ($next_page_num > $pager['pages_cnt']) {
+            $next_page_num = $pager['pages_cnt'];
+        }
+        $pager['next_page_link'] = "admin_categories.php?page={$next_page_num}";
 
-    $post_offset = $rows_per_page * ($pager['page_num'] - 1);
-    if ($post_offset < 0 || $post_offset >= $num_rows) {
-        $post_offset = 0;
-    }
+        $post_offset = $rows_per_page * ($pager['page_num'] - 1);
+        if ($post_offset < 0 || $post_offset >= $num_rows) {
+            $post_offset = 0;
+        }
 
-    for ($i = 1; $row = mysqli_fetch_assoc($adminCategories); $i++) {
-        if ($i > $post_offset && $i <= $post_offset + $rows_per_page) {
-            $cat_id = $row['cat_id'];
-            $cat_title = $row['cat_title'];
-            $cat_posts_count = $row['cat_posts_count'];
+        for ($i = 1; $row = mysqli_fetch_assoc($adminCategories); $i++) {
+            if ($i > $post_offset && $i <= $post_offset + $rows_per_page) {
+                $cat_id = $row['cat_id'];
+                $cat_title = $row['cat_title'];
+                $cat_posts_count = $row['cat_posts_count'];
 
-            include "includes/all_categories_table.php";
+                include "includes/all_categories_table.php";
+            }
         }
     }
 
@@ -268,51 +276,59 @@ function showAllPosts($rows_per_page) {
     validateQuery($allPosts);
     $num_rows = mysqli_num_rows($allPosts);
 
-    $pager['pages_cnt'] = ceil($num_rows / $rows_per_page);
-    if ($pager['pages_cnt'] == 0) {
-        $pager['pages_cnt'] = 1;
+    if (!my_is_int($rows_per_page)) {
+        $pager['pages_cnt'] = $num_rows;
+    } else {
+        $pager['pages_cnt'] = ceil($num_rows / $rows_per_page);
+        if ($pager['pages_cnt'] == 0) {
+            $pager['pages_cnt'] = 1;
+        }
     }
 
-    $pager['page_num'] = 1;
-    if (isset($_GET['page'])) {
+    if (!isset($_GET['page'])) {
+        $pager['page_num'] = 1;
+    } else {
         $pager['page_num'] = $_GET['page'];
     }
-    if ($pager['page_num'] < 1 || $pager['page_num'] > $pager['pages_cnt']) {
-        $pager['page_num'] = 1;
-    }
 
-    $previous_page_num = $pager['page_num'] - 1;
-    if ($previous_page_num < 1) {
-        $previous_page_num = 1;
-    }
-    $pager['previous_page_link'] = "admin_posts.php?page={$previous_page_num}";
+    if (!my_is_int($pager['page_num']) || $pager['page_num'] < 1) {
+        header("Location: admin_posts.php?page=1");
+    } elseif ($pager['page_num'] > $pager['pages_cnt']) {
+        header("Location: admin_posts.php?page={$pager['pages_cnt']}");
+    } else {
+        $previous_page_num = $pager['page_num'] - 1;
+        if ($previous_page_num < 1) {
+            $previous_page_num = 1;
+        }
+        $pager['previous_page_link'] = "admin_posts.php?page={$previous_page_num}";
 
-    $next_page_num = $pager['page_num'] + 1;
-    if ($next_page_num > $pager['pages_cnt']) {
-        $next_page_num = $pager['pages_cnt'];
-    }
-    $pager['next_page_link'] = "admin_posts.php?page={$next_page_num}";
+        $next_page_num = $pager['page_num'] + 1;
+        if ($next_page_num > $pager['pages_cnt']) {
+            $next_page_num = $pager['pages_cnt'];
+        }
+        $pager['next_page_link'] = "admin_posts.php?page={$next_page_num}";
 
-    $post_offset = $rows_per_page * ($pager['page_num'] - 1);
-    if ($post_offset < 0 || $post_offset >= $num_rows) {
-        $post_offset = 0;
-    }
+        $post_offset = $rows_per_page * ($pager['page_num'] - 1);
+        if ($post_offset < 0 || $post_offset >= $num_rows) {
+            $post_offset = 0;
+        }
 
-    for ($i = 1; $row = mysqli_fetch_assoc($allPosts); $i++) {
-        if ($i > $post_offset && $i <= $post_offset + $rows_per_page) {
-            $post_id = $row['post_id'];
-            $post_category_id = $row['cat_id'];
-            $post_category_title = $row['cat_title'];
-            $post_title = $row['post_title'];
-            $post_author_id = $row['user_id'];
-            $post_author_login = $row['user_login'];
-            $post_date = $row['post_date'];
-            $post_image = $row['post_image'];
-            $post_tags = $row['post_tags'];
-            $post_comments_count = $row['post_comments_count'];
-            $post_status = $row['post_status'];
+        for ($i = 1; $row = mysqli_fetch_assoc($allPosts); $i++) {
+            if ($i > $post_offset && $i <= $post_offset + $rows_per_page) {
+                $post_id = $row['post_id'];
+                $post_category_id = $row['cat_id'];
+                $post_category_title = $row['cat_title'];
+                $post_title = $row['post_title'];
+                $post_author_id = $row['user_id'];
+                $post_author_login = $row['user_login'];
+                $post_date = $row['post_date'];
+                $post_image = $row['post_image'];
+                $post_tags = $row['post_tags'];
+                $post_comments_count = $row['post_comments_count'];
+                $post_status = $row['post_status'];
 
-            include "includes/all_posts_table.php";
+                include "includes/all_posts_table.php";
+            }
         }
     }
 
@@ -661,48 +677,57 @@ function showAllComments($rows_per_page) {
     validateQuery($allComments);
     $num_rows = mysqli_num_rows($allComments);
 
-    $pager['pages_cnt'] = ceil($num_rows / $rows_per_page);
-    if ($pager['pages_cnt'] == 0) {
-        $pager['pages_cnt'] = 1;
+    if (!my_is_int($rows_per_page)) {
+        $pager['pages_cnt'] = $num_rows;
+    } else {
+        $pager['pages_cnt'] = ceil($num_rows / $rows_per_page);
+        if ($pager['pages_cnt'] == 0) {
+            $pager['pages_cnt'] = 1;
+        }
     }
 
-    $pager['page_num'] = 1;
-    if (isset($_GET['page'])) {
+    if (!isset($_GET['page'])) {
+        $pager['page_num'] = 1;
+    } else {
         $pager['page_num'] = $_GET['page'];
     }
-    if ($pager['page_num'] < 1 || $pager['page_num'] > $pager['pages_cnt']) {
-        $pager['page_num'] = 1;
-    }
 
-    $previous_page_num = $pager['page_num'] - 1;
-    if ($previous_page_num < 1) {
-        $previous_page_num = 1;
-    }
-    $pager['previous_page_link'] = "admin_comments.php?page={$previous_page_num}";
+    if (!my_is_int($pager['page_num']) || $pager['page_num'] < 1) {
+        header("Location: admin_comments.php?page=1");
+    } elseif ($pager['page_num'] > $pager['pages_cnt']) {
+        header("Location: admin_comments.php?page={$pager['pages_cnt']}");
+    } else {
 
-    $next_page_num = $pager['page_num'] + 1;
-    if ($next_page_num > $pager['pages_cnt']) {
-        $next_page_num = $pager['pages_cnt'];
-    }
-    $pager['next_page_link'] = "admin_comments.php?page={$next_page_num}";
+        $previous_page_num = $pager['page_num'] - 1;
+        if ($previous_page_num < 1) {
+            $previous_page_num = 1;
+        }
+        $pager['previous_page_link'] = "admin_comments.php?page={$previous_page_num}";
 
-    $post_offset = $rows_per_page * ($pager['page_num'] - 1);
-    if ($post_offset < 0 || $post_offset >= $num_rows) {
-        $post_offset = 0;
-    }
+        $next_page_num = $pager['page_num'] + 1;
+        if ($next_page_num > $pager['pages_cnt']) {
+            $next_page_num = $pager['pages_cnt'];
+        }
+        $pager['next_page_link'] = "admin_comments.php?page={$next_page_num}";
 
-    for ($i = 1; $row = mysqli_fetch_assoc($allComments); $i++) {
-        if ($i > $post_offset && $i <= $post_offset + $rows_per_page) {
-            $comment_id = $row['comment_id'];
-            $comment_post_id = $row['post_id'];
-            $comment_post_title = $row['post_title'];
-            $comment_user_id = $row['user_id'];
-            $comment_user_login = $row['user_login'];
-            $comment_date = $row['comment_date'];
-            $comment_content = $row['comment_content'];
-            $comment_status = $row['comment_status'];
+        $post_offset = $rows_per_page * ($pager['page_num'] - 1);
+        if ($post_offset < 0 || $post_offset >= $num_rows) {
+            $post_offset = 0;
+        }
 
-            include "includes/all_comments_table.php";
+        for ($i = 1; $row = mysqli_fetch_assoc($allComments); $i++) {
+            if ($i > $post_offset && $i <= $post_offset + $rows_per_page) {
+                $comment_id = $row['comment_id'];
+                $comment_post_id = $row['post_id'];
+                $comment_post_title = $row['post_title'];
+                $comment_user_id = $row['user_id'];
+                $comment_user_login = $row['user_login'];
+                $comment_date = $row['comment_date'];
+                $comment_content = $row['comment_content'];
+                $comment_status = $row['comment_status'];
+
+                include "includes/all_comments_table.php";
+            }
         }
     }
 
@@ -940,50 +965,58 @@ function showAllUsers($rows_per_page) {
     validateQuery($allUsers);
     $num_rows = mysqli_num_rows($allUsers);
 
-    $pager['pages_cnt'] = ceil($num_rows / $rows_per_page);
-    if ($pager['pages_cnt'] == 0) {
-        $pager['pages_cnt'] = 1;
+    if (!my_is_int($rows_per_page)) {
+        $pager['pages_cnt'] = $num_rows;
+    } else {
+        $pager['pages_cnt'] = ceil($num_rows / $rows_per_page);
+        if ($pager['pages_cnt'] == 0) {
+            $pager['pages_cnt'] = 1;
+        }
     }
 
-    $pager['page_num'] = 1;
-    if (isset($_GET['page'])) {
+    if (!isset($_GET['page'])) {
+        $pager['page_num'] = 1;
+    } else {
         $pager['page_num'] = $_GET['page'];
     }
-    if ($pager['page_num'] < 1 || $pager['page_num'] > $pager['pages_cnt']) {
-        $pager['page_num'] = 1;
-    }
 
-    $previous_page_num = $pager['page_num'] - 1;
-    if ($previous_page_num < 1) {
-        $previous_page_num = 1;
-    }
-    $pager['previous_page_link'] = "admin_users.php?page={$previous_page_num}";
+    if (!my_is_int($pager['page_num']) || $pager['page_num'] < 1) {
+        header("Location: admin_users.php?page=1");
+    } elseif ($pager['page_num'] > $pager['pages_cnt']) {
+        header("Location: admin_users.php?page={$pager['pages_cnt']}");
+    } else {
+        $previous_page_num = $pager['page_num'] - 1;
+        if ($previous_page_num < 1) {
+            $previous_page_num = 1;
+        }
+        $pager['previous_page_link'] = "admin_users.php?page={$previous_page_num}";
 
-    $next_page_num = $pager['page_num'] + 1;
-    if ($next_page_num > $pager['pages_cnt']) {
-        $next_page_num = $pager['pages_cnt'];
-    }
-    $pager['next_page_link'] = "admin_users.php?page={$next_page_num}";
+        $next_page_num = $pager['page_num'] + 1;
+        if ($next_page_num > $pager['pages_cnt']) {
+            $next_page_num = $pager['pages_cnt'];
+        }
+        $pager['next_page_link'] = "admin_users.php?page={$next_page_num}";
 
-    $post_offset = $rows_per_page * ($pager['page_num'] - 1);
-    if ($post_offset < 0 || $post_offset >= $num_rows) {
-        $post_offset = 0;
-    }
+        $post_offset = $rows_per_page * ($pager['page_num'] - 1);
+        if ($post_offset < 0 || $post_offset >= $num_rows) {
+            $post_offset = 0;
+        }
 
-    for ($i = 1; $row = mysqli_fetch_assoc($allUsers); $i++) {
-        if ($i > $post_offset && $i <= $post_offset + $rows_per_page) {
-            $user_id = $row['user_id'];
-            $user_login = $row['user_login'];
-            $user_password = $row['user_password'];
-            $user_firstname = $row['user_firstname'];
-            $user_lastname = $row['user_lastname'];
-            $user_email = $row['user_email'];
-            $user_image = $row['user_image'];
-            $user_privilege = $row['user_privilege'];
-            $user_posts_count = $row['user_posts_cnt'];
-            $user_comments_count = $row['user_comments_cnt'];
+        for ($i = 1; $row = mysqli_fetch_assoc($allUsers); $i++) {
+            if ($i > $post_offset && $i <= $post_offset + $rows_per_page) {
+                $user_id = $row['user_id'];
+                $user_login = $row['user_login'];
+                $user_password = $row['user_password'];
+                $user_firstname = $row['user_firstname'];
+                $user_lastname = $row['user_lastname'];
+                $user_email = $row['user_email'];
+                $user_image = $row['user_image'];
+                $user_privilege = $row['user_privilege'];
+                $user_posts_count = $row['user_posts_cnt'];
+                $user_comments_count = $row['user_comments_cnt'];
 
-            include "includes/all_users_table.php";
+                include "includes/all_users_table.php";
+            }
         }
     }
 
