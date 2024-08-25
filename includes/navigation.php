@@ -9,15 +9,6 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="index.php">Главная</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <?php 
-                    /* Put categories from database */
-                    showAllCategories(4);
-                    ?>
-                </ul>
                 <?php
                 /* Display Profile Navigation Menu for authorized users */
                 if (isset($_SESSION['user_id'])) {
@@ -27,7 +18,6 @@
                 }
                 ?>
             </div>
-            <!-- /.navbar-collapse -->
         </div>
         <!-- /.container -->
     </nav>

@@ -10,3 +10,12 @@
     color: #fff;
     border: none;
 }
+
+/* Navigation */
+.navbar-header {
+    float: none;
+}
+.navbar-right {
+    float: right;
+    margin-right: -15px;
+}

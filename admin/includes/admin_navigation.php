@@ -1,6 +1,6 @@
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
+    <div class="navbar-header" style="float: none;">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
@@ -8,26 +8,28 @@
             <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="index.php">Управление сайтом</a>
+
+        <!-- Top Menu Items -->
+        <ul class="nav navbar-right top-nav"  style="float: right; margin-right: -15px;">
+            <li><a href="../">Перейти на сайт</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?=$session_user['login'];?> <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="admin_posts.php?source=add_posts"><i class="fa fa-fw fa-plus"></i> Добавить публикацию</a>
+                    </li>
+                    <li>
+                        <a href="admin_profile.php"><i class="fa fa-fw fa-cog"></i> Профиль</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="../includes/logout.php" onclick="return confirm('Вы уверены, что хотите завершить сеанс?');"><i class="fa fa-fw fa-power-off"></i> Выйти</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
     </div>
-    <!-- Top Menu Items -->
-    <ul class="nav navbar-right top-nav">
-        <li><a href="../">Перейти на сайт</a></li>
-        <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?=$session_user['login'];?> <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-                <li>
-                    <a href="admin_posts.php?source=add_posts"><i class="fa fa-fw fa-plus"></i> Добавить публикацию</a>
-                </li>
-                <li>
-                    <a href="admin_profile.php"><i class="fa fa-fw fa-cog"></i> Профиль</a>
-                </li>
-                <li class="divider"></li>
-                <li>
-                    <a href="../includes/logout.php" onclick="return confirm('Вы уверены, что хотите завершить сеанс?');"><i class="fa fa-fw fa-power-off"></i> Выйти</a>
-                </li>
-            </ul>
-        </li>
-    </ul>
+    
     <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
