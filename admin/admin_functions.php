@@ -1881,7 +1881,7 @@ function showPostsByCategoryChart($chart_color, $cat_num) {
     $cat_num_escaped = mysqli_real_escape_string($connection, $cat_num);
 
     if (my_is_int($cat_num_escaped)) {
-        $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC LIMIT {$cat_num_escaped};";
+        $query = "SELECT * FROM categories ORDER BY cat_posts_count DESC, cat_title LIMIT {$cat_num_escaped};";
 
         $postsByCategoryChart = mysqli_query($connection, $query);
         validateQuery($postsByCategoryChart);
@@ -1917,7 +1917,7 @@ function showCommentsByPostChart($chart_color, $posts_num) {
     $posts_num_escaped = mysqli_real_escape_string($connection, $posts_num);
 
     if (my_is_int($posts_num_escaped)) {
-        $query = "SELECT * FROM posts WHERE post_status = 'опубликовано' ORDER BY post_comments_count DESC LIMIT {$posts_num_escaped};";
+        $query = "SELECT * FROM posts WHERE post_status = 'опубликовано' ORDER BY post_comments_count DESC, post_date DESC, post_id DESC LIMIT {$posts_num_escaped};";
 
         $commentsByPostChart = mysqli_query($connection, $query);
         validateQuery($commentsByPostChart);
@@ -1953,7 +1953,7 @@ function showUsersActivityChart($chart_color1, $chart_color2, $items_num) {
     $items_num_escaped = mysqli_real_escape_string($connection, $items_num);
 
     if (my_is_int($items_num_escaped)) {
-        $query = "SELECT *, user_posts_cnt+user_comments_cnt AS user_activity FROM users ORDER BY user_activity DESC LIMIT {$items_num_escaped};";
+        $query = "SELECT *, user_posts_cnt+user_comments_cnt AS user_activity FROM users ORDER BY user_activity DESC, user_comments_cnt DESC, user_id DESC LIMIT {$items_num_escaped};";
 
         $userActivityChart = mysqli_query($connection, $query);
         validateQuery($userActivityChart);
