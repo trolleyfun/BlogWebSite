@@ -41,6 +41,8 @@
                         <?php showPostsByCategoryChart("#337ab7", 6); ?>
                         <!-- Comments Number By Post Chart -->
                         <?php showCommentsByPostChart("#5cb85c", 5); ?>
+                        <!-- Comments Number By Post Chart -->
+                        <?php showUsersActivityChart("#f0ad4e", "#d9534f", 6); ?>
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>

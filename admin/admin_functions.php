@@ -1906,7 +1906,7 @@ function showPostsByCategoryChart($chart_color, $cat_num) {
         $axis_y_title = "количество\nпубликаций";
         $chart_title = "Популярные регионы";
 
-        include "includes/statistics_chart_form.php";
+        include "includes/statistics_chart_1bar_form.php";
     }
 }
 
@@ -1925,8 +1925,8 @@ function showCommentsByPostChart($chart_color, $posts_num) {
         $names_str = "";
         $values_str = "";
         while($row = mysqli_fetch_assoc($commentsByPostChart)) {
-            $cat_title = $row['post_title'];
-            $posts_cnt = $row['post_comments_count'];
+            $post_title = $row['post_title'];
+            $comments_cnt = $row['post_comments_count'];
             /* '#' is divider between elements of array */
             if ($names_str != "") {
                 $names_str .= "#";
@@ -1934,15 +1934,58 @@ function showCommentsByPostChart($chart_color, $posts_num) {
             if ($values_str != "") {
                 $values_str .= "#";
             }
-            $names_str .= $cat_title;
-            $values_str .= $posts_cnt;
+            $names_str .= $post_title;
+            $values_str .= $comments_cnt;
         }
 
         $axis_x_title = "";
         $axis_y_title = "количество\nкомментариев";
         $chart_title = "Самые читаемые публикации";
 
-        include "includes/statistics_chart_form.php";
+        include "includes/statistics_chart_1bar_form.php";
+    }
+}
+
+/* Get the number of approved comments for all posts from database and put this data to the chart. Posts are sorted by number of comments from top to down. $chart_color is color of the chart, $posts_num is number of posts that is displayed on the chart */
+function showUsersActivityChart($chart_color1, $chart_color2, $items_num) {
+    global $connection;
+
+    $items_num_escaped = mysqli_real_escape_string($connection, $items_num);
+
+    if (my_is_int($items_num_escaped)) {
+        $query = "SELECT *, user_posts_cnt+user_comments_cnt AS user_activity FROM users ORDER BY user_activity DESC LIMIT {$items_num_escaped};";
+
+        $userActivityChart = mysqli_query($connection, $query);
+        validateQuery($userActivityChart);
+
+        $names_str = "";
+        $values_str1 = "";
+        $values_str2 = "";
+        while($row = mysqli_fetch_assoc($userActivityChart)) {
+            $user_login = $row['user_login'];
+            $posts_cnt = $row['user_posts_cnt'];
+            $comments_cnt = $row['user_comments_cnt'];
+            /* '#' is divider between elements of array */
+            if ($names_str != "") {
+                $names_str .= "#";
+            }
+            if ($values_str1 != "") {
+                $values_str1 .= "#";
+            }
+            if ($values_str2 != "") {
+                $values_str2 .= "#";
+            }
+            $names_str .= $user_login;
+            $values_str1 .= $comments_cnt;
+            $values_str2 .= $posts_cnt;
+        }
+
+        $axis_x_title = "";
+        $axis_y_title1 = "количество\nкомментариев";
+        $axis_y_title2 = "количество\nпубликаций";
+        $chart_title = "Самые активные пользователи";
+
+        include "includes/statistics_chart_2bar_form.php";
     }
 }
 

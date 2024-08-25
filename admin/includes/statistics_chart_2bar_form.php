@@ -1,0 +1,3 @@
+<?php /* For functions showPostsByCategoryChart() and showCommentsByPostChart() */ ?>
+<div class="dashboard_chart_2bar" style="width: auto; height: 300px;" data-color1="<?=$chart_color1;?>" data-color2="<?=$chart_color2;?>" data-names="<?=$names_str;?>" data-values1="<?=$values_str1;?>" data-values2="<?=$values_str2;?>" data-x-title="<?=$axis_x_title;?>" data-y-title1="<?=$axis_y_title1;?>" data-y-title2="<?=$axis_y_title2;?>" data-chart-title="<?=$chart_title;?>"></div>
+<hr>
