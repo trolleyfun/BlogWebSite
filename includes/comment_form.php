@@ -11,7 +11,7 @@
             <?php } ?>
             <small><?=$comment_date;?></small>
         </h4>
-        <?=$comment_content;?>
+        <div><?=$comment_content;?></div>
     </div>
 </div>
 <hr>

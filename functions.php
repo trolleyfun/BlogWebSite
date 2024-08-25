@@ -89,7 +89,7 @@ function showAllPosts($posts_per_page) {
             $post_author_login = $row['user_login'];
             $post_date = $row['post_date'];
             $post_image = $row['post_image'];
-            $post_content = substr($row['post_content'], 0, 500);
+            $post_content = $row['post_content'];
 
             include "includes/post_form_short.php";
         }
@@ -227,7 +227,7 @@ function showPostByCategory($posts_per_page) {
                     $post_author_login = $row['user_login'];
                     $post_date = $row['post_date'];
                     $post_image = $row['post_image'];
-                    $post_content = substr($row['post_content'], 0, 500);
+                    $post_content = $row['post_content'];
 
                     include "includes/post_form_short.php";
                 }
@@ -339,7 +339,7 @@ function searchPosts($posts_per_page) {
                     $post_author_login = $row['user_login'];
                     $post_date = $row['post_date'];
                     $post_image = $row['post_image'];
-                    $post_content = substr($row['post_content'], 0, 500);
+                    $post_content = $row['post_content'];
 
                     include "includes/post_form_short.php";
                 }

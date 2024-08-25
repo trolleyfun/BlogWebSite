@@ -10,3 +10,9 @@
     color: #fff;
     border: none;
 }
+
+/* Post Content */
+.post-content-short {
+    max-height: 100px;
+    overflow: hidden;
+}
