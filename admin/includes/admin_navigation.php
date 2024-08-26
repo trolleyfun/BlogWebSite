@@ -10,7 +10,7 @@
         <a class="navbar-brand" href="index.php">Управление сайтом</a>
 
         <!-- Top Menu Items -->
-        <ul class="nav navbar-right top-nav"  style="float: right; margin-right: -15px;">
+        <ul class="nav navbar-right top-nav">
             <li><a href="../">Перейти на сайт</a></li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?=$session_user['login'];?> <b class="caret"></b></a>

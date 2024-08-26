@@ -19,3 +19,10 @@
     float: right;
     margin-right: -15px;
 }
+.top-nav .open .dropdown-menu {
+    float: none;
+}
+.navbar-right .dropdown-menu {
+    right: 0;
+    left: auto;
+}

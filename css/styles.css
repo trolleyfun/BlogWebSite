@@ -26,8 +26,18 @@
     padding-top: 15px;
     padding-bottom: 15px;
 }
-.navbar-nav > li {
+.navbar-header .navbar-nav > li {
     display: inline-block;
+}
+@media (min-width: 768px) {
+    #bs-example-navbar-collapse-1 {
+        display: none !important;
+    }
+}
+@media (max-width: 767px) {
+    #bs-example-navbar-collapse-2 {
+        display: none !important;
+    }
 }
 .navbar-nav .open .dropdown-menu {
     position: absolute;
