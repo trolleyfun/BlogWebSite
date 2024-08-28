@@ -2376,4 +2376,38 @@ function showPagesAdminCategories($pages_count, $current_page) {
         }
     }
 }
+
+function addSession() {
+    global $connection;
+
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        $session_id = session_id();
+        if (!isset($_SESSION['user_id'])) {
+            $session_user_id = null;
+        } else {
+            $session_user_id = $_SESSION['user_id'];
+            $session_user_id = mysqli_real_escape_string($connection, $session_user_id);
+            if (!userIdValidation($session_user_id)) {
+                $session_user_id = null;
+            }
+        }
+        if (is_null($session_user_id)) {
+            $session_user_id = "null";
+        }
+
+        $session_time = time();
+
+        $query = "SELECT * FROM users_online WHERE session_id = '{$session_id}';";
+        $searchSessionId = mysqli_query($connection, $query);
+        validateQuery($searchSessionId);
+
+        if (mysqli_num_rows($searchSessionId)) {
+            $query = "UPDATE users_online SET session_user_id = {$session_user_id}, session_time = {$session_time} WHERE session_id = '{$session_id}';";
+        } else {
+            $query = "INSERT INTO users_online(session_id, session_user_id, session_time) VALUES('{$session_id}', {$session_user_id}, {$session_time})";
+        }
+        $updateSession = mysqli_query($connection, $query);
+        validateQuery($updateSession);
+    }
+}
 ?>

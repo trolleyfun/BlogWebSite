@@ -10,4 +10,6 @@ if (isset($_SESSION['user_id'])) {
         header("Location: includes/logout.php");
     }
 }
+
+addSession();
 ?>
