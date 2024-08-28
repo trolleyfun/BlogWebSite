@@ -50,3 +50,13 @@ function confirmDeleteOptionBottom(message) {
         return true;
     }
 }
+
+/* Instant counting users online. Display the result in element with class "users_online" */
+function showUsersOnlineCnt() {
+    $.get("includes/users_online_cnt.php", (data)=>{
+        $('.users_online').text(data);
+    });
+}
+
+showUsersOnlineCnt();
+setInterval(showUsersOnlineCnt, 500); //every 500ms

@@ -15,6 +15,7 @@
                             Добро пожаловать
                             <small><?=$session_user['firstname']." ".$session_user['lastname'];?></small>
                         </h1>
+                        <h3>Пользователей онлайн: <span class="users_online"></span></h3>
                     </div>
                 </div>
                 <!-- /.row -->
