@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 25, 2024 at 12:25 PM
+-- Generation Time: Aug 28, 2024 at 02:46 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -462,6 +462,18 @@ INSERT INTO `users` (`user_id`, `user_login`, `user_password`, `user_firstname`,
 (213, 'Jonny', '$2y$10$yO5Yn/zzYpQA.0KKyY2SsuBWlzhadV5uGxaqDsUNWc0UpEDdOt9i.', 'Борис', 'Свирицын', '123456@example.com', 'walle.jpg', 'пользователь', 1, 5),
 (214, 'mishka', '$2y$10$UvO.hvc/FwSs8WGV5BtuZ./h0Keo9MaJGRF6nS9Yk5otHit2Amkge', 'Мишка', 'Кузнецов', 'mishka@mail.ru', 'user_icon_default.png', 'пользователь', 0, 3);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users_online`
+--
+
+CREATE TABLE `users_online` (
+  `session_id` varchar(255) NOT NULL,
+  `session_user_id` int(11) DEFAULT NULL,
+  `session_time` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Indexes for dumped tables
 --
@@ -496,6 +508,13 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`),
   ADD UNIQUE KEY `user_login` (`user_login`),
   ADD UNIQUE KEY `user_email` (`user_email`);
+
+--
+-- Indexes for table `users_online`
+--
+ALTER TABLE `users_online`
+  ADD PRIMARY KEY (`session_id`),
+  ADD KEY `session_user_id` (`session_user_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -542,6 +561,12 @@ ALTER TABLE `comments`
 ALTER TABLE `posts`
   ADD CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`post_category_id`) REFERENCES `categories` (`cat_id`) ON DELETE SET NULL ON UPDATE SET NULL,
   ADD CONSTRAINT `posts_ibfk_2` FOREIGN KEY (`post_author_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE SET NULL;
+
+--
+-- Constraints for table `users_online`
+--
+ALTER TABLE `users_online`
+  ADD CONSTRAINT `users_online_ibfk_1` FOREIGN KEY (`session_user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE SET NULL;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
