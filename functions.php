@@ -1007,6 +1007,7 @@ function showPagesSearchPosts($pages_count, $current_page, $search) {
     }
 }
 
+/* Add sessions info to database for new sessions and update sessions info for current sessions */
 function addSession() {
     global $connection;
 

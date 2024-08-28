@@ -2377,6 +2377,7 @@ function showPagesAdminCategories($pages_count, $current_page) {
     }
 }
 
+/* Add sessions info to database for new sessions and update sessions info for current sessions */
 function addSession() {
     global $connection;
 
@@ -2409,5 +2410,20 @@ function addSession() {
         $updateSession = mysqli_query($connection, $query);
         validateQuery($updateSession);
     }
+}
+
+/* Count the number of sessions of users who is online */
+function usersOnlineCnt() {
+    global $connection;
+
+    $session_timeout = 30; //after this time user is not online (in seconds)
+    $current_time = time();
+
+    $query = "SELECT * FROM users_online WHERE session_time + {$session_timeout} > {$current_time};";
+    $usersOnlineQuery = mysqli_query($connection, $query);
+    validateQuery($usersOnlineQuery);
+
+    $usersOnlineCnt = mysqli_num_rows($usersOnlineQuery);
+    return $usersOnlineCnt;
 }
 ?>
