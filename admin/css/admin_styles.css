@@ -26,3 +26,22 @@
     right: 0;
     left: auto;
 }
+
+/* Dashboard Section */
+.users_online_header {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 10px;
+    background-color: #829291;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 1.3em;
+    font-weight: bold;
+    padding: 10px 30px;
+    margin-bottom: 20px;
+}
+.users_online_cnt {
+    font-size: 1.4em;
+}

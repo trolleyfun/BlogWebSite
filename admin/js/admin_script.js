@@ -54,7 +54,7 @@ function confirmDeleteOptionBottom(message) {
 /* Instant counting users online. Display the result in element with class "users_online" */
 function showUsersOnlineCnt() {
     $.get("includes/users_online_cnt.php", (data)=>{
-        $('.users_online').text(data);
+        $('.users_online_cnt').text(data);
     });
 }
 
