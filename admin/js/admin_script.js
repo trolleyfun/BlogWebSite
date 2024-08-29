@@ -59,4 +59,4 @@ function showUsersOnlineCnt() {
 }
 
 showUsersOnlineCnt();
-setInterval(showUsersOnlineCnt, 500); //every 500ms
+setInterval(showUsersOnlineCnt, 1000); //every 1000ms

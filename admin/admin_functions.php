@@ -2398,14 +2398,14 @@ function addSession() {
 
         $session_time = time();
 
-        $query = "SELECT * FROM users_online WHERE session_id = '{$session_id}';";
+        $query = "SELECT * FROM sessions_list WHERE session_id = '{$session_id}';";
         $searchSessionId = mysqli_query($connection, $query);
         validateQuery($searchSessionId);
 
         if (mysqli_num_rows($searchSessionId)) {
-            $query = "UPDATE users_online SET session_user_id = {$session_user_id}, session_time = {$session_time} WHERE session_id = '{$session_id}';";
+            $query = "UPDATE sessions_list SET session_user_id = {$session_user_id}, session_time = {$session_time} WHERE session_id = '{$session_id}';";
         } else {
-            $query = "INSERT INTO users_online(session_id, session_user_id, session_time) VALUES('{$session_id}', {$session_user_id}, {$session_time})";
+            $query = "INSERT INTO sessions_list(session_id, session_user_id, session_time) VALUES('{$session_id}', {$session_user_id}, {$session_time})";
         }
         $updateSession = mysqli_query($connection, $query);
         validateQuery($updateSession);
@@ -2416,10 +2416,10 @@ function addSession() {
 function usersOnlineCnt() {
     global $connection;
 
-    $session_timeout = 30; //after this time user is not online (in seconds)
+    $session_timeout = 300; //after this time user is not online (in seconds)
     $current_time = time();
 
-    $query = "SELECT * FROM users_online WHERE session_time + {$session_timeout} > {$current_time};";
+    $query = "SELECT * FROM sessions_list WHERE session_time + {$session_timeout} > {$current_time};";
     $usersOnlineQuery = mysqli_query($connection, $query);
     validateQuery($usersOnlineQuery);
 
