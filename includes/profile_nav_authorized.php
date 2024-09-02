@@ -12,7 +12,7 @@
             </li>
             <li class="divider"></li>
             <li>
-                <a href="includes/logout.php" onclick="return confirm('Вы уверены, что хотите завершить сеанс?');"><span class="glyphicon glyphicon-off"></span> Выйти</a>
+                <a href="index.php?logout=true" onclick="return confirm('Вы уверены, что хотите завершить сеанс?');"><span class="glyphicon glyphicon-off"></span> Выйти</a>
             </li>
         </ul>
     </li>

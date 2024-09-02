@@ -47,7 +47,7 @@ function addCategories() {
         } else {
             $session_user_id = $_SESSION['user_id'];
             if (!userIdValidation($session_user_id)) {
-                header("Location: ../includes/logout.php");
+                header("Location: ../index.php?logout=true");
             } else {
                 $cat_title = $_POST['cat_title'];
                 $cat_title = mysqli_real_escape_string($connection, $cat_title);
@@ -88,7 +88,7 @@ function updateCategories($cat_id, $err_status) {
         } else {
             $session_user_id = $_SESSION['user_id'];
             if (!userIdValidation($session_user_id)) {
-                header("Location: ../includes/logout.php");
+                header("Location: ../index.php?logout=true");
             } else {
                 $cat['cat_id'] = $cat_id;
                 $cat['title'] = $_POST['edit_cat_title'];
@@ -248,7 +248,7 @@ function deleteCategories($delete_cat_id) {
     } else {
         $session_user_id = $_SESSION['user_id'];
         if (!userIdValidation($session_user_id)) {
-            header("Location: ../includes/logout.php");
+            header("Location: ../index.php?logout=true");
         } else {
             $delete_cat_id_escaped = mysqli_real_escape_string($connection, $delete_cat_id);
 
@@ -347,7 +347,7 @@ function addPosts() {
         } else {
             $session_user_id = $_SESSION['user_id'];
             if (!userIdValidation($session_user_id)) {
-                header("Location: ../includes/logout.php");
+                header("Location: ../index.php?logout=true");
             } else {        
                 $post['author_id'] = $session_user_id;
                 $post['category_id'] = $_POST['post_category_id'];
@@ -425,7 +425,7 @@ function confirmPosts($post_id, $confirm_option) {
     } else {
         $session_user_id = $_SESSION['user_id'];
         if (!userIdValidation($session_user_id)) {
-            header("Location: ../includes/logout.php");
+            header("Location: ../index.php?logout=true");
         } else {
             $confirm_post['post_id'] = $post_id;    
             $confirm_post['status'] = "";
@@ -484,7 +484,7 @@ function deletePosts($delete_post_id) {
     } else {
         $session_user_id = $_SESSION['user_id'];
         if (!userIdValidation($session_user_id)) {
-            header("Location: ../includes/logout.php");
+            header("Location: ../index.php?logout=true");
         } else {
             $delete_post_id_escaped = mysqli_real_escape_string($connection, $delete_post_id);
 
@@ -564,7 +564,7 @@ function updatePosts($post_id, $current_image, $err_status) {
         } else {
             $session_user_id = $_SESSION['user_id'];
             if (!userIdValidation($session_user_id)) {
-                header("Location: ../includes/logout.php");
+                header("Location: ../index.php?logout=true");
             } else {
                 $post['post_id'] = $post_id;
                 $post['category_id'] = $_POST['edit_post_category_id'];
@@ -752,7 +752,7 @@ function deleteComments($delete_comment_id) {
     } else {
         $session_user_id = $_SESSION['user_id'];
         if (!userIdValidation($session_user_id)) {
-            header("Location: ../includes/logout.php");
+            header("Location: ../index.php?logout=true");
         } else {
             $delete_comment_id_escaped = mysqli_real_escape_string($connection, $delete_comment_id);
 
@@ -804,7 +804,7 @@ function confirmComments($comment_id, $confirm_option) {
     } else {
         $session_user_id = $_SESSION['user_id'];
         if (!userIdValidation($session_user_id)) {
-            header("Location: ../includes/logout.php");
+            header("Location: ../index.php?logout=true");
         } else {
             $confirm_comment['comment_id'] = $comment_id;
             $confirm_comment['status'] = "";
@@ -1035,7 +1035,7 @@ function addUsers() {
         } else {
             $session_user_id = $_SESSION['user_id'];
             if (!userIdValidation($session_user_id)) {
-                header("Location: ../includes/logout.php");
+                header("Location: ../index.php?logout=true");
             } else {
                 $user['login'] = $_POST['user_login'];
                 $user['password'] = $_POST['user_password'];
@@ -1135,7 +1135,7 @@ function deleteUsers($delete_user_id) {
     } else {
         $session_user_id = $_SESSION['user_id'];
         if (!userIdValidation($session_user_id)) {
-            header("Location: ../includes/logout.php");
+            header("Location: ../index.php?logout=true");
         } else {
             $delete_user_id_escaped = mysqli_real_escape_string($connection, $delete_user_id);
             if (!userIdValidation($delete_user_id_escaped)) {
@@ -1160,7 +1160,7 @@ function changeUserPrivilege($user_id, $privilege) {
     } else {
         $session_user_id = $_SESSION['user_id'];
         if (!userIdValidation($session_user_id)) {
-            header("Location: ../includes/logout.php");
+            header("Location: ../index.php?logout=true");
         } else {
             $user['user_id'] = $user_id;
             $user['privilege'] = "";
@@ -1241,7 +1241,7 @@ function updateUsers($user_id, $current_image, $err_status) {
         } else {
             $session_user_id = $_SESSION['user_id'];
             if (!userIdValidation($session_user_id)) {
-                header("Location: ../includes/logout.php");
+                header("Location: ../index.php?logout=true");
             } else {
                 $user['user_id'] = $user_id;
                 $user['firstname'] = $_POST['edit_user_firstname'];
@@ -1385,7 +1385,7 @@ function updateProfile($user_id, $current_image, $err_status) {
         } else {
             $session_user_id = $_SESSION['user_id'];
             if (!userIdValidation($session_user_id)) {
-                header("Location: ../includes/logout.php");
+                header("Location: ../index.php?logout=true");
             } else {
                 $user['user_id'] = $user_id;
                 $user['firstname'] = $_POST['profile_firstname'];
@@ -1474,7 +1474,7 @@ function resetUserPassword($user_id, $err_status) {
         } else {
             $session_user_id = $_SESSION['user_id'];
             if (!userIdValidation($session_user_id)) {
-                header("Location: ../includes/logout.php");
+                header("Location: ../index.php?logout=true");
             } else {
                 $user['user_id'] = $user_id;
                 $user['password'] = $_POST['reset_user_password'];
@@ -1522,7 +1522,7 @@ function changeUserPassword($user_id, $db_user_password, $err_status) {
         } else {
             $session_user_id = $_SESSION['user_id'];
             if (!userIdValidation($session_user_id)) {
-                header("Location: ../includes/logout.php");
+                header("Location: ../index.php?logout=true");
             } else {
                 $user['user_id'] = $user_id;
                 $user['current_password'] = $_POST['current_user_password'];

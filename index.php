@@ -18,6 +18,8 @@
 
                 <!-- Blog Posts -->
                 <?php 
+                /* Log out users */
+                userLogout();
                 /* Put Blog Posts from database */
                 showAllPosts(5);
                 ?>

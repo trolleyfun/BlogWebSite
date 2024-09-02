@@ -389,7 +389,7 @@ function addComments($add_comment_post_id, $err_status) {
             $comment = escapeArray($comment);
 
             if (!userIdValidation($comment['user_id'])) {
-                header("Location: includes/logout.php");
+                header("Location: index.php?logout=true");
             } else {  
                 if (!postIdValidation($comment['post_id'])) {
                     header("Location: index.php");
@@ -529,6 +529,18 @@ function userLogin() {
     }
 
     include "includes/login_form.php";
+}
+
+/* Unset session variables and logout user */
+function userLogout() {
+    if (isset($_GET['logout'])) {
+        $logout = $_GET['logout'];
+        if ($logout == "true") {
+            session_unset();
+        }
+
+        header("Location: index.php");
+    }
 }
 
 /* Users signup. Put data from the signup form to database */
