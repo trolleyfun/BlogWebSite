@@ -21,6 +21,9 @@
                     <li>
                         <a href="admin_profile.php"><i class="fa fa-fw fa-cog"></i> Профиль</a>
                     </li>
+                    <li>
+                        <a href="admin_support.php"><i class="fa fa-fw fa-phone"></i> Поддержка</a>
+                    </li>
                     <li class="divider"></li>
                     <li>
                         <a href="../index.php?logout=true" onclick="return confirm('Вы уверены, что хотите завершить сеанс?');"><i class="fa fa-fw fa-power-off"></i> Выйти</a>
@@ -50,6 +53,9 @@
             </li>
             <li>
                 <a href="admin_profile.php"><i class="fa fa-fw fa-cog"></i> Профиль</a>
+            </li>
+            <li>
+                <a href="admin_support.php"><i class="fa fa-fw fa-phone"></i> Поддержка</a>
             </li>
         </ul>
     </div>

@@ -10,6 +10,9 @@
             <li>
                 <a href="admin/admin_profile.php"><span class="glyphicon glyphicon-cog"></span> Профиль</a>
             </li>
+            <li>
+                <a href="admin/admin_support.php"><span class="glyphicon glyphicon-earphone"></span> Поддержка</a>
+            </li>
             <li class="divider"></li>
             <li>
                 <a href="index.php?logout=true" onclick="return confirm('Вы уверены, что хотите завершить сеанс?');"><span class="glyphicon glyphicon-off"></span> Выйти</a>
