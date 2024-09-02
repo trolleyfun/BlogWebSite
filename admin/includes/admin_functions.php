@@ -2124,6 +2124,27 @@ function showProfileOperationInfo() {
     include "includes/profile_operation_info.php";
 }
 
+/* Show info message if support message was sent */
+function showSupportOperationInfo() {
+    if (isset($_GET['operation'])) {
+        $support_operation = $_GET['operation'];
+    } else {
+        $support_operation = "";
+    }
+
+    $support_operation_message = "";
+    switch($support_operation) {
+        case "send":
+            $support_operation_message = "Ваше обращение успешно отправлено. Вы получите ответ на указанный e-mail";
+            break;
+        default:
+            $support_operation_message = "Произошла непредвиденная ошибка. Попробуйте снова";
+            break;
+    }
+
+    include "includes/support_operation_info.php";
+}
+
 /* Apply selected options on the Posts Page */
 function selectPostOptions() {
     if (isset($_POST['apply_post_option_btn_top']) || isset($_POST['apply_post_option_btn_bottom'])) {
@@ -2425,5 +2446,57 @@ function usersOnlineCnt() {
 
     $usersOnlineCnt = mysqli_num_rows($usersOnlineQuery);
     return $usersOnlineCnt;
+}
+
+function sendSupportMessage() {
+    global $connection;
+
+    $err_support = ['subject'=>false, 'email_empty'=>false, 'email_correct'=>false, 'content'=>false];
+
+    if (isset($_POST['send_support_btn'])) {
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: ../index.php");
+        } else {
+            $session_user_id = $_SESSION['user_id'];
+            if (!userIdValidation($session_user_id)) {
+                header("Location: ../index.php?logout=true");
+            } else {
+                $support['subject'] = $_POST['support_subject'];
+                $support['email_from'] = $_POST['support_email'];
+                $support['content'] = $_POST['support_content'];
+                $support['email_to'] = "blogwebsite@yandex.ru";
+
+                foreach($err_support as $key=>$value) {
+                    $err_support[$key] = false;
+                }
+                if (empty($support['subject'])) {
+                    $err_support['subject'] = true;
+                }
+                if (empty($support['email_from'])) {
+                    $err_support['email_empty'] = true;
+                } else {
+                    $err_support['email_correct'] = !emailValidation($support['email_from']);
+                }
+                if (empty($support['content'])) {
+                    $err_support['content'] = true;
+                }
+                $err_result = false;
+                foreach($err_support as $err_item) {
+                    $err_result = $err_result || $err_item;
+                }
+
+                if (!$err_result) {
+                    if (mail($support['email_to'], $support['subject'], $support['content'])) {
+
+                    header("Location: admin_support.php?source=info&operation=send");
+                    } else {
+                        header("Location: admin_support.php?source=info&operation=error");
+                    }
+                }
+            }
+        }
+    }
+
+    include "includes/support_form.php";
 }
 ?>
