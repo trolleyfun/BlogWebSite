@@ -15,7 +15,7 @@
         </div>
         <div class="form-group">
             <label for="support_content">Текст обращения<span style='color: #a94442;'> *</span></label>
-            <textarea name="support_content" id="support_content" rows="7" class="form-control" required></textarea>
+            <textarea name="support_content" id="support_content" rows="7" class="form-control summernote-post" required></textarea>
             <span style='color: #a94442;'><?php displayErrorMessage($err_support['content'], "Это поле не может быть пустым"); ?></span>
         </div>
         <div class="form-group">
