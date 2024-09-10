@@ -7,12 +7,19 @@
 <html lang="ru">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+
+    <!-- Open Graph Protocol -->
+    <meta property="og:title" content="Блог &mdash; Путешествия">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blogwebsite.h1n.ru/">
+    <meta property="og:image" content="https://blogwebsite.h1n.ru/img/preview-img.png">
+    <meta property="og:description" content="Блог о путешествиях">
+    <meta property="og:locale" content="ru">
 
     <title>Управление &mdash; Блог</title>
 
@@ -37,6 +44,9 @@
 
     <!-- User Styles -->
     <link rel="stylesheet" href="css/admin_styles.css">
+
+    <!-- Favicon -->
+    <link rel="icon" href="../favicon.ico">
 </head>
 
 <body>
