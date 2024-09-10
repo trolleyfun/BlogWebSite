@@ -1,4 +1,10 @@
 <?php
+/* E-mail for user's messages send to */
+define('BLOGWEBSITE_MAIL_RECEIVE', "blogwebsite@yandex.ru");
+/* E-mail of server to send messages from */
+define('BLOGWEBSITE_MAIL_SEND', "support@blogwebsite.h1n.ru");
+
+
 /* Check if the query is successful. If not, intercept the program and display an error post_operation_message */
 function validateQuery($result) {
     global $connection;
@@ -2448,6 +2454,7 @@ function usersOnlineCnt() {
     return $usersOnlineCnt;
 }
 
+/* Display Support Form to send messages, take data from the form and send email */
 function sendSupportMessage() {
     global $connection;
 
@@ -2462,9 +2469,10 @@ function sendSupportMessage() {
                 header("Location: ../index.php?logout=true");
             } else {
                 $support['subject'] = $_POST['support_subject'];
-                $support['email_from'] = $_POST['support_email'];
+                $support['user_email'] = $_POST['support_email'];
                 $support['content'] = $_POST['support_content'];
-                $support['email_to'] = "blogwebsite@yandex.ru";
+                $support['email_to'] = BLOGWEBSITE_MAIL_RECEIVE;
+                $support['email_from'] = BLOGWEBSITE_MAIL_SEND;
 
                 foreach($err_support as $key=>$value) {
                     $err_support[$key] = false;
@@ -2472,10 +2480,10 @@ function sendSupportMessage() {
                 if (empty($support['subject'])) {
                     $err_support['subject'] = true;
                 }
-                if (empty($support['email_from'])) {
+                if (empty($support['user_email'])) {
                     $err_support['email_empty'] = true;
                 } else {
-                    $err_support['email_correct'] = !emailValidation($support['email_from']);
+                    $err_support['email_correct'] = !emailValidation($support['user_email']);
                 }
                 if (empty($support['content'])) {
                     $err_support['content'] = true;
@@ -2485,8 +2493,17 @@ function sendSupportMessage() {
                     $err_result = $err_result || $err_item;
                 }
 
+                $mail_body = "<p>E-mail для ответа: {$support['user_email']}</p><hr>";
+                $mail_body .= $support['content'];
+
+                $headers[] = "From: {$support['email_from']}";
+                $headers[] = "To: {$support['email_to']}";
+                $headers[] = "Return-Path: {$support['email_from']}";
+                $headers[] = "MIME-Version: 1.0";
+                $headers[] = "Content-type: text/html; charset=utf-8";
+
                 if (!$err_result) {
-                    if (mail($support['email_to'], $support['subject'], $support['content'])) {
+                    if (mail($support['email_to'], $support['subject'], $mail_body, implode("\r\n", $headers))) {
 
                     header("Location: admin_support.php?source=info&operation=send");
                     } else {
