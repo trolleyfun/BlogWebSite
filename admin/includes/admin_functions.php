@@ -2497,7 +2497,6 @@ function sendSupportMessage() {
                 $mail_body .= $support['content'];
 
                 $headers[] = "From: {$support['email_from']}";
-                $headers[] = "To: {$support['email_to']}";
                 $headers[] = "Return-Path: {$support['email_from']}";
                 $headers[] = "MIME-Version: 1.0";
                 $headers[] = "Content-type: text/html; charset=utf-8";
