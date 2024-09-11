@@ -17,7 +17,7 @@
     <meta property="og:title" content="Блог &mdash; Путешествия">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://blogwebsite.h1n.ru/">
-    <meta property="og:image" content="https://blogwebsite.h1n.ru/img/preview-img.png">
+    <meta property="og:image" content="https://blogwebsite.h1n.ru/img/preview_img.png">
     <meta property="og:description" content="Блог о путешествиях">
     <meta property="og:locale" content="ru">
 
