@@ -21,6 +21,11 @@ function displayErrorMessage($status, $post_operation_message) {
     }
 }
 
+/* Redirect to $location */
+function redirect($location) {
+    header("Location: {$location}");
+}
+
 /* Escape special characters in array elements for use in sql queries */
 function escapeArray($array) {
     global $connection;
