@@ -1058,4 +1058,39 @@ function addSession() {
         validateQuery($updateSession);
     }
 }
+
+/* Check if session is active and if session variable is set. If it is, return Id of user, otherwise return false */
+function sessionValidation() {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        return false;
+    } elseif (!isset($_SESSION['user_id'])) {
+        return false;
+    } else {
+        $user_id = $_SESSION['user_id'];
+        return $user_id;
+    }
+}
+
+/* Return login of authorized user if session is valid. If session is invalid, return false */
+function sessionUserLogin() {
+    global $connection;
+
+    $user_id = sessionValidation();
+    $user_id = mysqli_real_escape_string($connection, $user_id);
+
+    if (!my_is_int($user_id)) {
+        return false;
+    } else {
+        $query = "SELECT user_login FROM users WHERE user_id = {$user_id};";
+        $sessionLogin = mysqli_query($connection, $query);
+        validateQuery($sessionLogin);
+
+        if ($row = mysqli_fetch_assoc($sessionLogin)) {
+            $user_login = $row['user_login'];
+            return $user_login;
+        } else {
+            return false;
+        }
+    }
+}
 ?>
